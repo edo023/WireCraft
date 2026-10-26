@@ -14,6 +14,7 @@ pub mod cavi;
 pub mod collegamenti;
 pub mod commesse;
 pub mod distinta;
+pub mod edita;
 pub mod fili;
 pub mod fogli;
 pub mod impostazioni;
@@ -53,6 +54,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(cavi::comandi());
     v.extend(plc::comandi());
     v.extend(revisioni::comandi());
+    v.extend(edita::comandi());
     v
 }
 

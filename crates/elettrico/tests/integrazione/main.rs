@@ -6,6 +6,7 @@ mod commesse;
 mod compatibilita_spac;
 mod cavi_plc;
 mod cross;
+mod edita;
 mod fili;
 mod fogli;
 mod impostazioni;

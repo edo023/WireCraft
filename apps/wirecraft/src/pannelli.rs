@@ -6,17 +6,19 @@
 //! i comandi come se fossero scritti sulla riga di comando.
 
 use cadcraft_ui_egui::CadApp;
-use elettrico::{fogli, siglatura, simboli};
+use elettrico::{fogli, simboli};
 
 use crate::cavi_plc::{FinestraCavi, FinestraPlc};
 use crate::dialogo::{Dialogo, Esito, SchedaMateriali};
+use crate::edita_xs::EditaXs;
 use crate::gestione::GestioneMultifoglio;
 use crate::progetti::GestioneProgetti;
 use crate::liste::FinestraListe;
+use crate::navigatore;
 use crate::settaggi::FinestraSettaggi;
 use crate::ribbon::Azione;
 use crate::stampa::FinestraStampa;
-use serde_json::{Value, json};
+use serde_json::json;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 enum Scheda {
@@ -28,25 +30,18 @@ enum Scheda {
     Materiali,
 }
 
-struct Voce {
-    handle: String,
-    quadro: String,
-    sigla: String,
-    foglio: u32,
-    pos: (f64, f64),
-}
-
 #[derive(Default)]
 pub struct Pannelli {
     scheda: Scheda,
     /// (disegno, revisione) dei dati mostrati: si rileggono solo quando il disegno cambia.
     letto: Option<(u64, u64)>,
     fogli: Vec<fogli::Foglio>,
-    componenti: Vec<Voce>,
-    cross: Option<Value>,
+    navigatore: navigatore::Dati,
+    cross: Option<Vec<navigatore::Problema>>,
     filtro: String,
     morsettiera: String,
     dialogo: Option<Dialogo>,
+    edita_xs: Option<EditaXs>,
     materiali: SchedaMateriali,
     stampa: FinestraStampa,
     gestione: GestioneMultifoglio,
@@ -67,13 +62,10 @@ impl Pannelli {
             return;
         }
         self.fogli = fogli::elenco(&mut cad.session).unwrap_or_default();
-        self.componenti = siglatura::componenti(&mut cad.session)
-            .unwrap_or_default()
-            .into_iter()
-            .filter(|c| c.madre())
-            .map(|c| Voce { handle: c.blocco.handle.clone(), quadro: c.blocco.attributo("QUADRO").to_string(), sigla: c.nome.clone(), foglio: c.foglio, pos: c.blocco.pos })
-            .collect();
-        self.componenti.sort_by(|a, b| a.quadro.cmp(&b.quadro).then_with(|| a.sigla.cmp(&b.sigla)));
+        // il navigatore si rilegge solo quando lo si guarda
+        if self.scheda == Scheda::Navigatore {
+            self.navigatore = navigatore::leggi(cad);
+        }
         // la lettura non cambia il disegno: si ricorda la revisione dopo
         self.letto = cad.session.state().ok().map(|st| (st.uid, st.revision));
     }
@@ -90,7 +82,9 @@ impl Pannelli {
         egui::Panel::left("ce_pannelli").resizable(true).default_size(250.0).show(ui, |ui| {
             ui.horizontal_wrapped(|ui| {
                 for (s, t) in [(Scheda::Fogli, "Fogli"), (Scheda::Simboli, "Simboli"), (Scheda::Navigatore, "Navigatore"), (Scheda::Cross, "Cross"), (Scheda::Materiali, "Materiali")] {
-                    ui.selectable_value(&mut self.scheda, s, t);
+                    if ui.selectable_value(&mut self.scheda, s, t).clicked() && s == Scheda::Navigatore {
+                        self.letto = None;
+                    }
                 }
             });
             ui.separator();
@@ -109,6 +103,11 @@ impl Pannelli {
             && let Esito::Chiuso = d.mostra(cad, ui.ctx())
         {
             self.dialogo = None;
+        }
+        if let Some(d) = &mut self.edita_xs
+            && let Esito::Chiuso = d.mostra(cad, ui.ctx())
+        {
+            self.edita_xs = None;
         }
         self.stampa.mostra(cad, ui.ctx(), &self.fogli);
         self.gestione.mostra(cad, ui.ctx());
@@ -135,7 +134,7 @@ impl Pannelli {
                 self.scheda = Scheda::Fogli;
             }
             Azione::Cross => {
-                self.cross = cad.run("crossreference", json!({})).ok();
+                self.cross = Some(navigatore::verifica(cad));
                 self.scheda = Scheda::Cross;
             }
             Azione::ArchivioMateriali => self.scheda = Scheda::Materiali,
@@ -189,9 +188,19 @@ impl Pannelli {
         let imp = elettrico::impostazioni::correnti();
         let foglio = self.fogli.iter().find(|f| f.corrente).map(|f| if f.titolo.is_empty() { format!("{:02}", f.numero) } else { format!("{:02} – {}", f.numero, f.titolo) });
         let mut cambia_quadro = None;
+        let mut vai_foglio = None;
         egui::Panel::bottom("ce_stato").exact_size(22.0).show(ui, |ui| {
             ui.horizontal_centered(|ui| {
-                ui.label(format!("Foglio: {}", foglio.unwrap_or_else(|| "—".into())));
+                // cambio foglio rapido: tendina con numero e titolo dei fogli
+                ui.label("Foglio:");
+                egui::ComboBox::from_id_salt("ce_stato_foglio").width(220.0).selected_text(foglio.unwrap_or_else(|| "—".into())).show_ui(ui, |ui| {
+                    for f in &self.fogli {
+                        let t = if f.titolo.is_empty() { format!("{:02}", f.numero) } else { format!("{:02} – {}", f.numero, f.titolo) };
+                        if ui.selectable_label(f.corrente, t).clicked() {
+                            vai_foglio = Some(f.numero);
+                        }
+                    }
+                });
                 ui.separator();
                 ui.label(format!("Progetto: {}", self.commessa.clone().unwrap_or_else(|| "—".into())));
                 ui.separator();
@@ -209,15 +218,21 @@ impl Pannelli {
         if let Some(q) = cambia_quadro {
             let _ = cad.run("impostazioni", json!({"quadro": q}));
         }
+        if let Some(n) = vai_foglio {
+            let _ = cad.run("cambiofoglio", json!({"foglio": n}));
+        }
     }
 
-    /// Apre la finestra di modifica per il componente selezionato.
+    /// Apre la finestra di modifica per l'oggetto selezionato: un componente (Edita Simbolo)
+    /// oppure un morsetto, il numero di un filo o un rimando (Edita Fili e Morsetti).
     fn edita_selezionato(&mut self, cad: &mut CadApp) {
         let scelti: Vec<String> = cad.session.selection().iter().map(|h| h.hex()).collect();
-        let trovato = scelti.iter().find_map(|h| Dialogo::modifica(cad, h));
-        match trovato {
-            Some(d) => self.dialogo = Some(d),
-            None => cad.set_status("Selezionare un componente (simbolo) da modificare"),
+        if let Some(d) = scelti.iter().find_map(|h| Dialogo::modifica(cad, h)) {
+            self.dialogo = Some(d);
+        } else if let Some(d) = scelti.iter().find_map(|h| EditaXs::apri(cad, h)) {
+            self.edita_xs = Some(d);
+        } else {
+            cad.set_status("Selezionare un componente, un morsetto, un numero di filo o un rimando da modificare");
         }
     }
 
@@ -306,59 +321,21 @@ impl Pannelli {
     }
 
     fn navigatore(&mut self, cad: &mut CadApp, ui: &mut egui::Ui) {
-        ui.add(egui::TextEdit::singleline(&mut self.filtro).hint_text("Cerca sigla"));
-        let filtro = self.filtro.to_lowercase();
-        let mut vai = None;
-        let mut edita = None;
-        let mut quadro: Option<&str> = None;
-        for v in self.componenti.iter().filter(|v| filtro.is_empty() || v.sigla.to_lowercase().contains(&filtro)) {
-            if quadro != Some(v.quadro.as_str()) {
-                ui.add_space(4.0);
-                ui.label(egui::RichText::new(if v.quadro.is_empty() { "(senza quadro)" } else { v.quadro.as_str() }).small().strong());
-                quadro = Some(v.quadro.as_str());
-            }
-            ui.horizontal(|ui| {
-                if ui.small_button("✎").on_hover_text("Edita simbolo").clicked() {
-                    edita = Some(v.handle.clone());
-                }
-                if ui.selectable_label(false, format!("{}   foglio {}", v.sigla, v.foglio)).clicked() {
-                    vai = Some((v.foglio, v.pos));
-                }
-            });
-        }
-        if let Some(h) = edita {
-            self.dialogo = Dialogo::modifica(cad, &h);
-        }
-        if let Some((n, p)) = vai {
-            if n > 0 {
-                let _ = cad.run("cambiofoglio", json!({"foglio": n}));
-            }
-            let _ = cad.run("zoom.window", json!({"p1": [p.0 - 40.0, p.1 - 30.0], "p2": [p.0 + 40.0, p.1 + 30.0]}));
+        match navigatore::mostra_navigatore(ui, &self.navigatore, &mut self.filtro) {
+            Some(navigatore::Richiesta::Vai(p)) => navigatore::vai(cad, &p),
+            Some(navigatore::Richiesta::Edita(h)) => self.dialogo = Dialogo::modifica(cad, &h),
+            None => {}
         }
     }
 
     fn cross(&mut self, cad: &mut CadApp, ui: &mut egui::Ui) {
-        if ui.button("Verifica cross reference").clicked() {
-            self.cross = cad.run("crossreference", json!({})).ok();
+        let (esegui, vai) = navigatore::mostra_cross(ui, &self.cross);
+        if esegui {
+            self.cross = Some(navigatore::verifica(cad));
         }
-        let Some(r) = &self.cross else {
-            ui.label("Controlla contatti, specchietti e rimandi di tutto il multifoglio.");
-            return;
-        };
-        let elenco = |ui: &mut egui::Ui, titolo: &str, chiave: &str, colore: egui::Color32| {
-            let v: Vec<&str> = r.get(chiave).and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).collect();
-            if v.is_empty() {
-                ui.colored_label(egui::Color32::from_rgb(80, 180, 90), format!("✔ {titolo}: nessuno"));
-            } else {
-                ui.colored_label(colore, format!("{titolo}: {}", v.len()));
-                for t in v {
-                    ui.label(format!("   {t}"));
-                }
-            }
-        };
-        elenco(ui, "Contatti senza madre", "figliSenzaMadre", egui::Color32::from_rgb(220, 70, 60));
-        elenco(ui, "Contatti oltre la disponibilità", "contattiSenzaPosto", egui::Color32::from_rgb(220, 70, 60));
-        elenco(ui, "Rimandi senza corrispondenza", "rimandiSenzaCoppia", egui::Color32::from_rgb(220, 180, 40));
+        if let Some(p) = vai {
+            navigatore::vai(cad, &p);
+        }
     }
 
     fn tavolozza(&mut self, cad: &mut CadApp, ui: &mut egui::Ui) {
@@ -405,7 +382,7 @@ impl Pannelli {
         ui.separator();
         ui.label(egui::RichText::new("Verifiche e Output").strong());
         if ui.add_sized([ui.available_width(), 22.0], egui::Button::new("Cross Reference")).clicked() {
-            self.cross = cad.run("crossreference", json!({})).ok();
+            self.cross = Some(navigatore::verifica(cad));
             self.scheda = Scheda::Cross;
         }
         if ui.add_sized([ui.available_width(), 22.0], egui::Button::new("Distinta materiali (CSV)…")).clicked()

@@ -400,6 +400,39 @@ pub fn blocca(s: &mut Session, p: Option<P>, fence: Option<(P, P)>, bloccato: bo
     Ok(k)
 }
 
+/// Edita Fili: dà il numero `nome` (l'apice davanti si toglie) a tutte le etichette della rete
+/// dell'etichetta `handle` e le blocca o sblocca. Un numero cambiato a mano resta bloccato se
+/// non si dice altro. Restituisce le etichette cambiate.
+pub fn cambia_numero(s: &mut Session, handle: &str, nome: Option<&str>, bloccato: Option<bool>) -> Result<usize> {
+    let etichette = blocchi_inseriti(s, BLOCCO_NUMERO)?;
+    let e = etichette.iter().find(|e| e.handle.eq_ignore_ascii_case(handle)).ok_or_else(|| errore("L'oggetto non è il numero di un filo"))?;
+    let tutti = fili::fili(s, &e.layer)?;
+    let rete: Vec<&Inserito> = reti(&tutti)
+        .into_iter()
+        .map(|g| g.into_iter().filter_map(|i| tutti.get(i)).collect::<Vec<_>>())
+        .find(|g| etichetta_su(e, g))
+        .map(|g| etichette.iter().filter(|x| x.layer == e.layer && etichetta_su(x, &g)).collect())
+        .unwrap_or_else(|| vec![e]);
+    let nome = nome.map(|n| n.trim().trim_start_matches('\'').to_string());
+    if nome.as_ref().is_some_and(String::is_empty) {
+        return Err(errore("Indicare il numero o la stringa del filo"));
+    }
+    let bloccato = bloccato.or(nome.as_ref().map(|_| true));
+    let mut v = serde_json::Map::new();
+    if let Some(n) = &nome {
+        v.insert("N".into(), json!(n));
+    }
+    if let Some(b) = bloccato {
+        v.insert("BLOCCATO".into(), json!(if b { "1" } else { "" }));
+    }
+    let handles: Vec<String> = rete.iter().map(|x| x.handle.clone()).collect();
+    for h in &handles {
+        esegui(s, "attedit", json!({"handle": h, "values": v}))?;
+    }
+    aggiorna_morsetti(s)?;
+    Ok(handles.len())
+}
+
 /// Un numero di filo usato: dove, e se è ripetuto per errore.
 #[derive(Clone, Debug, PartialEq)]
 pub struct NumeroUsato {

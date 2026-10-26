@@ -9,9 +9,11 @@
 
 mod cavi_plc;
 mod dialogo;
+mod edita_xs;
 mod gestione;
 mod icone;
 mod liste;
+mod navigatore;
 mod pannelli;
 mod progetti;
 mod settaggi;
