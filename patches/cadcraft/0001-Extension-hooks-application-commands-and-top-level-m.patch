@@ -1,0 +1,73 @@
+From 9d5f0a3854ff5cefa6f3218877975f33bfec0155 Mon Sep 17 00:00:00 2001
+From: Alfre <alfredopennisi3@gmail.com>
+Date: Sat, 24 Oct 2026 20:03:59 +0200
+Subject: [PATCH] Extension hooks: application commands and top-level menus
+
+---
+ crates/engine/src/cmd/mod.rs | 26 ++++++++++++++++++++++++++
+ crates/ui-egui/src/menus.rs  |  5 +++++
+ 2 files changed, 31 insertions(+)
+
+diff --git a/crates/engine/src/cmd/mod.rs b/crates/engine/src/cmd/mod.rs
+index 74bc7f6..47f0864 100644
+--- a/crates/engine/src/cmd/mod.rs
++++ b/crates/engine/src/cmd/mod.rs
+@@ -168,6 +168,27 @@ pub fn has_selection(s: &Session) -> std::result::Result<(), String> {
+     if s.selection().is_empty() { Err("nothing selected".into()) } else { Ok(()) }
+ }
+ 
++/// Commands contributed by an application built on CADCraft, waiting to join the registry.
++static EXTENSIONS: std::sync::Mutex<Vec<CommandSpec>> = std::sync::Mutex::new(Vec::new());
++/// Set once the registry is built: later extensions would never be seen.
++static REGISTRY_BUILT: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
++
++/// Add commands from an application built on CADCraft. They join the registry (command line,
++/// menus, MCP, control channel) when it is first read, so call this at start-up, before anything
++/// looks a command up; returns false when it is too late or an id is registered twice.
++/// Ids that clash with built-in commands are dropped (the built-in one wins).
++pub fn register_extension_commands(specs: Vec<CommandSpec>) -> bool {
++    if REGISTRY_BUILT.load(std::sync::atomic::Ordering::SeqCst) {
++        return false;
++    }
++    let Ok(mut pending) = EXTENSIONS.lock() else { return false };
++    if specs.iter().any(|s| pending.iter().any(|p| p.id == s.id)) {
++        return false;
++    }
++    pending.extend(specs);
++    true
++}
++
+ pub fn command_specs() -> &'static [CommandSpec] {
+     static SPECS: std::sync::OnceLock<Vec<CommandSpec>> = std::sync::OnceLock::new();
+     SPECS.get_or_init(|| {
+@@ -207,6 +228,11 @@ pub fn command_specs() -> &'static [CommandSpec] {
+         v.extend(txt2mtxt::specs());
+         v.extend(constraints::specs());
+         v.extend(lisp::specs());
++        REGISTRY_BUILT.store(true, std::sync::atomic::Ordering::SeqCst);
++        if let Ok(mut pending) = EXTENSIONS.lock() {
++            let extra: Vec<CommandSpec> = std::mem::take(&mut *pending).into_iter().filter(|e| !v.iter().any(|c: &CommandSpec| c.id == e.id)).collect();
++            v.extend(extra);
++        }
+         v
+     })
+ }
+diff --git a/crates/ui-egui/src/menus.rs b/crates/ui-egui/src/menus.rs
+index 8a4476e..7513317 100644
+--- a/crates/ui-egui/src/menus.rs
++++ b/crates/ui-egui/src/menus.rs
+@@ -499,6 +499,11 @@ pub fn tree(app: &CadApp) -> Vec<(String, Vec<Entry>)> {
+     let mut out: Vec<(String, Vec<Entry>)> = MENUS.iter().map(|m| (m.to_string(), Vec::new())).collect();
+     let mut add = |path: &[&str], label: &str, id: &str, shortcut: Option<&str>, enabled: bool| {
+         let Some((top, rest)) = path.split_first() else { return };
++        // A top-level menu of an application's own commands goes before Window.
++        if !out.iter().any(|(m, _)| m == top) {
++            let at = out.iter().position(|(m, _)| m == "Window").unwrap_or(out.len());
++            out.insert(at, (top.to_string(), Vec::new()));
++        }
+         let Some((_, entries)) = out.iter_mut().find(|(m, _)| m == top) else { return };
+         let mut cur = entries;
+         let n = rest.len();
+-- 
+2.53.0.windows.1
+

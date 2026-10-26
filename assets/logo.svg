@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>WireCraft</title>
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0E2A4A"/>
+      <stop offset="1" stop-color="#174E7E"/>
+    </linearGradient>
+    <linearGradient id="rame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFC24A"/>
+      <stop offset="1" stop-color="#F08A1C"/>
+    </linearGradient>
+  </defs>
+  <!-- fondo: un foglio di schema con la sua griglia -->
+  <rect x="8" y="8" width="240" height="240" rx="44" fill="url(#fondo)"/>
+  <g stroke="#FFFFFF" stroke-opacity="0.07" stroke-width="2">
+    <line x1="56" y1="20" x2="56" y2="236"/>
+    <line x1="104" y1="20" x2="104" y2="236"/>
+    <line x1="152" y1="20" x2="152" y2="236"/>
+    <line x1="200" y1="20" x2="200" y2="236"/>
+  </g>
+  <!-- la linea di alimentazione in basso, con le calate dalla W -->
+  <g stroke="#4FD8C4" stroke-width="8" stroke-linecap="round" fill="none">
+    <line x1="34" y1="212" x2="222" y2="212"/>
+    <line x1="92" y1="182" x2="92" y2="212"/>
+    <line x1="164" y1="182" x2="164" y2="212"/>
+  </g>
+  <circle cx="92" cy="212" r="10" fill="#4FD8C4"/>
+  <circle cx="164" cy="212" r="10" fill="#4FD8C4"/>
+  <!-- la W: un filo di rame -->
+  <polyline points="50,70 92,182 128,104 164,182 206,70" fill="none" stroke="url(#rame)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- i morsetti ai capi e al centro -->
+  <g fill="#FFFFFF">
+    <circle cx="50" cy="66" r="16"/>
+    <circle cx="206" cy="66" r="16"/>
+    <circle cx="128" cy="100" r="14"/>
+  </g>
+  <g fill="#0E2A4A">
+    <circle cx="50" cy="66" r="6"/>
+    <circle cx="206" cy="66" r="6"/>
+    <circle cx="128" cy="100" r="5"/>
+  </g>
+</svg>

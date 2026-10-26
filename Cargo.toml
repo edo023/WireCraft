@@ -1,0 +1,45 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "apps/*"]
+# CADCraft is a separate workspace (git submodule); its crates are path dependencies.
+exclude = ["vendor"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.95"
+
+[workspace.dependencies]
+cadcraft-engine = { path = "vendor/cadcraft/crates/engine" }
+cadcraft-io = { path = "vendor/cadcraft/crates/io" }
+cadcraft-ui-egui = { path = "vendor/cadcraft/crates/ui-egui" }
+elettrico = { path = "crates/elettrico" }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+log = "0.4"
+egui = "0.36"
+eframe = { version = "0.36", default-features = false }
+rfd = "0.17"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+
+# Same profiles as CADCraft, so its crates build the same way.
+[profile.dev.package."*"]
+opt-level = 2
+debug = false
+
+[profile.dev]
+opt-level = 1
+debug = "line-tables-only"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 16
+debug = 0
