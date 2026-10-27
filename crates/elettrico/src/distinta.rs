@@ -108,8 +108,8 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![
         CommandSpec {
             id: "distintamateriali",
-            label: "DISTINTA Materiali",
-            menu: &["UTIL", "DISTINTA Materiali"],
+            label: "Distinta Materiali",
+            menu: &["Progetto", "Distinta Materiali"],
             shortcut: None,
             aliases: &[],
             params: "{ordine?: sigla|tipo, at?: [x,y] (tabella nel foglio corrente), file?: percorso .csv} → {intestazione, righe}",
@@ -122,7 +122,7 @@ pub fn comandi() -> Vec<CommandSpec> {
         CommandSpec {
             id: "materiale",
             label: "Associa materiale",
-            menu: &["UTIL", "Associa materiale"],
+            menu: &["Progetto", "Associa materiale"],
             shortcut: None,
             aliases: &[],
             params: "{sigla, codice, costruttore?, descrizione?, aggiungi?: bool (aggiunge ai materiali già associati)}",

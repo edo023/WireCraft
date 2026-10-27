@@ -732,7 +732,7 @@ fn run_rimando_coll(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn run_rapido(s: &mut Session, p: &Value, verticale: bool) -> Result<Value> {
     let at = punto_param(p, "at").ok_or_else(|| errore("Indicare il punto"))?;
-    in_gruppo(s, if verticale { "Quick filo verticale" } else { "Quick filo orizzontale" }, |s| filo_rapido(s, at, verticale).map(|h| json!({"handle": h})))
+    in_gruppo(s, if verticale { "Filo rapido verticale" } else { "Filo rapido orizzontale" }, |s| filo_rapido(s, at, verticale).map(|h| json!({"handle": h})))
 }
 
 fn run_vv(s: &mut Session, p: &Value) -> Result<Value> {
@@ -1027,7 +1027,7 @@ fn fabbrica_hh(_s: &Session) -> Result<Box<dyn Interactive>> {
     Ok(Box::new(UnPunto { nome: "hh", messaggio: "Punto di partenza del filo orizzontale (Invio per finire)" }))
 }
 
-const MENU: &str = "ELETTRICO";
+const MENU: &str = "Elettrico";
 
 fn spec(
     id: &'static str,
@@ -1081,8 +1081,8 @@ pub fn comandi() -> Vec<CommandSpec> {
             run_rimando_coll,
             Some(fabbrica_rimando_coll),
         ),
-        spec("vv", "Quick Filo Verticale (VV)", &[MENU, "Quick Filo Verticale (VV)"], &[], "{at: [x,y]} → {handle}", run_vv, Some(fabbrica_vv)),
-        spec("hh", "Quick Filo Orizzontale (HH)", &[MENU, "Quick Filo Orizzontale (HH)"], &[], "{at: [x,y]} → {handle}", run_hh, Some(fabbrica_hh)),
+        spec("vv", "Filo Rapido Verticale (VV)", &[MENU, "Filo Rapido Verticale (VV)"], &[], "{at: [x,y]} → {handle}", run_vv, Some(fabbrica_vv)),
+        spec("hh", "Filo Rapido Orizzontale (HH)", &[MENU, "Filo Rapido Orizzontale (HH)"], &[], "{at: [x,y]} → {handle}", run_hh, Some(fabbrica_hh)),
         spec("aggiornarimandi", "Aggiorna Rimandi", &[MENU, "Aggiorna Rimandi"], &[], "{} → {collegati, senzaCoppia}", run_aggiorna, None),
     ]
 }

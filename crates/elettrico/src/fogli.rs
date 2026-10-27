@@ -448,7 +448,7 @@ fn chiedi_punto(_s: &Session) -> Result<Box<dyn Interactive>> {
     Ok(Box::new(Richiesta { nome: "coordinata", messaggio: "Indicare un punto".into(), default: None, accetta: Accept::POINT, id: "coordinata", chiave: "at" }))
 }
 
-const MENU: &str = "FOGLI";
+const MENU: &str = "Fogli";
 
 fn spec(
     id: &'static str,
@@ -466,20 +466,20 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![
         spec(
             "nuovomultifoglio",
-            "Nuovo MULTIFOGLIO",
-            &[MENU, "Nuovo MULTIFOGLIO"],
+            "Nuovo Multifoglio",
+            &[MENU, "Nuovo Multifoglio"],
             &[],
             "{fogli?: numero (default 10), commessa?, descrizione?, multifoglio?, descrizioneMultifoglio?, cliente?, cliente1?, cliente2?, disegnatore?, data?} → {fogli}",
             run_nuovo,
             None,
         ),
-        spec("foglioprecedente", "Foglio PRECEDENTE", &[MENU, "Foglio PRECEDENTE"], &["fp"], "{} → {foglio, titolo}", run_precedente, None),
-        spec("cambiofoglio", "Cambio FOGLIO", &[MENU, "Cambio FOGLIO…"], &["cf"], "{foglio} → {foglio, titolo}", run_cambio, Some(chiedi_foglio)),
-        spec("fogliosuccessivo", "Foglio SEGUENTE", &[MENU, "Foglio SEGUENTE"], &["fs"], "{} → {foglio, titolo}", run_seguente, None),
+        spec("foglioprecedente", "Foglio Precedente", &[MENU, "Foglio Precedente"], &["fp"], "{} → {foglio, titolo}", run_precedente, None),
+        spec("cambiofoglio", "Cambio FOGLIO", &[MENU, "Cambio Foglio…"], &["cf"], "{foglio} → {foglio, titolo}", run_cambio, Some(chiedi_foglio)),
+        spec("fogliosuccessivo", "Foglio Seguente", &[MENU, "Foglio Seguente"], &["fs"], "{} → {foglio, titolo}", run_seguente, None),
         spec(
             "aggiungifogli",
             "Aggiungi FOGLI",
-            &[MENU, "Aggiungi FOGLI…"],
+            &[MENU, "Aggiungi Fogli…"],
             &[],
             "{quanti?: numero (default 10), da?: primo numero (default dopo l'ultimo), incremento?: (default 1), titolo?} → {fogli}",
             run_aggiungi,
@@ -494,7 +494,7 @@ pub fn comandi() -> Vec<CommandSpec> {
             run_titolo,
             Some(chiedi_titolo),
         ),
-        spec("numerafogli", "NUMERA Fogli", &[MENU, "NUMERA Fogli"], &[], "{} → {fogli}", run_numera, None),
+        spec("numerafogli", "Numera Fogli", &[MENU, "Numera Fogli"], &[], "{} → {fogli}", run_numera, None),
         spec(
             "descrizionecolonna",
             "Descrizione Colonna",

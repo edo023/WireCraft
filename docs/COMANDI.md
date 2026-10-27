@@ -4,9 +4,9 @@ Tutti i comandi si usano dai menu, dalla barra a schede, dalla riga di comando e
 
 ## Il programma
 
-All'avvio, senza un disegno da aprire, si apre **Gestione Progetti**. In alto la barra a schede: WireCraft, Fili e Morsetti, Simboli, Moduli, Lay-Out, Disegno, Vista, Output. A sinistra i pannelli Fogli, Simboli (libreria con anteprime), Navigatore, Cross e Materiali; a destra la tavolozza dei comandi; in basso la barra di stato con foglio, progetto, quadro corrente e conduttore in uso.
+All'avvio, senza un disegno da aprire, si apre **Gestione Progetti**. In alto la barra a schede: WireCraft, Fili e Morsetti, Simboli, Strumenti, Quadro, Disegno, Vista, Output. A sinistra i pannelli Fogli, Simboli (libreria con anteprime), Navigatore, Cross e Materiali; a destra la tavolozza dei comandi; in basso la barra di stato con foglio, progetto, quadro corrente e conduttore in uso.
 
-Finestre: Gestione Progetti, Gestione Multifoglio (con revisioni e fogli memorizzati), Settaggi, inserimento/modifica simbolo (XS), Liste e Tabelle, Gestione Cavi, Gestione PLC, Traduttore, Stampa e PDF Fogli.
+Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria), Impostazioni, inserimento e modifica del simbolo (XS), Liste e Tabelle, Gestione Cavi, Gestione PLC, Traduttore, Stampa e PDF Fogli.
 
 ### Progetti e settaggi
 
@@ -15,7 +15,7 @@ Finestre: Gestione Progetti, Gestione Multifoglio (con revisioni e fogli memoriz
 | `COMMESSA.NUOVA`, `COMMESSA.NUOVOMULTIFOGLIO`, `COMMESSA.APRI`, `COMMESSA.MODIFICA`, `COMMESSA.COPIA`, `COMMESSE.ELENCO` | gestione dei progetti |
 | `IMPOSTAZIONI` (`SETTAGGI`) | siglatura, numerazione fili, conduttori, quadro/funzione/ubicazione correnti, morsetti, nomi delle alimentazioni |
 
-### Fogli (menu FOGLI)
+### Fogli (menu Fogli)
 
 | Comando | Cosa fa |
 |---|---|
@@ -30,7 +30,7 @@ Finestre: Gestione Progetti, Gestione Multifoglio (con revisioni e fogli memoriz
 | `REVISIONE.CREA`, `.VEDI`, `.ANNULLA`, `.RESET`, `.ELENCO` | revisioni: archivio dei fogli e simbolo nel cartiglio |
 | `STAMPAFOGLI` | PDF dei fogli scelti; **dinamico**: segnalibri e riferimenti cliccabili |
 
-### Schema (menu ELETTRICO)
+### Schema (menu Elettrico)
 
 | Comando | Cosa fa |
 |---|---|
@@ -47,7 +47,7 @@ Finestre: Gestione Progetti, Gestione Multifoglio (con revisioni e fogli memoriz
 | `EDITAMORSETTO`, `EDITAFILO`, `EDITARIMANDO` | modifica di morsetti (con il controllo dei numeri doppi), fili (rinomina tutta la rete e la blocca) e rimandi (ricollega i riferimenti) |
 | `AGGIORNALISTE` | cross reference, rimandi e tutte le liste già sui fogli |
 
-### Liste, cavi, PLC (menu UTIL)
+### Liste, cavi, PLC (menu Progetto)
 
 | Comando | Cosa fa |
 |---|---|
@@ -58,14 +58,14 @@ Finestre: Gestione Progetti, Gestione Multifoglio (con revisioni e fogli memoriz
 | `RETI` | le reti con i capi collegati (per script e agenti) |
 | `TRADUCI`, `TRADUTTORE.FRASI`, `.AGGIUNGI`, `.IMPORTA`, `.ESPORTA` | schema bilingue dal dizionario (funzioni, titoli dei fogli, descrizioni di colonna); elenco delle frasi senza traduzione |
 
-### Quadro (scheda Lay-Out)
+### Quadro (scheda e menu Quadro)
 
 | Comando | Cosa fa |
 |---|---|
 | `LAYOUTQUADRO` | interno armadio su un foglio nuovo: piastra in scala con canaline, guide DIN, ingombri di componenti e morsettiere, tabella delle misure |
 | `FORATURAPIASTRA` | fori di fissaggio a passo costante su guide e canaline, disegnati sul foglio e in CSV con le quote dall'angolo della piastra |
 
-## Simboli (menu IEC e Interruttori)
+## Simboli (menu Simboli e Protezioni)
 
 52 simboli IEC 60617 disegnati da noi, a categorie: contatti (NO, NC, scambio, ritardati, di potenza a 2 e 3 poli, del relè termico), bobine (relè, contattore, ritardate all'eccitazione e alla diseccitazione, elettrovalvola), comandi (pulsanti NO/NC, emergenza, luminoso, selettori), sensori (finecorsa, prossimità, fotocellula, pressostato, termostato), segnalazione (lampada, sirena), protezioni (fusibili, relè termico), interruttori (magnetotermici 1–4 poli, differenziali, salvamotore, sezionatore), motori (trifase, con PE, monofase), trasformatore e alimentatore, utilizzatori (resistenza, presa), componenti (resistore, condensatore, diodo), terre e masse.
 

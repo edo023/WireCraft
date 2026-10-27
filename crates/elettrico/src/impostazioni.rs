@@ -561,7 +561,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![CommandSpec {
         id: "impostazioni",
         label: "SETTAGGI",
-        menu: &["ELETTRICO", "SETTAGGI…"],
+        menu: &["Elettrico", "Impostazioni…"],
         shortcut: None,
         aliases: &["settaggi"],
         params: "{siglatura?: incrementale|foglio-prefisso-assoluta|foglio-prefisso-relativa|prefisso-foglio-assoluta|prefisso-foglio-relativa|posizionale, separatoreSigla?, prefissoAssoluto?, cifreFoglio?, sigleUgualiQuadri?, numeriFili?: foglio-progressivo|progressivo|posizionale, separatoreFili?, cifreFilo?, prefissoFili?, suffissoFili?, passoFili?, conduttore?: {sezione, colore, codice, costruttore}, conduttoreAlimentazione?, applicaConduttore?, quadro?, funzione?, ubicazione?, morsettieraSoloPrimo?, nomiAlimentazioni?: [..]} → le impostazioni in uso (senza parametri: le legge)",

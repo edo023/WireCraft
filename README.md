@@ -76,7 +76,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 - schema bilingue con un comando: funzioni, titoli, colonne
 
 **🗄️ Quadro**
-- interno armadio: piastra in scala con canaline, guide DIN e ingombri dei componenti presi dallo schema
+- layout del quadro: piastra in scala con canaline, guide DIN e ingombri dei componenti presi dallo schema
 - foratura della piastra con le quote, in CSV
 
 **🖨️ Stampa**

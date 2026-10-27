@@ -1,4 +1,4 @@
-//! Finestra "Gestione Multifoglio": elenco dei fogli con titolo e traduzione modificabili,
+//! Finestra "Gestione Fogli": elenco dei fogli con titolo e traduzione modificabili,
 //! generazione di nuovi fogli, inserisci/elimina/svuota/rinomina, shift e compatta, numerazione
 //! dei fogli e fogli memorizzati. Ogni pulsante esegue un comando (un passo di annullamento).
 
@@ -85,7 +85,7 @@ impl GestioneMultifoglio {
         }
         self.rileggi(cad);
         let mut aperta = true;
-        egui::Window::new("Gestione Multifoglio").id(egui::Id::new("ce_gestione_multifoglio")).open(&mut aperta).default_width(720.0).default_height(560.0).show(ctx, |ui| {
+        egui::Window::new("Gestione Fogli").id(egui::Id::new("ce_gestione_multifoglio")).open(&mut aperta).default_width(720.0).default_height(560.0).show(ctx, |ui| {
             if self.righe.is_empty() {
                 ui.label("Il disegno non è ancora un multifoglio: squadratura e cartiglio sul foglio 0 e i fogli dello schema.");
                 if ui.button("Crea multifoglio").clicked() {

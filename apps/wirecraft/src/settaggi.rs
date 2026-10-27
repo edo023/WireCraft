@@ -1,4 +1,4 @@
-//! Finestra "Settaggi": siglatura dei componenti, numerazione dei fili, conduttori in uso,
+//! Finestra "Impostazioni": siglatura dei componenti, numerazione dei fili, conduttori in uso,
 //! morsetti e nomi delle alimentazioni. Le impostazioni sono quelle della commessa del disegno
 //! aperto (o quelle generali) e si salvano con "Applica".
 
@@ -40,7 +40,7 @@ impl FinestraSettaggi {
         let Some(mut b) = self.bozza.take() else { return };
         let mut aperta = true;
         let mut applica = false;
-        egui::Window::new("Settaggi").id(egui::Id::new("ce_settaggi")).open(&mut aperta).default_width(620.0).default_height(440.0).show(ctx, |ui| {
+        egui::Window::new("Impostazioni").id(egui::Id::new("ce_settaggi")).open(&mut aperta).default_width(620.0).default_height(440.0).show(ctx, |ui| {
             let file = impostazioni::file().map_or_else(|| "impostazioni del programma (non salvate)".to_string(), |f| f.display().to_string());
             ui.label(egui::RichText::new(format!("File: {file}")).small());
             ui.separator();
@@ -79,7 +79,7 @@ impl FinestraSettaggi {
                         ui.checkbox(&mut b.sigle_uguali_quadri, "Sigle uguali ammesse in quadri diversi");
                         let esempio = elettrico::siglatura::formatta(&b, "KA", 5, 3);
                         ui.label(format!("Esempio (foglio 5, terzo KA): {esempio}"));
-                        ui.label(egui::RichText::new("Per applicare la nuova siglatura allo schema: Sigle Componenti.").small());
+                        ui.label(egui::RichText::new("Per applicare la nuova siglatura allo schema: Siglatura Componenti.").small());
                     }
                     Sezione::Fili => {
                         ui.label(egui::RichText::new("Numerazione automatica dei fili").strong());
@@ -156,7 +156,7 @@ impl FinestraSettaggi {
             b.nomi_alimentazioni = self.nomi.lines().map(str::trim).filter(|l| !l.is_empty()).map(str::to_string).collect();
             let p = impostazioni::a_json(&b);
             self.messaggio = Some(match cad.run("impostazioni", p) {
-                Ok(_) => (true, "Settaggi salvati".to_string()),
+                Ok(_) => (true, "Impostazioni salvate".to_string()),
                 Err(e) => (false, e.to_string()),
             });
         }

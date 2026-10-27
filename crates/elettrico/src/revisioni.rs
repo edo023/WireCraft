@@ -331,14 +331,14 @@ pub fn comandi() -> Vec<CommandSpec> {
         spec(
             "revisione.crea",
             "Crea Revisione",
-            &["FOGLI", "REVISIONE Fogli", "Crea revisione…"],
+            &["Fogli", "Revisioni", "Crea revisione…"],
             "{numero?: (default il seguente: 00, 01…), modifica, data?: (oggi), firma?, fogli?: [numeri] | \"corrente\" (default tutti)}",
             run_crea as cadcraft_engine::cmd::Run,
         ),
-        spec("revisione.elenco", "Elenco Revisioni", &["FOGLI", "REVISIONE Fogli", "Elenco revisioni"], "{} → {revisioni, prossima}", run_elenco),
-        spec("revisione.vedi", "Vedi Revisione", &["FOGLI", "REVISIONE Fogli", "Vedi revisione…"], "{foglio?, numero?: (senza: la versione corrente)}", run_vedi),
-        spec("revisione.annulla", "Annulla Revisione", &["FOGLI", "REVISIONE Fogli", "Annulla revisione…"], "{numero} — il foglio torna com'era archiviato", run_annulla),
-        spec("revisione.reset", "Reset Revisioni", &["FOGLI", "REVISIONE Fogli", "Reset revisioni"], "{} — toglie archivi e simboli delle revisioni", run_reset),
+        spec("revisione.elenco", "Elenco Revisioni", &["Fogli", "Revisioni", "Elenco revisioni"], "{} → {revisioni, prossima}", run_elenco),
+        spec("revisione.vedi", "Vedi Revisione", &["Fogli", "Revisioni", "Vedi revisione…"], "{foglio?, numero?: (senza: la versione corrente)}", run_vedi),
+        spec("revisione.annulla", "Annulla Revisione", &["Fogli", "Revisioni", "Annulla revisione…"], "{numero} — il foglio torna com'era archiviato", run_annulla),
+        spec("revisione.reset", "Reset Revisioni", &["Fogli", "Revisioni", "Reset revisioni"], "{} — toglie archivi e simboli delle revisioni", run_reset),
     ]
 }
 

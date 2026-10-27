@@ -206,7 +206,7 @@ pub fn mostra_navigatore(ui: &mut egui::Ui, d: &Dati, filtro: &mut String) -> Op
             egui::CollapsingHeader::new(titolo).id_salt(("nav_q", q)).default_open(!f.is_empty() || d.quadri.len() == 1).show(ui, |ui| {
                 for m in madri.iter().filter(|m| passa(&m.posto.testo) || passa(&m.funzione) || m.figli.iter().any(|x| passa(&x.testo))) {
                     ui.horizontal(|ui| {
-                        if ui.small_button("✎").on_hover_text("Edita simbolo (XS)").clicked() {
+                        if ui.small_button("✎").on_hover_text("Modifica simbolo (XS)").clicked() {
                             r = Some(Richiesta::Edita(m.posto.handle.clone()));
                         }
                         egui::CollapsingHeader::new(format!("{}   {}   {}", m.posto.testo, m.posto.rif(), m.funzione)).id_salt(("nav_m", &m.posto.handle)).show(ui, |ui| {

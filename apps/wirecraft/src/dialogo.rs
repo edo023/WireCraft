@@ -103,7 +103,7 @@ impl Dialogo {
             indice: None,
             handle: Some(b.handle.clone()),
             madre_sim: c.madre(),
-            titolo: format!("Edita simbolo – {}", c.nome),
+            titolo: format!("Modifica simbolo – {}", c.nome),
             nome_proposto: String::new(),
             nome: c.nome.clone(),
             quadro: b.attributo("QUADRO").to_string(),

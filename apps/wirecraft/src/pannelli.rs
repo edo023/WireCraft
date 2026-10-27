@@ -180,7 +180,7 @@ impl Pannelli {
             }
             Azione::StampaFogli => {
                 if self.fogli.is_empty() {
-                    cad.set_status("Il disegno non ha fogli: usa Gestione Multifoglio");
+                    cad.set_status("Il disegno non ha fogli: usa Gestione Fogli");
                 } else {
                     self.stampa.apri(cad);
                 }
@@ -370,23 +370,23 @@ impl Pannelli {
             ("Collegamenti", "collegamenti"),
             ("Rimandi per Alimentazioni", "rimandialimentazioni"),
             ("Rimandi per Collegamenti", "rimandicollegamenti"),
-            ("Quick Filo Verticale (VV)", "vv"),
-            ("Quick Filo Orizzontale (HH)", "hh"),
+            ("Filo Rapido Verticale (VV)", "vv"),
+            ("Filo Rapido Orizzontale (HH)", "hh"),
         ] {
             pulsante(ui, t, c);
         }
         ui.separator();
         ui.label(egui::RichText::new("Simboli").strong());
         // dopo i pulsanti, che tengono `cad` occupato
-        let edita = ui.add_sized([ui.available_width(), 22.0], egui::Button::new("Edita Simbolo (XS)")).on_hover_text("Modifica il componente selezionato").clicked();
+        let edita = ui.add_sized([ui.available_width(), 22.0], egui::Button::new("Modifica Simbolo (XS)")).on_hover_text("Modifica il componente selezionato").clicked();
         ui.separator();
         ui.label(egui::RichText::new("Numerazione").strong());
         pulsante(ui, "Numera Fili Automatico", "numerafili");
-        pulsante(ui, "Sigle Componenti", "siglecomponenti");
+        pulsante(ui, "Siglatura Componenti", "siglecomponenti");
         pulsante(ui, "Numera Fogli", "numerafogli");
         ui.separator();
         ui.label(egui::RichText::new("Morsetti").strong());
-        pulsante(ui, "Inser Morsetti", "morsetti");
+        pulsante(ui, "Inserisci Morsetti", "morsetti");
         if edita {
             self.edita_selezionato(cad);
         }

@@ -330,8 +330,8 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![
         CommandSpec {
             id: "morsetti",
-            label: "Inser MORSETTI",
-            menu: &["ELETTRICO", "Inser MORSETTI"],
+            label: "Inserisci Morsetti",
+            menu: &["Elettrico", "Inserisci Morsetti"],
             shortcut: None,
             aliases: &[],
             params: "{morsettiera: \"-XG\", at: [x,y] | da: [x,y] + a: [x,y] (linea che attraversa i fili), numero?: primo numero, quadro?} → {morsetti: [{handle, numero}]}",
@@ -343,8 +343,8 @@ pub fn comandi() -> Vec<CommandSpec> {
         },
         CommandSpec {
             id: "connettori",
-            label: "Inser CONNETTORI",
-            menu: &["ELETTRICO", "Inser CONNETTORI"],
+            label: "Inserisci Connettori",
+            menu: &["Elettrico", "Inserisci Connettori"],
             shortcut: None,
             aliases: &[],
             params: "{connettore: \"-XC1\", sesso?: M|F (default F), at: [x,y] | da + a (linea che attraversa i fili), numero?: primo pin, quadro?} → {morsetti: [{handle, numero}]}",
@@ -356,8 +356,8 @@ pub fn comandi() -> Vec<CommandSpec> {
         },
         CommandSpec {
             id: "morsettiera",
-            label: "MORSETTIERE e CONNETTORI",
-            menu: &["ELETTRICO", "MORSETTIERE e CONNETTORI"],
+            label: "Morsettiere e Connettori",
+            menu: &["Elettrico", "Morsettiere e Connettori"],
             shortcut: None,
             aliases: &[],
             params: "{morsettiera: \"-XG\", at?: [x,y] (tabella nel foglio corrente), file?: percorso .csv} → {righe: [[morsetto, filo, posizione, quadro]]}",

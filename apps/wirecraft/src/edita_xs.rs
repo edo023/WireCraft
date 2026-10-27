@@ -31,7 +31,7 @@ impl EditaXs {
         let (comando, titolo, campi, bloccato) = match tipo {
             Tipo::Morsetto => (
                 "editamorsetto",
-                format!("Edita morsetto – {}:{}", b.attributo("MORSETTIERA"), b.attributo("NUMM")),
+                format!("Modifica morsetto – {}:{}", b.attributo("MORSETTIERA"), b.attributo("NUMM")),
                 vec![
                     campo("Morsettiera", "morsettiera", "MORSETTIERA"),
                     campo("Numero", "numero", "NUMM"),
@@ -45,10 +45,10 @@ impl EditaXs {
                 ],
                 None,
             ),
-            Tipo::NumeroFilo => ("editafilo", format!("Edita numero filo – {}", b.attributo("N")), vec![campo("Numero del filo", "numero", "N")], Some(b.attributo("BLOCCATO").trim() == "1")),
+            Tipo::NumeroFilo => ("editafilo", format!("Modifica numero filo – {}", b.attributo("N")), vec![campo("Numero del filo", "numero", "N")], Some(b.attributo("BLOCCATO").trim() == "1")),
             Tipo::Rimando => (
                 "editarimando",
-                format!("Edita rimando – {}", b.attributo("SEGNALE")),
+                format!("Modifica rimando – {}", b.attributo("SEGNALE")),
                 vec![campo("Nome del potenziale", "segnale", "SEGNALE"), campo("Descrizione", "descrizione", "#LINEA")],
                 None,
             ),

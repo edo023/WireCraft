@@ -332,8 +332,8 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![
         CommandSpec {
             id: "siglecomponenti",
-            label: "SIGLE Componenti",
-            menu: &["ELETTRICO", "SIGLE Componenti"],
+            label: "Siglatura Componenti",
+            menu: &["Elettrico", "Siglatura Componenti"],
             shortcut: None,
             aliases: &[],
             params: "{} → {cambi: [[vecchia, nuova]]}",
@@ -345,8 +345,8 @@ pub fn comandi() -> Vec<CommandSpec> {
         },
         CommandSpec {
             id: "crossreference",
-            label: "CROSS REFERENCE",
-            menu: &["UTIL", "CROSS REFERENCE"],
+            label: "Cross Reference",
+            menu: &["Progetto", "Cross Reference"],
             shortcut: None,
             aliases: &[],
             params: "{} → {figliSenzaMadre, contattiSenzaPosto, rimandiSenzaCoppia}",

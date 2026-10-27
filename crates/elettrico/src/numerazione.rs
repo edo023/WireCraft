@@ -631,22 +631,22 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![
         spec(
             "numerafili",
-            "NUMERA Fili Automatico",
-            &["ELETTRICO", "NUMERA Fili Automatico"],
+            "Numerazione Automatica Fili",
+            &["Elettrico", "Numerazione Automatica Fili"],
             "{foglio?: numero (default il corrente) | fogli?: [numeri] | tutti?: true, primo?: numero di partenza, mantieni?: bool (i fili già numerati conservano il numero)} → {fili: {foglio: [nomi]}}",
             run_numera as cadcraft_engine::cmd::Run,
             None,
         ),
         spec(
             "numerafilo",
-            "NUMERA Fili",
-            &["ELETTRICO", "NUMERA Fili"],
+            "Numera Filo",
+            &["Elettrico", "Numera Filo"],
             "{numero: \"12\" (incrementa filo per filo) | \"'R1\" (stringa libera), at: [x,y] | da + a (fence), blocca?: bool} → {numeri}",
             run_manuale,
             Some(fabbrica_manuale as cadcraft_engine::cmd::Factory),
         ),
-        spec("bloccafili", "Blocca / Sblocca Fili", &["ELETTRICO", "Utility Fili", "Blocca / Sblocca Fili"], "{at | da + a, bloccato?: bool (default true)}", run_blocca, Some(fabbrica_blocca)),
-        spec("listanumerifili", "Lista numeri usati", &["ELETTRICO", "Utility Fili", "Lista numeri usati"], "{} → {numeri: [{numero, dove, rimando, ripetuto}], ripetuti}", run_lista, None),
+        spec("bloccafili", "Blocca / Sblocca Fili", &["Elettrico", "Strumenti Fili", "Blocca / Sblocca Fili"], "{at | da + a, bloccato?: bool (default true)}", run_blocca, Some(fabbrica_blocca)),
+        spec("listanumerifili", "Lista numeri usati", &["Elettrico", "Strumenti Fili", "Lista numeri usati"], "{} → {numeri: [{numero, dove, rimando, ripetuto}], ripetuti}", run_lista, None),
     ]
 }
 

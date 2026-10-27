@@ -67,7 +67,7 @@ fn run_riconosci(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn run_morsetto(s: &mut Session, p: &Value) -> Result<Value> {
     let h = testo_param(p, "handle").ok_or_else(|| errore("Indicare il morsetto (handle)"))?;
-    in_gruppo(s, "Edita morsetto", |s| {
+    in_gruppo(s, "Modifica morsetto", |s| {
         let (t, b) = riconosci(s, &h)?;
         if t != Tipo::Morsetto {
             return Err(errore("L'oggetto non è un morsetto"));
@@ -93,7 +93,7 @@ fn run_morsetto(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn run_filo(s: &mut Session, p: &Value) -> Result<Value> {
     let h = testo_param(p, "handle").ok_or_else(|| errore("Indicare il numero del filo (handle)"))?;
-    in_gruppo(s, "Edita filo", |s| {
+    in_gruppo(s, "Modifica filo", |s| {
         let (t, b) = riconosci(s, &h)?;
         if t != Tipo::NumeroFilo {
             return Err(errore("L'oggetto non è il numero di un filo"));
@@ -107,7 +107,7 @@ fn run_filo(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn run_rimando(s: &mut Session, p: &Value) -> Result<Value> {
     let h = testo_param(p, "handle").ok_or_else(|| errore("Indicare il rimando (handle)"))?;
-    in_gruppo(s, "Edita rimando", |s| {
+    in_gruppo(s, "Modifica rimando", |s| {
         let (t, b) = riconosci(s, &h)?;
         if t != Tipo::Rimando {
             return Err(errore("L'oggetto non è un rimando"));
@@ -131,18 +131,18 @@ pub fn comandi() -> Vec<CommandSpec> {
         spec("xs.riconosci", "Che oggetto è", &[], "{handle} → {tipo: componente|morsetto|filo|rimando|cavo|bit|altro, blocco, attributi}", run_riconosci as cadcraft_engine::cmd::Run),
         spec(
             "editamorsetto",
-            "Edita Morsetto",
-            &["ELETTRICO", "Edita Fili e Morsetti (XS)", "Morsetto"],
+            "Modifica Morsetto",
+            &["Elettrico", "Modifica Fili e Morsetti", "Morsetto"],
             "{handle, morsettiera?, numero?, quadro?, sezione?, costruttore?, tipo?, utenza?, note?, livello?}",
             run_morsetto,
         ),
         spec(
             "editafilo",
-            "Edita Numero Filo",
-            &["ELETTRICO", "Edita Fili e Morsetti (XS)", "Numero filo"],
+            "Modifica Numero Filo",
+            &["Elettrico", "Modifica Fili e Morsetti", "Numero filo"],
             "{handle: etichetta del numero, numero? (tutta la rete; cambiato resta bloccato), bloccato?}",
             run_filo,
         ),
-        spec("editarimando", "Edita Rimando", &["ELETTRICO", "Edita Fili e Morsetti (XS)", "Rimando"], "{handle, segnale?, descrizione?}", run_rimando),
+        spec("editarimando", "Modifica Rimando", &["Elettrico", "Modifica Fili e Morsetti", "Rimando"], "{handle, segnale?, descrizione?}", run_rimando),
     ]
 }

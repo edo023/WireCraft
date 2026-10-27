@@ -359,13 +359,13 @@ pub fn comandi() -> Vec<CommandSpec> {
             interactive: Some(fabbrica_conduttore),
             ..spec(
                 "conduttore",
-                "Specializza / Modifica materiale dei Conduttori",
-                &["ELETTRICO", "Specializza / Modifica materiale dei Conduttori"],
+                "Materiale dei Conduttori",
+                &["Elettrico", "Materiale dei Conduttori"],
                 "{at: [x,y] | da + a (fence), sezione?, colore?, codice?, costruttore? (default il conduttore in uso), togli?: bool} → {reti}",
                 run_conduttore as cadcraft_engine::cmd::Run,
             )
         },
-        spec("tabellacablaggio", "Tabella di cablaggio", &["UTIL", "Tabella di cablaggio (CSV)"], "{file?: percorso .csv} → {intestazione, righe}", run_cablaggio),
+        spec("tabellacablaggio", "Tabella di cablaggio", &["Progetto", "Tabella di cablaggio (CSV)"], "{file?: percorso .csv} → {intestazione, righe}", run_cablaggio),
         spec("reti", "Reti dei fili", &[], "{fogli?: [numeri]} → {reti: [{foglio, nome, posizione, capi, conduttore, specializzato}]}", run_reti),
     ]
 }

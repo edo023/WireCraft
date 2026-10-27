@@ -21,7 +21,7 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 ## 27 ottobre 2026: traduttore, quadro, connettori, pubblicazione
 
 - **Traduttore**: dizionario CSV in cinque lingue (IT, EN, DE, FR, ES) con le frasi frequenti degli schemi di macchine e quadri. Il comando `TRADUCI` rende bilingue lo schema (funzioni dei componenti, titoli dei fogli, descrizioni di colonna) ed elenca le frasi senza traduzione. Una frase scritta in maiuscolo resta in maiuscolo.
-- **Interno armadio** (`LAYOUTQUADRO`): su un foglio nuovo la piastra in scala, con canaline ai lati e tra le file, guide DIN e gli ingombri dei componenti del quadro presi dallo schema, morsettiere comprese. La piastra si sceglie tra le misure commerciali; una tabella elenca componenti e misure.
+- **Layout quadro** (`LAYOUTQUADRO`): su un foglio nuovo la piastra in scala, con canaline ai lati e tra le file, guide DIN e gli ingombri dei componenti del quadro presi dallo schema, morsettiere comprese. La piastra si sceglie tra le misure commerciali; una tabella elenca componenti e misure.
 - **Foratura piastra** (`FORATURAPIASTRA`): fori di fissaggio a passo costante su guide e canaline, anche se spostate a mano; disegnati sul foglio e in CSV con le quote dall'angolo della piastra.
 - **Connettori**: pin con sesso maschio/femmina, posati come i morsetti; si modificano come i morsetti, ricevono i numeri dei fili ed escono nelle stesse liste.
 - **Pubblicazione open source** con licenza MIT o Apache-2.0.

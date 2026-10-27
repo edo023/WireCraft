@@ -414,14 +414,14 @@ pub fn comandi() -> Vec<CommandSpec> {
         CommandSpec { interactive: Some(fabbrica_scheda), ..spec(
             "plc.scheda",
             "Scheda I/O PLC",
-            &["UTIL", "Gestione PLC", "Scheda I/O…"],
+            &["Progetto", "Gestione PLC", "Scheda I/O…"],
             "{at: [x,y] (primo bit), tipo?: ingressi|uscite, bit?: 8|16 (default 8), indirizzo?: \"E0.0\", base?: bit per byte (8), morsetto?: primo morsetto (1), sigla?, quadro?, descrizione?, costruttore?, codice?: (per la distinta), rack?, slot?, commenti?: [[c1, c2]..]} → {sigla, bit}",
             run_scheda as cadcraft_engine::cmd::Run,
         ) },
-        spec("plc.numerabit", "Numera BIT", &["UTIL", "Gestione PLC", "Numera BIT…"], "{sigla: scheda, indirizzo: primo (\"E2.0\"), base?: 8} → {indirizzi}", run_numera),
-        spec("plc.elenco", "Gestione BIT (elenco I/O)", &["UTIL", "Gestione PLC", "Elenco I/O (CSV)"], "{file?: .csv} → {intestazione, righe}", run_elenco),
+        spec("plc.numerabit", "Numera I/O", &["Progetto", "Gestione PLC", "Numera I/O…"], "{sigla: scheda, indirizzo: primo (\"E2.0\"), base?: 8} → {indirizzi}", run_numera),
+        spec("plc.elenco", "Elenco I/O", &["Progetto", "Gestione PLC", "Elenco I/O (CSV)"], "{file?: .csv} → {intestazione, righe}", run_elenco),
         spec("plc.commento", "Commento di un bit", &[], "{indirizzo, commento?, commento2?}", run_commento),
-        spec("plc.importa", "Importa commenti I/O", &["UTIL", "Gestione PLC", "Importa commenti (CSV)"], "{file: .csv (indirizzo; commento; commento 2a lingua)}", run_importa),
+        spec("plc.importa", "Importa commenti I/O", &["Progetto", "Gestione PLC", "Importa commenti (CSV)"], "{file: .csv (indirizzo; commento; commento 2a lingua)}", run_importa),
     ]
 }
 

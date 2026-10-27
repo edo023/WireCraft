@@ -462,16 +462,16 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![
         spec(
             "traduci",
-            "TRADUZIONE",
-            &["UTIL", "TRADUZIONE"],
+            "Traduci Schema",
+            &["Progetto", "Traduci Schema"],
             "{da?: \"IT\", a?: \"EN\", sovrascrivi?: false} → {tradotti, mancanti: [frasi senza traduzione]}",
             has_doc as cadcraft_engine::cmd::Enabled,
             run_traduci as cadcraft_engine::cmd::Run,
         ),
         spec("traduttore.frasi", "Dizionario", &[], "{da?, a?} → {lingue, voci: [[frase, traduzione]], mancanti}", always, run_frasi),
         spec("traduttore.aggiungi", "Aggiungi al dizionario", &[], "{frase, traduzione, da?, a?}", always, run_aggiungi),
-        spec("traduttore.importa", "Importa dizionario", &["UTIL", "Utility Traduttore", "Importa dizionario"], "{file: CSV con le lingue nella prima riga}", always, run_importa),
-        spec("traduttore.esporta", "Esporta dizionario", &["UTIL", "Utility Traduttore", "Esporta dizionario"], "{file}", always, run_esporta),
+        spec("traduttore.importa", "Importa dizionario", &["Progetto", "Dizionario", "Importa dizionario"], "{file: CSV con le lingue nella prima riga}", always, run_importa),
+        spec("traduttore.esporta", "Esporta dizionario", &["Progetto", "Dizionario", "Esporta dizionario"], "{file}", always, run_esporta),
     ]
 }
 

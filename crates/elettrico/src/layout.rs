@@ -606,15 +606,15 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![
         spec(
             "layoutquadro",
-            "Interno Armadio",
-            &["LAYOUT", "Interno Armadio"],
+            "Layout Quadro",
+            &["Quadro", "Layout Quadro"],
             "{quadro?: \"+QG\" (default il quadro corrente), foglio?: numero (default dopo l'ultimo), larghezza?, altezza?: piastra in mm (default la più piccola in cui entra tutto)} → {foglio, larghezza, altezza, scala, posati, fuori}",
             run_layout as cadcraft_engine::cmd::Run,
         ),
         spec(
             "foraturapiastra",
             "Foratura Piastra",
-            &["LAYOUT", "Foratura Piastra"],
+            &["Quadro", "Foratura Piastra"],
             "{foglio?: foglio del lay-out (default il corrente), diametro?: 4.2, passoGuide?: 100, passoCanaline?: 250, file?: CSV, disegna?: true} → {fori: [[n, x, y, diametro, elemento]]}",
             run_fori,
         ),

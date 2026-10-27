@@ -455,18 +455,18 @@ pub fn comandi() -> Vec<CommandSpec> {
         spec(
             "cavo.definisci",
             "Definisci cavo",
-            &["UTIL", "CAVI", "Definisci cavo…"],
+            &["Progetto", "Cavi", "Definisci cavo…"],
             "{sigla?: (default -W01, -W02…), formazione: \"4G1,5\" | \"3x2.5\", codice?, costruttore?, funzione?, daQuadro?, aQuadro?, lunghezza?, vene?: [..]} → cavo",
             run_definisci as cadcraft_engine::cmd::Run,
         ),
         spec("cavo.elimina", "Elimina cavo", &[], "{sigla}", run_elimina),
-        spec("cavi", "Elenco cavi", &["UTIL", "CAVI", "Elenco cavi"], "{} → {cavi: [{sigla, formazione, vene, usate…}]}", run_elenco),
+        spec("cavi", "Elenco cavi", &["Progetto", "Cavi", "Elenco cavi"], "{} → {cavi: [{sigla, formazione, vene, usate…}]}", run_elenco),
         CommandSpec {
             interactive: Some(fabbrica_posa),
-            ..spec("cavo.posa", "Posa cavo", &["UTIL", "CAVI", "Posa cavo"], "{cavo: \"-W01\", at: [x,y] | da + a (fence), vena?: (default la prima libera)} → {vene}", run_posa)
+            ..spec("cavo.posa", "Posa cavo", &["Progetto", "Cavi", "Posa cavo"], "{cavo: \"-W01\", at: [x,y] | da + a (fence), vena?: (default la prima libera)} → {vene}", run_posa)
         },
-        spec("cavo.togli", "Togli cavo dai fili", &["UTIL", "CAVI", "Togli cavo dai fili"], "{at | da + a}", run_togli),
-        spec("cavo.conduttori", "Tabella conduttori dei cavi", &["UTIL", "CAVI", "Tabella conduttori (CSV)"], "{file?} → {righe: [[cavo, vena, filo, da, a, posizione]]}", run_conduttori),
+        spec("cavo.togli", "Togli cavo dai fili", &["Progetto", "Cavi", "Togli cavo dai fili"], "{at | da + a}", run_togli),
+        spec("cavo.conduttori", "Tabella conduttori dei cavi", &["Progetto", "Cavi", "Tabella conduttori (CSV)"], "{file?} → {righe: [[cavo, vena, filo, da, a, posizione]]}", run_conduttori),
     ]
 }
 

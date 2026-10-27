@@ -227,7 +227,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![
         spec("materiali.cerca", "Cerca in Archivio Materiali", &[], "{testo?, preferiti?: bool, limite?} → {articoli}", run_cerca as cadcraft_engine::cmd::Run),
         spec("materiali.aggiungi", "Aggiungi ad Archivio Materiali", &[], "{costruttore?, codice, descrizione?, categoria?, preferito?}", run_aggiungi),
-        spec("materiali.importa", "Importa listino materiali", &["UTIL", "Importa listino materiali (CSV)"], "{file: percorso .csv} → {letti, nuovi}", run_importa),
+        spec("materiali.importa", "Importa listino materiali", &["Progetto", "Importa listino materiali (CSV)"], "{file: percorso .csv} → {letti, nuovi}", run_importa),
     ]
 }
 

@@ -316,7 +316,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     vec![CommandSpec {
         id: "stampafogli",
         label: "STAMPA e PDF Fogli",
-        menu: &["FOGLI", "STAMPA e PDF Fogli…"],
+        menu: &["Fogli", "Stampa e PDF…"],
         shortcut: None,
         aliases: &[],
         params: "{fogli?: \"tutti\" | \"corrente\" | \"1-3,5\" | [numeri], file?: percorso .pdf (default: cartella PDF accanto al disegno), colori?: bool (default bianco e nero), dinamico?: bool (default sì: segnalibri e riferimenti cliccabili), titolo?} → {file, fogli, pagine, collegamenti}",

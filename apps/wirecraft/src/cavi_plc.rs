@@ -248,7 +248,7 @@ impl FinestraPlc {
             });
             ui.separator();
             ui.horizontal(|ui| {
-                ui.label("Numera BIT della scheda");
+                ui.label("Numera I/O della scheda");
                 ui.add(egui::TextEdit::singleline(&mut self.numera_sigla).hint_text("-A02.1").desired_width(70.0));
                 ui.label("dal");
                 ui.add(egui::TextEdit::singleline(&mut self.numera_da).hint_text("E2.0").desired_width(60.0));

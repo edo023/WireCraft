@@ -17,7 +17,7 @@ pub enum Azione {
     GestioneMultifoglio,
     /// Finestra "Gestione Progetti" (commesse).
     Progetti,
-    /// Finestra "Settaggi".
+    /// Finestra "Impostazioni".
     Settaggi,
     /// Finestra "Liste e Tabelle", sul tipo di uscita dato.
     Liste(Option<&'static str>),
@@ -127,8 +127,8 @@ fn schede() -> Vec<Scheda> {
                     "Generale",
                     true,
                     vec![
-                        Elemento::Piccoli(vec![t(Icona::Simbologia, "Simbologia", ND), t(Icona::Settaggi, "Settaggi", Settaggi), t(Icona::Scansione, "Scansione", Cross)]),
-                        Elemento::Piccoli(vec![t(Icona::Impianto, "Schema d'impianto", ND), t(Icona::Quadro, "Quadro", Settaggi), t(Icona::Tensioni, "Tensioni", ND)]),
+                        Elemento::Piccoli(vec![t(Icona::Simbologia, "Simbologia", ND), t(Icona::Settaggi, "Impostazioni", Settaggi), t(Icona::Scansione, "Verifica", Cross)]),
+                        Elemento::Piccoli(vec![t(Icona::Impianto, "Schema d'impianto", ND), t(Icona::Quadro, "Quadro corrente", Settaggi), t(Icona::Tensioni, "Tensioni", ND)]),
                         Elemento::Piccoli(vec![
                             Voce::Icone(vec![p(Icona::Pianta, "Planimetria", ND)]),
                             Voce::Icone(vec![p(Icona::Aggiorna, "Aggiorna liste e tabelle", Esegui("aggiornaliste", "{}"))]),
@@ -139,7 +139,7 @@ fn schede() -> Vec<Scheda> {
                     "Fogli",
                     true,
                     vec![
-                        g(Icona::Multifoglio, "Gestione Multifoglio", GestioneMultifoglio),
+                        g(Icona::Multifoglio, "Gestione Fogli", GestioneMultifoglio),
                         g(Icona::FoglioPrecedente, "Foglio Precedente", Esegui("foglioprecedente", "{}")),
                         g(Icona::CambioFoglio, "Cambio Foglio", Avvia("cambiofoglio")),
                         g(Icona::FoglioSeguente, "Foglio Seguente", Esegui("fogliosuccessivo", "{}")),
@@ -171,10 +171,10 @@ fn schede() -> Vec<Scheda> {
                     ],
                 ),
                 gruppo(
-                    "Edita Simbolo",
+                    "Modifica Simbolo",
                     false,
                     vec![
-                        g(Icona::EditaSimbolo, "Edita Simbolo (XS)", Edita),
+                        g(Icona::EditaSimbolo, "Modifica Simbolo (XS)", Edita),
                         Elemento::Piccoli(vec![t(Icona::Copia, "Copia", Avvia("copy")), t(Icona::Sposta, "Sposta", Avvia("spostasimbolo")), t(Icona::Cancella, "Cancella", Avvia("cancellasimbolo"))]),
                     ],
                 ),
@@ -183,10 +183,10 @@ fn schede() -> Vec<Scheda> {
                     true,
                     vec![
                         g(Icona::Plc, "Gestione PLC", Plc),
-                        g(Icona::Bit, "Gestione BIT", Plc),
+                        g(Icona::Bit, "Segnali I/O", Plc),
                         Elemento::Piccoli(vec![
                             t(Icona::Libreria, "Libreria Simboli", LibreriaSimboli),
-                            t(Icona::NumeraBit, "Numera BIT", Plc),
+                            t(Icona::NumeraBit, "Numera I/O", Plc),
                             t(Icona::ArchivioPlc, "Lista I/O", Liste(Some("io"))),
                         ]),
                     ],
@@ -201,7 +201,7 @@ fn schede() -> Vec<Scheda> {
                     true,
                     vec![
                         g(Icona::Filo, "Filo", Avvia("filo")),
-                        Elemento::Piccoli(vec![t(Icona::Connessione, "Connessione", Avvia("connessione")), t(Icona::FiloV, "Quick Filo (VV)", Avvia("vv")), t(Icona::FiloH, "Quick Filo (HH)", Avvia("hh"))]),
+                        Elemento::Piccoli(vec![t(Icona::Connessione, "Connessione", Avvia("connessione")), t(Icona::FiloV, "Filo Rapido (VV)", Avvia("vv")), t(Icona::FiloH, "Filo Rapido (HH)", Avvia("hh"))]),
                     ],
                 ),
                 gruppo(
@@ -226,10 +226,10 @@ fn schede() -> Vec<Scheda> {
                         Elemento::Piccoli(vec![
                             t(Icona::NumeraFili, "Rinumera foglio corrente", Esegui("numerafili", "{}")),
                             t(Icona::Legenda, "Lista Numeri Usati", Esegui("listanumerifili", "{}")),
-                            t(Icona::Sigle, "Sigle Componenti", Esegui("siglecomponenti", "{}")),
+                            t(Icona::Sigle, "Siglatura Componenti", Esegui("siglecomponenti", "{}")),
                         ]),
                         Elemento::Piccoli(vec![
-                            t(Icona::Filo, "Specializza conduttori", Avvia("conduttore")),
+                            t(Icona::Filo, "Materiale Conduttori", Avvia("conduttore")),
                             t(Icona::Cancella, "Blocca/Sblocca fili", Avvia("bloccafili")),
                             t(Icona::NumeraFogli, "Numera Fogli", Esegui("numerafogli", "{}")),
                         ]),
@@ -238,7 +238,7 @@ fn schede() -> Vec<Scheda> {
                 gruppo(
                     "Morsetti e Connettori",
                     false,
-                    vec![g(Icona::Morsetti, "Inser Morsetti", Avvia("morsetti")), g(Icona::Morsettiera, "Morsettiere", Morsettiera), g(Icona::Morsetti, "Inser Connettori", Avvia("connettori"))],
+                    vec![g(Icona::Morsetti, "Inserisci Morsetti", Avvia("morsetti")), g(Icona::Morsettiera, "Morsettiere", Morsettiera), g(Icona::Morsetti, "Inserisci Connettori", Avvia("connettori"))],
                 ),
             ],
         },
@@ -257,7 +257,7 @@ fn schede() -> Vec<Scheda> {
             ],
         },
         Scheda {
-            nome: "Moduli",
+            nome: "Strumenti",
             gruppi: vec![gruppo(
                 "Moduli",
                 false,
@@ -271,11 +271,11 @@ fn schede() -> Vec<Scheda> {
             )],
         },
         Scheda {
-            nome: "Lay-Out",
+            nome: "Quadro",
             gruppi: vec![gruppo(
-                "Quadro",
+                "Layout",
                 false,
-                vec![g(Icona::Quadro, "Interno Armadio", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Pianta, "Gestore Topografico", ND), g(Icona::Tensioni, "Sovratemperature", ND)],
+                vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Pianta, "Topografia Impianto", ND), g(Icona::Tensioni, "Sovratemperature", ND)],
             )],
         },
         Scheda {
@@ -537,7 +537,7 @@ mod tests {
 
     #[test]
     fn etichette_su_due_righe() {
-        assert_eq!(due_righe("Gestione Multifoglio"), "Gestione\nMultifoglio");
+        assert_eq!(due_righe("Gestione Fogli"), "Gestione\nFogli");
         assert_eq!(due_righe("Foglio Precedente"), "Foglio\nPrecedente");
         assert_eq!(due_righe("Filo"), "Filo");
     }

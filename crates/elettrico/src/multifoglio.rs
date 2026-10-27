@@ -133,7 +133,7 @@ fn riallinea(s: &mut Session) -> Result<()> {
     Ok(())
 }
 
-const AVVISO: &str = "Controllare numeri dei fili e sigle che contengono il foglio (Numera Fili, Sigle Componenti)";
+const AVVISO: &str = "Controllare numeri dei fili e sigle che contengono il foglio (Numera Fili, Siglatura Componenti)";
 
 /// Sposta il gruppo di fogli `gruppo` di `posizioni` (avanti se positivo): gli altri fogli non
 /// cambiano e i numeri d'arrivo devono essere liberi.
@@ -503,7 +503,7 @@ fn run_sposta_tra_fogli(s: &mut Session, p: &Value) -> Result<Value> {
     })
 }
 
-const MENU: &str = "FOGLI";
+const MENU: &str = "Fogli";
 
 pub fn comandi() -> Vec<CommandSpec> {
     let spec = |id, label, menu, params, run| CommandSpec { id, label, menu, shortcut: None, aliases: &[], params, enabled: has_doc, run, undoable: false, interactive: None, transparent: false };
@@ -512,18 +512,18 @@ pub fn comandi() -> Vec<CommandSpec> {
         spec("eliminafogli", "Elimina Fogli", &[MENU, "Elimina Fogli…"], "{fogli: [numeri] | \"3-5,8\"}", run_elimina),
         spec("svuotafogli", "Svuota Fogli", &[MENU, "Svuota Fogli…"], "{fogli: [numeri] | \"3-5,8\"}", run_svuota),
         spec("rinominafoglio", "Rinomina Foglio", &[MENU, "Rinomina Foglio…"], "{da: numero, a: numero}", run_rinomina),
-        spec("shiftfogli", "Shift Fogli", &[MENU, "Shift Fogli…"], "{posizioni: +n avanti | -n indietro, fogli?: [numeri] (gruppo) | da?: numero (dal foglio in poi)}", run_shift),
+        spec("shiftfogli", "Shift Fogli", &[MENU, "Scorri Fogli…"], "{posizioni: +n avanti | -n indietro, fogli?: [numeri] (gruppo) | da?: numero (dal foglio in poi)}", run_shift),
         spec("compattafogli", "Compatta Fogli", &[MENU, "Compatta Fogli"], "{} — numeri consecutivi dal più basso", run_compatta),
-        spec("copiatrafogli", "COPIA tra Fogli", &[MENU, "COPIA tra Fogli…"], "{handles?: [hex] (default la selezione), fogli: [numeri]} — le madri copiate prendono sigle nuove", run_copia_tra_fogli),
-        spec("spostatrafogli", "SPOSTA tra Fogli", &[MENU, "SPOSTA tra Fogli…"], "{handles?: [hex] (default la selezione), foglio: numero}", run_sposta_tra_fogli),
+        spec("copiatrafogli", "COPIA tra Fogli", &[MENU, "Copia su Altri Fogli…"], "{handles?: [hex] (default la selezione), fogli: [numeri]} — le madri copiate prendono sigle nuove", run_copia_tra_fogli),
+        spec("spostatrafogli", "SPOSTA tra Fogli", &[MENU, "Sposta su Altri Fogli…"], "{handles?: [hex] (default la selezione), foglio: numero}", run_sposta_tra_fogli),
         spec(
             "memorizzafoglio",
             "MEMORIZZA Foglio",
-            &[MENU, "MEMORIZZA Foglio…"],
+            &[MENU, "Salva Foglio in Libreria…"],
             "{nome, categoria?, descrizione?, handles? (default la selezione o tutto il foglio corrente), cartella?: libreria}",
             run_memorizza,
         ),
-        spec("inseriscimemorizzato", "INS Fogli Memorizzati", &[MENU, "INS Fogli Memorizzati…"], "{nome, categoria? | file, at?: [x,y] (default 0,0)}", run_inserisci_memorizzato),
+        spec("inseriscimemorizzato", "INS Fogli Memorizzati", &[MENU, "Inserisci Foglio da Libreria…"], "{nome, categoria? | file, at?: [x,y] (default 0,0)}", run_inserisci_memorizzato),
         CommandSpec {
             id: "fogli.memorizzati",
             label: "Elenco fogli memorizzati",

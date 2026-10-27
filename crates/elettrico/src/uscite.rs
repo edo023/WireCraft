@@ -523,11 +523,11 @@ pub fn comandi() -> Vec<CommandSpec> {
         spec(
             "uscita",
             "Liste e Tabelle sui fogli",
-            &["UTIL", "Liste e Tabelle sui fogli…"],
+            &["Progetto", "Liste e Tabelle sui fogli…"],
             "{tipo: indice|distinta|morsettiere|cablaggio|funzioni|simboli, foglio?: primo foglio (default dopo l'ultimo), quadro?, morsettiera?} → {fogli}",
             run_uscita as cadcraft_engine::cmd::Run,
         ),
-        spec("aggiornaliste", "Aggiorna Liste e Tabelle", &["ELETTRICO", "Aggiorna Liste e Tabelle"], "{} — cross reference, rimandi e uscite già disegnate", run_aggiorna),
+        spec("aggiornaliste", "Aggiorna Liste e Tabelle", &["Elettrico", "Aggiorna Liste e Tabelle"], "{} — cross reference, rimandi e uscite già disegnate", run_aggiorna),
     ]
 }
 
