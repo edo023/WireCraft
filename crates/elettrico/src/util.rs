@@ -202,6 +202,31 @@ pub fn errore(msg: impl Into<String>) -> EngineError {
     EngineError::Other(msg.into())
 }
 
+/// Scrive i valori negli attributi di un blocco inserito e aggiunge, nascosti, quelli che la sua
+/// definizione non ha (simboli disegnati prima che il tag esistesse, o da un altro programma).
+pub fn imposta_attributi(s: &mut Session, handle: &str, valori: &[(&str, &str)]) -> Result<()> {
+    use cadcraft_engine::doc::{EntityKind, Handle};
+    let h = Handle::parse_hex(handle).ok_or_else(|| errore(format!("handle non valido: {handle}")))?;
+    s.doc_mut()?.modify_entity(h, |e| {
+        let EntityKind::Insert(i) = &mut e.kind else { return };
+        for (tag, valore) in valori {
+            if let Some(a) = i.attribs.iter_mut().find(|a| a.tag.eq_ignore_ascii_case(tag)) {
+                a.text.value = (*valore).to_string();
+            } else if let Some(modello) = i.attribs.first() {
+                let mut a = modello.clone();
+                a.tag = tag.to_ascii_uppercase();
+                a.prompt = a.tag.clone();
+                a.text.value = (*valore).to_string();
+                a.invisible = true;
+                a.constant = false;
+                a.multiline = None;
+                i.attribs.push(a);
+            }
+        }
+    })?;
+    Ok(())
+}
+
 pub fn testo_param(p: &Value, chiave: &str) -> Option<String> {
     p.get(chiave).and_then(Value::as_str).map(str::to_string)
 }

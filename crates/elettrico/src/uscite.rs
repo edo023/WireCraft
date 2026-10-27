@@ -505,6 +505,7 @@ fn run_uscita(s: &mut Session, p: &Value) -> Result<Value> {
 
 fn run_aggiorna(s: &mut Session, _p: &Value) -> Result<Value> {
     in_gruppo(s, "Aggiorna liste e tabelle", |s| {
+        crate::norma81346::applica(s)?;
         crate::siglatura::aggiorna_tutto(s)?;
         crate::fili::aggiorna_rimandi(s)?;
         let v = aggiorna_liste(s)?;

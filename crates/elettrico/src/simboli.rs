@@ -1259,7 +1259,7 @@ fn crea_blocco(s: &mut Session, sim: &Simbolo) -> Result<()> {
         let prima = h.len();
         attr(s, &mut h, "NOME", "", (x_testi, y_nome), 2.5, false)?;
         if sim.madre() {
-            for tag in ["QUADRO", "FUNZIONE1", "FUNZIONE2", "CODICE", "COSTRUTTORE", "TIPO", "DESCRIZIONE"] {
+            for tag in ["QUADRO", "FUNZIONE_IMPIANTO", "UBICAZIONE", "FUNZIONE1", "FUNZIONE2", "CODICE", "COSTRUTTORE", "TIPO", "DESCRIZIONE"] {
                 attr(s, &mut h, tag, "", (x_testi, y_nome - 3.0), 1.8, true)?;
             }
         } else {
@@ -1372,6 +1372,16 @@ pub fn inserisci(s: &mut Session, sim: &Simbolo, at: P, p: &Value) -> Result<Val
     }
     let r = esegui(s, "insert", json!({"name": sim.blocco, "at": [at.0, at.1], "attribs": attr}))?;
     let h = handles(&r).into_iter().next().ok_or_else(|| errore("simbolo non inserito"))?;
+    if sim.madre() {
+        // funzione e ubicazione (CEI EN 81346): quelle date o le correnti
+        let imp = crate::impostazioni::correnti();
+        let funzione = crate::norma81346::Livello::Funzione.normalizza(&testo_param(p, "funzioneImpianto").unwrap_or(imp.funzione));
+        let ubicazione = crate::norma81346::Livello::Ubicazione.normalizza(&testo_param(p, "ubicazione").unwrap_or(imp.ubicazione));
+        let valori: Vec<(&str, &str)> = [("FUNZIONE_IMPIANTO", funzione.as_str()), ("UBICAZIONE", ubicazione.as_str())].into_iter().filter(|(_, v)| !v.is_empty()).collect();
+        if !valori.is_empty() {
+            crate::util::imposta_attributi(s, &h, &valori)?;
+        }
+    }
     if !riferimenti.is_empty() {
         let layer = layer_corrente(s)?;
         for (k, r) in riferimenti.iter().enumerate() {

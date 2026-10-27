@@ -12,7 +12,7 @@ Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artifici
 <img alt="Rust" src="https://img.shields.io/badge/Rust-1.95%2B-b7410e?logo=rust">
 <img alt="Windows" src="https://img.shields.io/badge/piattaforma-Windows-0078d6">
 <img alt="Stato alpha" src="https://img.shields.io/badge/stato-alpha-orange">
-<img alt="43 test di integrazione" src="https://img.shields.io/badge/test-43%20passati-brightgreen">
+<img alt="47 test di integrazione" src="https://img.shields.io/badge/test-47%20passati-brightgreen">
 </p>
 
 <p align="center"><img src="docs/img/schema.png" alt="WireCraft: lo schema di potenza di un motore, con i fogli del progetto a sinistra e i comandi elettrici a destra" width="100%"></p>
@@ -43,6 +43,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 - aggiungi, inserisci, elimina, rinomina, sposta e compatta i fogli: i riferimenti seguono
 - titoli e descrizioni di colonna in due lingue
 - fogli memorizzati (pagine standard in libreria) e revisioni
+- configurazioni con nome per cliente, riusabili nei progetti nuovi
 
 **⚡ Schema**
 - fili ortogonali, nodi automatici, alimentazioni e collegamenti a N fili
@@ -56,6 +57,8 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 - numerazione fili automatica e manuale, fili bloccati, numeri doppi segnalati
 - cross reference dinamico con i problemi in rosso, giallo e verde
 - navigatore ad albero: quadri, componenti, alimentazioni, rimandi, figli orfani
+- vai al collegato: dal contatto alla bobina, dalla bobina ai contatti, tra rimandi
+- designazione CEI EN 81346: box di quadro, funzione e ubicazione, etichette sopra la sigla
 
 </td>
 <td width="50%" valign="top">
@@ -131,9 +134,10 @@ Dall'idea alla prima versione pubblica in cinque giorni. La storia completa, gio
 | 26 ottobre | **Prima versione**: progetti, multifoglio, fili, simboli, siglatura, numerazione, morsetti, cavi, PLC, liste, PDF | ✅ |
 | 26 ottobre | Navigatore, Cross Reference, modifica di fili, morsetti e rimandi | ✅ |
 | 27 ottobre | Traduttore, lay-out del quadro, foratura piastra, connettori. **Pubblicazione open source** | ✅ |
+| 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346 | ✅ |
 | Prossimi passi | Loop diagram, configuratore macchina con le opzioni, gestore topografico e pulsantiere | 🔜 |
 | | Calcolo delle sovratemperature del quadro, schema unifilare per i quadri di distribuzione | 🔜 |
-| | Box quadro e funzione secondo la CEI EN 81346, estrazione targhette | 🔜 |
+| | Estrazione targhette | 🔜 |
 | | Esportazione Excel, editor di morsettiera avanzato (ponticelli, multilivello) | 🔜 |
 | | Installer per Windows e release con l'eseguibile pronto | 🔜 |
 
@@ -144,7 +148,7 @@ WireCraft è un livello elettrico sopra [CADCraft](https://github.com/storytold/
 | Cartella | Contenuto |
 |---|---|
 | `apps/wirecraft` | il programma desktop (`wirecraft.exe`): barra a schede, pannelli, finestre |
-| `crates/elettrico` | tutti i comandi elettrici, con 43 test di integrazione in `tests/integrazione` |
+| `crates/elettrico` | tutti i comandi elettrici, con 47 test di integrazione in `tests/integrazione` |
 | `crates/elettrico/examples` | `esempio_completo` (un progetto con tutte le funzioni), `multifoglio`, `analizza` (blocchi e attributi di un DWG) |
 | `vendor/cadcraft` | CADCraft, come git submodule |
 | `patches/cadcraft` | i piccoli ganci che servono a CADCraft (comandi e menu di un'applicazione) e la versione su cui si applicano |

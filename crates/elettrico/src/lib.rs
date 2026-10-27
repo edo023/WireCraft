@@ -21,6 +21,7 @@ pub mod impostazioni;
 pub mod layout;
 pub mod morsetti;
 pub mod multifoglio;
+pub mod norma81346;
 pub mod numerazione;
 pub mod plc;
 pub mod revisioni;
@@ -61,6 +62,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(traduttore::comandi());
     v.extend(layout::comandi());
     v.extend(salto::comandi());
+    v.extend(norma81346::comandi());
     v
 }
 

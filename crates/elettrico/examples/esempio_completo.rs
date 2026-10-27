@@ -62,6 +62,8 @@ fn main() -> Result<(), String> {
     e("simbolo.m3", json!({"at": [60.0, 80.0], "funzione1": "Motore nastro", "funzione2": "Belt motor", "costruttore": "Siemens", "tipo": "1LE1001-1BB2", "descrizione": "Motore 4kW 1400 rpm"}))?;
     e("cavo.definisci", json!({"formazione": "4G1,5", "codice": "FROR 4G1,5", "funzione": "Motore nastro", "daQuadro": "+QG", "aQuadro": "+BM", "lunghezza": "15"}))?;
     e("cavo.posa", json!({"cavo": "-W01", "da": [50.0, 90.0], "a": [90.0, 90.0]}))?;
+    // il motore è a bordo macchina: il box quadro lo dice a tutto quello che racchiude
+    e("box.quadro", json!({"valore": "BM", "da": [30.0, 52.0], "a": [115.0, 102.0], "descrizione": "Bordo macchina"}))?;
 
     // foglio 3: ausiliari 230 VAC con marcia/arresto e autoritenuta
     e("cambiofoglio", json!({"foglio": 3}))?;
@@ -97,6 +99,8 @@ fn main() -> Result<(), String> {
 
     e("numerafili", json!({"tutti": true}))?;
     e("siglecomponenti", json!({}))?;
+    // designazione CEI EN 81346 sopra le sigle del foglio del motore, dove il box non la dice già
+    e("designazioni", json!({"fogli": [2], "regola": "discordanti"}))?;
     // la seconda lingua dove manca, dal dizionario
     e("traduci", json!({"a": "EN"}))?;
     // lay-out dell'interno del quadro e foratura della piastra

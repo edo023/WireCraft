@@ -13,6 +13,7 @@ mod impostazioni;
 mod layout;
 mod libreria;
 mod multifoglio;
+mod norma81346;
 mod numerazione;
 mod revisioni;
 mod salto;

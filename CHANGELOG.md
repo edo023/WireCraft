@@ -9,7 +9,6 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 - **Gestore topografico e pulsantiere**: posizione dei componenti nell'impianto, fronte e retro delle pulsantiere.
 - **Calcolo delle sovratemperature** del quadro dalle potenze dissipate.
 - **Schema unifilare** per i quadri di distribuzione, con la tabella dati di ogni circuito.
-- **CEI EN 81346**: box di quadro e di funzione che assegnano l'appartenenza ai componenti.
 - **Estrazione targhette** per sigle, fili e morsetti.
 - **Esportazione Excel** delle liste; editor di morsettiera avanzato (ponticelli, multilivello).
 - **Installer per Windows** e release con l'eseguibile pronto.
@@ -22,9 +21,10 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 
 - **Vai al Collegato** (`SALTA`): dal contatto alla sua madre, dalla madre ai suoi contatti uno dopo l'altro, da un rimando a quello corrispondente; cambia foglio, inquadra e seleziona, così ripetendo si torna indietro.
 - **Configurazioni con nome**: le impostazioni (siglatura, numerazione fili, conduttori, morsetti, alimentazioni) si salvano con un nome, per cliente o per tipo di lavoro, e si riusano in un altro progetto o alla creazione di un progetto nuovo. Esportazione e importazione su file `.ini`, anche dai settaggi di un altro CAD elettrico. Nella finestra Impostazioni, sezione Configurazioni.
+- **CEI EN 81346**: ogni componente ha funzione (`=`), ubicazione (`++`) e quadro (`+`); i simboli nuovi prendono quelli correnti. I **box** di quadro, funzione e ubicazione (riquadri tratto-punto) li assegnano a tutto quello che racchiudono; le **etichette di designazione** li mostrano sopra la sigla, anche solo dove il box non li dice già. Nella scheda Quadro della barra.
 - Etichette di menu, barra a schede e finestre riscritte con parole nostre; comandi e scorciatoie invariati.
 
-Verificato: il salto dal contatto porta alla bobina sul suo foglio e ritorno; i contatti di una madre escono in ordine di foglio; un rimando porta al suo corrispondente, uno senza coppia non porta da nessuna parte. Una configurazione usata in un progetto non ne cambia il quadro corrente; un nome sbagliato non lascia un progetto creato a metà.
+Verificato: il salto dal contatto porta alla bobina sul suo foglio e ritorno; i contatti di una madre escono in ordine di foglio; un rimando porta al suo corrispondente, uno senza coppia non porta da nessuna parte. Una configurazione usata in un progetto non ne cambia il quadro corrente; un nome sbagliato non lascia un progetto creato a metà. Fra box dello stesso tipo uno dentro l'altro vale il più piccolo; un componente spostato in un altro box prende il nuovo quadro con Aggiorna Liste e Tabelle.
 
 ## 27 ottobre 2026: traduttore, quadro, connettori, pubblicazione
 

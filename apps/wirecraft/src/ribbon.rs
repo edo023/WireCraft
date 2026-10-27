@@ -274,11 +274,30 @@ fn schede() -> Vec<Scheda> {
         },
         Scheda {
             nome: "Quadro",
-            gruppi: vec![gruppo(
-                "Layout",
-                false,
-                vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Pianta, "Topografia Impianto", ND), g(Icona::Tensioni, "Sovratemperature", ND)],
-            )],
+            gruppi: vec![
+                gruppo(
+                    "Layout",
+                    false,
+                    vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Pianta, "Topografia Impianto", ND), g(Icona::Tensioni, "Sovratemperature", ND)],
+                ),
+                gruppo(
+                    "CEI EN 81346",
+                    false,
+                    vec![
+                        g(Icona::Quadro, "Box Quadro", Avvia("box.quadro")),
+                        Elemento::Piccoli(vec![
+                            t(Icona::Impianto, "Box Funzione", Avvia("box.funzione")),
+                            t(Icona::Pianta, "Box Ubicazione", Avvia("box.ubicazione")),
+                            t(Icona::Aggiorna, "Applica i Box", Esegui("box.applica", "{}")),
+                        ]),
+                        Elemento::Piccoli(vec![
+                            t(Icona::Sigle, "Designazioni", Esegui("designazioni", r#"{"fogli": "tutti"}"#)),
+                            t(Icona::Sigle, "Solo Discordanti", Esegui("designazioni", r#"{"fogli": "tutti", "regola": "discordanti"}"#)),
+                            t(Icona::Cancella, "Togli Designazioni", Esegui("designazioni", r#"{"fogli": "tutti", "togli": true}"#)),
+                        ]),
+                    ],
+                ),
+            ],
         },
         Scheda {
             nome: "Disegno",
