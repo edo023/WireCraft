@@ -12,6 +12,7 @@ mod fogli;
 mod impostazioni;
 mod layout;
 mod libreria;
+mod loopdiagram;
 mod multifoglio;
 mod norma81346;
 mod numerazione;

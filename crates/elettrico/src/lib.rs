@@ -19,6 +19,7 @@ pub mod fili;
 pub mod fogli;
 pub mod impostazioni;
 pub mod layout;
+pub mod loopdiagram;
 pub mod morsetti;
 pub mod multifoglio;
 pub mod norma81346;
@@ -65,6 +66,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(salto::comandi());
     v.extend(norma81346::comandi());
     v.extend(termico::comandi());
+    v.extend(loopdiagram::comandi());
     v
 }
 

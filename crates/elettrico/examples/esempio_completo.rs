@@ -108,7 +108,7 @@ fn main() -> Result<(), String> {
     e("foraturapiastra", json!({"foglio": layout["foglio"]}))?;
     // calcolo termico del quadro, con l'armadio della piastra
     e("uscita", json!({"tipo": "termico", "quadro": "+QG"}))?;
-    for tipo in ["indice", "distinta", "morsettiere", "cablaggio", "cavi", "io", "funzioni", "simboli"] {
+    for tipo in ["indice", "distinta", "morsettiere", "cablaggio", "cavi", "io", "loop", "funzioni", "simboli"] {
         e("uscita", json!({"tipo": tipo}))?;
     }
     e("crossreference", json!({}))?;

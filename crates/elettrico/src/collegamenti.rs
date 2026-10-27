@@ -35,6 +35,8 @@ pub struct Capo {
     pub quadro: String,
     pub pos: P,
     pub tipo: TipoCapo,
+    /// Il blocco da cui viene (simbolo, morsetto o rimando).
+    pub blocco: String,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -109,7 +111,7 @@ fn capi_componenti(s: &mut Session, layer: &str) -> Result<Vec<Capo>> {
             quadri.iter().find(|(n, _)| n.eq_ignore_ascii_case(&sigla)).map(|(_, q)| q.clone()).unwrap_or_default()
         };
         for (tag, p) in sim.pin(b.pos) {
-            v.push(Capo { sigla: sigla.clone(), pin: b.attributo(&tag).to_string(), quadro: quadro.clone(), pos: p, tipo: TipoCapo::Componente });
+            v.push(Capo { sigla: sigla.clone(), pin: b.attributo(&tag).to_string(), quadro: quadro.clone(), pos: p, tipo: TipoCapo::Componente, blocco: b.handle.clone() });
         }
     }
     Ok(v)
@@ -135,11 +137,11 @@ pub fn reti(s: &mut Session, fogli_da: &[u32]) -> Result<Vec<Rete>> {
             let estremo = |p: P| g.iter().any(|x| vicini(x.a, p) || vicini(x.b, p));
             let mut capi: Vec<Capo> = componenti.iter().filter(|c| tocca(c.pos)).cloned().collect();
             for m in tutti_morsetti.iter().filter(|m| m.foglio == f.numero && tocca(m.blocco.pos)) {
-                capi.push(Capo { sigla: m.morsettiera.clone(), pin: m.numero.clone(), quadro: m.blocco.attributo("QUADRO").into(), pos: m.blocco.pos, tipo: TipoCapo::Morsetto });
+                capi.push(Capo { sigla: m.morsettiera.clone(), pin: m.numero.clone(), quadro: m.blocco.attributo("QUADRO").into(), pos: m.blocco.pos, tipo: TipoCapo::Morsetto, blocco: m.blocco.handle.clone() });
             }
             let rim: Vec<&fili::Rimando> = rimandi.iter().filter(|r| r.foglio == f.numero && estremo(r.pos)).collect();
             for r in &rim {
-                capi.push(Capo { sigla: r.segnale.clone(), pin: String::new(), quadro: String::new(), pos: r.pos, tipo: TipoCapo::Rimando });
+                capi.push(Capo { sigla: r.segnale.clone(), pin: String::new(), quadro: String::new(), pos: r.pos, tipo: TipoCapo::Rimando, blocco: r.handle.clone() });
             }
             // dall'alto in basso, da sinistra a destra
             capi.sort_by(|a, b| b.pos.1.total_cmp(&a.pos.1).then(a.pos.0.total_cmp(&b.pos.0)));

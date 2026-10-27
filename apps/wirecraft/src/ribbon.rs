@@ -269,7 +269,7 @@ fn schede() -> Vec<Scheda> {
                     g(Icona::Collegamenti, "Modulo Cavi", Cavi),
                     g(Icona::Plc, "Gestione PLC", Plc),
                     g(Icona::Legenda, "Traduttore", Traduttore),
-                    g(Icona::Impianto, "Loop Diagram", ND),
+                    g(Icona::Impianto, "Loop Diagram", Liste(Some("loop"))),
                     g(Icona::Settaggi, "Configuratore", ND),
                 ],
             )],

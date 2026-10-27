@@ -19,6 +19,8 @@ const ORIGINE: P = (20.0, squadratura::CORNICE_MAX.1 - squadratura::FASCIA_DESCR
 const LARGHEZZA_AREA: f64 = 390.0;
 /// Altezza utile: fino a 5 mm sopra il cartiglio.
 const ALTEZZA_AREA: f64 = ORIGINE.1 - squadratura::CORNICE_MIN.1 - squadratura::CARTIGLIO_ALTEZZA - 5.0;
+/// Larghezza e altezza dell'area di una pagina di uscita (mm).
+pub const AREA: P = (LARGHEZZA_AREA, ALTEZZA_AREA);
 const ALTEZZA_TITOLO: f64 = 9.0;
 const ALTEZZA_INTESTAZIONE: f64 = 8.0;
 const TESTO: f64 = 2.5;
@@ -159,10 +161,27 @@ fn occupato(s: &Session, n: u32) -> Result<bool> {
 /// un foglio con altro disegno) e dà loro il titolo. Restituisce i fogli usati.
 pub fn disegna(s: &mut Session, t: &Tabella, tipo: &str, parametri: &Value, primo: Option<u32>, titolo_foglio: &str, titolo_foglio1: &str) -> Result<Vec<u32>> {
     let pagine = t.pagine();
+    disegna_con(s, pagine.len(), tipo, parametri, primo, titolo_foglio, titolo_foglio1, |s, k, h| disegna_pagina(s, t, &pagine[k], h))
+}
+
+/// Come [`disegna`], per un'uscita di `n_pagine` disegnate da `pagina(s, k, handles)` in
+/// coordinate del blocco (origine in alto a sinistra dell'area, [`AREA`] mm).
+#[allow(clippy::too_many_arguments)]
+pub fn disegna_con(
+    s: &mut Session,
+    n_pagine: usize,
+    tipo: &str,
+    parametri: &Value,
+    primo: Option<u32>,
+    titolo_foglio: &str,
+    titolo_foglio1: &str,
+    mut pagina: impl FnMut(&mut Session, usize, &mut Vec<String>) -> Result<()>,
+) -> Result<Vec<u32>> {
+    let n_pagine = n_pagine.max(1);
     let ultimo = fogli::elenco(s)?.last().map_or(0, |f| f.numero);
     let mut usati = Vec::new();
     let esistenti = pagine_esistenti(s)?;
-    for (n, (k, gruppi)) in (primo.unwrap_or(ultimo + 1)..).zip(pagine.iter().enumerate()) {
+    for (n, k) in (primo.unwrap_or(ultimo + 1)..).zip(0..n_pagine) {
         let esiste = fogli::elenco(s)?.iter().any(|f| f.numero == n);
         if esiste && occupato(s, n)? && k > 0 {
             // il foglio che segue ha altro disegno: se ne inserisce uno nuovo prima
@@ -178,13 +197,13 @@ pub fn disegna(s: &mut Session, t: &Tabella, tipo: &str, parametri: &Value, prim
         let nome = format!("{PREFISSO_BLOCCO}{n}");
         su_layer_zero(s, |s| {
             let mut h = Vec::new();
-            disegna_pagina(s, t, gruppi, &mut h)?;
-            for (tag, valore) in [("TIPO", tipo.to_string()), ("PARAMETRI", parametri.to_string()), ("PAGINA", format!("{}/{}", k + 1, pagine.len()))] {
+            pagina(s, k, &mut h)?;
+            for (tag, valore) in [("TIPO", tipo.to_string()), ("PARAMETRI", parametri.to_string()), ("PAGINA", format!("{}/{}", k + 1, n_pagine))] {
                 h.extend(handles(&esegui(s, "attdef", json!({"tag": tag, "prompt": tag, "default": valore, "at": [0.0, 0.0], "height": 1.0, "invisible": true}))?));
             }
             blocco(s, &nome, h, "Uscita aggiornabile")
         })?;
-        inserisci_su_layer(s, &nome, ORIGINE, &json!({"TIPO": tipo, "PARAMETRI": parametri.to_string(), "PAGINA": format!("{}/{}", k + 1, pagine.len())}), &layer)?;
+        inserisci_su_layer(s, &nome, ORIGINE, &json!({"TIPO": tipo, "PARAMETRI": parametri.to_string(), "PAGINA": format!("{}/{}", k + 1, n_pagine)}), &layer)?;
         if !titolo_foglio.is_empty() {
             fogli::imposta_titolo(s, n, titolo_foglio, Some(titolo_foglio1))?;
         }
@@ -197,7 +216,7 @@ pub fn disegna(s: &mut Session, t: &Tabella, tipo: &str, parametri: &Value, prim
 // ---------- le uscite ----------
 
 /// Tipi di uscita.
-pub const TIPI: [(&str, &str); 11] = [
+pub const TIPI: [(&str, &str); 12] = [
     ("indice", "Lista fogli"),
     ("distinta", "Distinta materiali"),
     ("morsettiere", "Morsettiere"),
@@ -209,6 +228,7 @@ pub const TIPI: [(&str, &str); 11] = [
     ("funzioni", "Legenda funzioni"),
     ("simboli", "Legenda simboli"),
     ("termico", "Calcolo termico del quadro"),
+    ("loop", "Loop diagram"),
 ];
 
 /// La tabella di un'uscita con i dati del disegno, e i titoli del foglio (due lingue).
@@ -452,6 +472,7 @@ pub fn tabella(s: &mut Session, tipo: &str, p: &Value) -> Result<(Tabella, &'sta
                 "Symbols Legend",
             ))
         }
+        "loop" => Ok((crate::loopdiagram::tabella(s)?, "Loop diagram", "Loop Diagram")),
         "termico" => {
             let quadro = if quadro.trim().is_empty() { crate::impostazioni::quadro_corrente().unwrap_or_default() } else { quadro.clone() };
             let (d, e, voci) = crate::termico::calcolo(s, &quadro, p)?;
@@ -465,6 +486,10 @@ pub fn tabella(s: &mut Session, tipo: &str, p: &Value) -> Result<(Tabella, &'sta
 
 /// Disegna l'uscita `tipo` (parametri: quadro, morsettiera) dal foglio `primo`.
 pub fn uscita(s: &mut Session, tipo: &str, p: &Value, primo: Option<u32>) -> Result<Vec<u32>> {
+    // il loop diagram è un disegno, non una tabella
+    if tipo == "loop" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
+        return crate::loopdiagram::uscita(s, primo);
+    }
     let (t, t0, t1) = tabella(s, tipo, p)?;
     let mut parametri = serde_json::Map::new();
     for k in ["quadro", "morsettiera"] {
@@ -473,7 +498,7 @@ pub fn uscita(s: &mut Session, tipo: &str, p: &Value, primo: Option<u32>) -> Res
         }
     }
     // i dati dell'armadio del calcolo termico
-    for k in ["larghezza", "altezza", "profondita", "installazione", "materiale", "tEsterna", "tMassima", "tEsternaMin", "tMinima"] {
+    for k in ["larghezza", "altezza", "profondita", "installazione", "materiale", "tEsterna", "tMassima", "tEsternaMin", "tMinima", "tabella"] {
         if let Some(v) = p.get(k).filter(|v| !v.is_null()) {
             parametri.insert(k.into(), v.clone());
         }
