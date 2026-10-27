@@ -143,6 +143,14 @@ impl Pannelli {
             Azione::Traduttore => self.traduttore.apri(),
             Azione::Sovratemperature => self.termico.apri(cad),
             Azione::Tensioni => self.tensioni.apri(),
+            Azione::Targhette(tipo) => {
+                if let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).set_file_name(format!("targhette {tipo}.csv")).save_file() {
+                    match cad.run("targhette", json!({"tipo": tipo, "file": p.to_string_lossy()})) {
+                        Ok(r) => cad.set_status(r["message"].as_str().unwrap_or("Targhette salvate").to_string()),
+                        Err(e) => cad.set_status(e),
+                    }
+                }
+            }
             Azione::GestioneMultifoglio => {
                 self.gestione.apri();
                 self.scheda = Scheda::Fogli;

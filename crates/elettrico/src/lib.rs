@@ -32,6 +32,7 @@ pub mod simboli;
 pub mod specchietto;
 pub mod squadratura;
 pub mod stampa;
+pub mod targhette;
 pub mod tensioni;
 pub mod termico;
 pub mod traduttore;
@@ -69,6 +70,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(termico::comandi());
     v.extend(loopdiagram::comandi());
     v.extend(tensioni::comandi());
+    v.extend(targhette::comandi());
     v
 }
 

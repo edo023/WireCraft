@@ -35,6 +35,8 @@ pub enum Azione {
     Sovratemperature,
     /// Finestra "Tensioni": potenziali e colori dei conduttori.
     Tensioni,
+    /// Targhette del tipo dato (componenti, fili, morsetti, cavi) in CSV.
+    Targhette(&'static str),
     Cross,
     /// Salto al collegato della selezione: madre, contatti, rimando corrispondente.
     Salta,
@@ -365,6 +367,14 @@ fn schede() -> Vec<Scheda> {
                     ],
                 ),
                 gruppo("CSV", false, vec![g(Icona::Csv, "Distinta (CSV)", Distinta { per_tipo: true }), g(Icona::Morsettiera, "Morsettiera (CSV)", Morsettiera)]),
+                gruppo(
+                    "Targhette",
+                    false,
+                    vec![
+                        Elemento::Piccoli(vec![t(Icona::Sigle, "Componenti", Targhette("componenti")), t(Icona::NumeraFili, "Fili", Targhette("fili"))]),
+                        Elemento::Piccoli(vec![t(Icona::Morsetti, "Morsetti", Targhette("morsetti")), t(Icona::Collegamenti, "Cavi", Targhette("cavi"))]),
+                    ],
+                ),
             ],
         },
     ]

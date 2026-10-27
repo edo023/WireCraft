@@ -61,6 +61,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `CAVO.DEFINISCI`, `CAVO.POSA`, `CAVO.TOGLI`, `CAVO.ELIMINA`, `CAVI`, `CAVO.CONDUTTORI` | cavi e vene |
 | `PLC.SCHEDA`, `PLC.NUMERABIT`, `PLC.COMMENTO`, `PLC.ELENCO`, `PLC.IMPORTA` | schede I/O, indirizzi, commenti, elenco I/O |
 | `RETI` | le reti con i capi collegati (per script e agenti) |
+| `TARGHETTE {tipo}` | targhette in CSV: `componenti`, `fili` (una per capo), `morsetti` (con la testata), `cavi` (una per estremità); `quadro` per filtrare |
 | `LOOPDIAGRAM` | per ogni bit dei PLC: fili, morsetti, cavi, dispositivo in campo e suoi altri capi (sui fogli: `USCITA {tipo: loop}`) |
 | `TRADUCI`, `TRADUTTORE.FRASI`, `.AGGIUNGI`, `.IMPORTA`, `.ESPORTA` | schema bilingue dal dizionario (funzioni, titoli dei fogli, descrizioni di colonna); elenco delle frasi senza traduzione |
 
