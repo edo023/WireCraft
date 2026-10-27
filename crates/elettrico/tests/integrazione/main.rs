@@ -20,6 +20,7 @@ mod revisioni;
 mod salto;
 mod simboli;
 mod stampa;
+mod tensioni;
 mod termico;
 mod traduttore;
 mod uscite;

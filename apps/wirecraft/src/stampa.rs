@@ -18,6 +18,7 @@ pub struct FinestraStampa {
     scelta: Scelta,
     intervallo: String,
     colori: bool,
+    fili_colorati: bool,
     dinamico: bool,
     apri: bool,
     file: String,
@@ -34,6 +35,7 @@ impl Default for FinestraStampa {
             scelta: Scelta::Tutti,
             intervallo: String::new(),
             colori: o.colori,
+            fili_colorati: o.fili_colorati,
             dinamico: o.dinamico,
             apri: true,
             file: String::new(),
@@ -72,7 +74,7 @@ impl FinestraStampa {
             Scelta::Corrente => "corrente",
             Scelta::Intervallo => self.intervallo.trim(),
         };
-        json!({"fogli": fogli, "file": self.file.trim(), "colori": self.colori, "dinamico": self.dinamico})
+        json!({"fogli": fogli, "file": self.file.trim(), "colori": self.colori, "filiColorati": self.fili_colorati, "dinamico": self.dinamico})
     }
 
     fn sfoglia(&mut self) {
@@ -132,7 +134,8 @@ impl FinestraStampa {
             });
             ui.add_space(6.0);
             ui.label(egui::RichText::new("Opzioni").strong());
-            ui.checkbox(&mut self.colori, "A colori (altrimenti bianco e nero)");
+            ui.add_enabled(!self.fili_colorati, egui::Checkbox::new(&mut self.colori, "A colori (altrimenti bianco e nero)"));
+            ui.checkbox(&mut self.fili_colorati, "Fili colorati come il conduttore, il resto in nero").on_hover_text("Prima colora i fili: Tensioni → Colora i fili");
             ui.checkbox(&mut self.dinamico, "PDF dinamico: segnalibri dei fogli e riferimenti cliccabili")
                 .on_hover_text("I riferimenti come 05/3B di rimandi, contatti e specchietti portano alla pagina del foglio citato");
             ui.checkbox(&mut self.apri, "Apri il PDF al termine");

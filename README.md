@@ -12,7 +12,7 @@ Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artifici
 <img alt="Rust" src="https://img.shields.io/badge/Rust-1.95%2B-b7410e?logo=rust">
 <img alt="Windows" src="https://img.shields.io/badge/piattaforma-Windows-0078d6">
 <img alt="Stato alpha" src="https://img.shields.io/badge/stato-alpha-orange">
-<img alt="49 test di integrazione" src="https://img.shields.io/badge/test-49%20passati-brightgreen">
+<img alt="50 test di integrazione" src="https://img.shields.io/badge/test-50%20passati-brightgreen">
 </p>
 
 <p align="center"><img src="docs/img/schema.png" alt="WireCraft: lo schema di potenza di un motore, con i fogli del progetto a sinistra e i comandi elettrici a destra" width="100%"></p>
@@ -51,6 +51,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 - 52 simboli IEC 60617 disegnati da zero, con anteprime
 - inserimento su più fili in un colpo solo (fence); cancella e sposta richiudono i fili
 - specchietti dei contatti sotto bobine, relè e salvamotori
+- fili colorati come il conduttore vero, dalla tabella delle tensioni (L1 marrone, PE giallo-verde, +24V blu…)
 
 **🏷️ Automatismi**
 - siglatura dei componenti in sei modalità, per quadro
@@ -86,6 +87,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 
 **🖨️ Stampa**
 - PDF dinamico: segnalibri dei fogli e riferimenti cliccabili
+- fili a colori e tutto il resto in nero, come una stampa da consegnare
 
 </td>
 </tr>
@@ -99,9 +101,9 @@ I componenti del quadro e le morsettiere finiscono sulle guide DIN in scala, tra
 
 ### Le uscite sono già pronte da consegnare
 
-Schema di potenza, morsettiere, tabella di cablaggio e legenda dei simboli: generate dal progetto, bilingui, nel PDF con i rimandi cliccabili.
+Schema con i fili colorati come i conduttori, calcolo termico del quadro, loop diagram e tabella di cablaggio: generati dal progetto, bilingui, nel PDF con i rimandi cliccabili.
 
-<p align="center"><img src="docs/img/output-pdf.png" alt="Quattro pagine del PDF: schema di un motore, morsettiere, tabella di cablaggio, legenda dei simboli" width="100%"></p>
+<p align="center"><img src="docs/img/output-pdf.png" alt="Quattro pagine del PDF: schema di un motore a fili colorati, calcolo termico, loop diagram, tabella di cablaggio" width="100%"></p>
 
 ## Provalo
 
@@ -136,7 +138,7 @@ Dall'idea alla prima versione pubblica in cinque giorni. La storia completa, gio
 | 26 ottobre | **Prima versione**: progetti, multifoglio, fili, simboli, siglatura, numerazione, morsetti, cavi, PLC, liste, PDF | ✅ |
 | 26 ottobre | Navigatore, Cross Reference, modifica di fili, morsetti e rimandi | ✅ |
 | 27 ottobre | Traduttore, lay-out del quadro, foratura piastra, connettori. **Pubblicazione open source** | ✅ |
-| 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346, calcolo termico del quadro, loop diagram | ✅ |
+| 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346, calcolo termico del quadro, loop diagram, tensioni e fili colorati | ✅ |
 | Prossimi passi | Configuratore macchina con le opzioni, gestore topografico e pulsantiere | 🔜 |
 | | Schema unifilare per i quadri di distribuzione | 🔜 |
 | | Estrazione targhette | 🔜 |
@@ -150,7 +152,7 @@ WireCraft è un livello elettrico sopra [CADCraft](https://github.com/storytold/
 | Cartella | Contenuto |
 |---|---|
 | `apps/wirecraft` | il programma desktop (`wirecraft.exe`): barra a schede, pannelli, finestre |
-| `crates/elettrico` | tutti i comandi elettrici, con 49 test di integrazione in `tests/integrazione` |
+| `crates/elettrico` | tutti i comandi elettrici, con 50 test di integrazione in `tests/integrazione` |
 | `crates/elettrico/examples` | `esempio_completo` (un progetto con tutte le funzioni), `multifoglio`, `analizza` (blocchi e attributi di un DWG) |
 | `vendor/cadcraft` | CADCraft, come git submodule |
 | `patches/cadcraft` | i piccoli ganci che servono a CADCraft (comandi e menu di un'applicazione) e la versione su cui si applicano |

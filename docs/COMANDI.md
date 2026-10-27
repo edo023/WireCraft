@@ -30,7 +30,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `COPIATRAFOGLI`, `SPOSTATRAFOGLI` | copia (con sigle nuove) o sposta oggetti su altri fogli |
 | `MEMORIZZAFOGLIO`, `INSERISCIMEMORIZZATO` | fogli memorizzati in libreria, per categoria |
 | `REVISIONE.CREA`, `.VEDI`, `.ANNULLA`, `.RESET`, `.ELENCO` | revisioni: archivio dei fogli e simbolo nel cartiglio |
-| `STAMPAFOGLI` | PDF dei fogli scelti; **dinamico**: segnalibri e riferimenti cliccabili |
+| `STAMPAFOGLI` | PDF dei fogli scelti; **dinamico**: segnalibri e riferimenti cliccabili; `filiColorati`: i fili a colori e il resto in nero |
 
 ### Schema (menu Elettrico)
 
@@ -44,6 +44,8 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `CROSSREFERENCE` | dove sta la madre di ogni contatto, specchietti, rimandi; elenca i problemi |
 | `SALTA` (Vai al Collegato) | dal contatto alla madre, dalla madre ai suoi contatti, da un rimando al corrispondente: cambia foglio, inquadra e seleziona |
 | `NUMERAFILI` (automatica), `NUMERAFILO` (manuale), `BLOCCAFILI`, `LISTANUMERIFILI` | numerazione dei fili |
+| `TENSIONI` | la tabella dei potenziali: tensione e colore del conduttore (`BK`, `BN`, `BU`, `GNYE`…); le reti senza indicazione sul filo prendono il colore del loro potenziale |
+| `COLORAFILI` | i fili del disegno col colore del conduttore (`togli`: di nuovo col colore del layer) |
 | `CONDUTTORE` | specializza il conduttore (sezione, colore, codice) dei fili toccati |
 | `MORSETTI`, `MORSETTIERA` | morsetti su una linea che attraversa i fili; morsettiera in tabella o CSV |
 | `CONNETTORI` | pin di connettore (sesso M/F) su una linea che attraversa i fili; escono nelle stesse liste dei morsetti |

@@ -37,6 +37,8 @@ const TOLL_CARTA: f64 = 5.0;
 pub struct Opzioni {
     /// A colori; altrimenti in bianco e nero (`monochrome.ctb`).
     pub colori: bool,
+    /// I fili col colore del conduttore e tutto il resto in nero (vince su `colori`).
+    pub fili_colorati: bool,
     /// Segnalibri dei fogli e riferimenti cliccabili.
     pub dinamico: bool,
     /// Titolo del documento PDF.
@@ -45,7 +47,7 @@ pub struct Opzioni {
 
 impl Default for Opzioni {
     fn default() -> Self {
-        Opzioni { colori: false, dinamico: true, titolo: String::new() }
+        Opzioni { colori: false, fili_colorati: false, dinamico: true, titolo: String::new() }
     }
 }
 
@@ -234,7 +236,10 @@ fn collegamenti(d: &Drawing, fogli: &[u32], finestra: &Bounds2) -> Vec<Collegame
 /// Il PDF dei fogli `fogli` (in quest'ordine, uno per pagina); `titoli` per i segnalibri.
 pub fn pdf_fogli(d: &Drawing, fogli: &[u32], titoli: &HashMap<u32, String>, o: &Opzioni) -> Result<Stampa> {
     let plot = cadcraft_engine::cmd::file::io().and_then(|h| h.plot).ok_or_else(|| errore("La stampa non è disponibile in questa versione"))?;
-    let copia = copia_di_stampa(d, fogli, o.colori);
+    let mut copia = copia_di_stampa(d, fogli, o.colori || o.fili_colorati);
+    if o.fili_colorati {
+        crate::tensioni::nero_tranne_i_fili(&mut copia);
+    }
     let nomi: Vec<String> = fogli.iter().map(|n| etichetta(*n)).collect();
     let pdf = plot(&copia, &Space::Model, &json!({"layouts": nomi, "title": o.titolo})).map_err(|e| errore(format!("Stampa: {e}")))?;
     if !o.dinamico {
@@ -281,6 +286,7 @@ fn run_stampa(s: &mut Session, p: &Value) -> Result<Value> {
     let base = Opzioni::default();
     let o = Opzioni {
         colori: flag("colori", base.colori),
+        fili_colorati: flag("filiColorati", base.fili_colorati),
         dinamico: flag("dinamico", base.dinamico),
         titolo: testo_param(p, "titolo").unwrap_or_else(|| file.file_stem().map(|s| s.to_string_lossy().to_string()).unwrap_or_default()),
     };
@@ -319,7 +325,7 @@ pub fn comandi() -> Vec<CommandSpec> {
         menu: &["Fogli", "Stampa e PDF…"],
         shortcut: None,
         aliases: &[],
-        params: "{fogli?: \"tutti\" | \"corrente\" | \"1-3,5\" | [numeri], file?: percorso .pdf (default: cartella PDF accanto al disegno), colori?: bool (default bianco e nero), dinamico?: bool (default sì: segnalibri e riferimenti cliccabili), titolo?} → {file, fogli, pagine, collegamenti}",
+        params: "{fogli?: \"tutti\" | \"corrente\" | \"1-3,5\" | [numeri], file?: percorso .pdf (default: cartella PDF accanto al disegno), colori?: bool (default bianco e nero), filiColorati?: bool (i fili col colore del conduttore, il resto in nero), dinamico?: bool (default sì: segnalibri e riferimenti cliccabili), titolo?} → {file, fogli, pagine, collegamenti}",
         enabled: has_doc,
         run: run_stampa,
         undoable: false,

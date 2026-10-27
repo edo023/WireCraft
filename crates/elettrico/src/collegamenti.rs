@@ -153,11 +153,18 @@ pub fn reti(s: &mut Session, fogli_da: &[u32]) -> Result<Vec<Rete>> {
                 .unwrap_or_default();
             let indicazione = dati.iter().filter(|e| e.layer == f.layer).find(|e| dati_su(e, &g));
             let alimentazione = rim.iter().any(|r| r.famiglia == fili::Famiglia::Alimentazione);
-            let (conduttore, specializzato) = match indicazione {
+            let (mut conduttore, specializzato) = match indicazione {
                 Some(e) => (conduttore_da(e), true),
                 None if alimentazione => (imp.conduttore_alimentazione.clone(), false),
                 None => (imp.conduttore.clone(), false),
             };
+            // senza indicazione sul filo, il colore del potenziale (L1 marrone, PE giallo-verde…)
+            if !specializzato
+                && let Some(p) = crate::tensioni::potenziale(&nome)
+                && !p.colore.is_empty()
+            {
+                conduttore.colore = p.colore;
+            }
             out.push(Rete { foglio: f.numero, nome, fili: g.into_iter().cloned().collect(), capi, conduttore, specializzato });
         }
     }

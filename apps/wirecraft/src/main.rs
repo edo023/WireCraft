@@ -19,6 +19,7 @@ mod progetti;
 mod settaggi;
 mod ribbon;
 mod stampa;
+mod tensioni;
 mod termico;
 mod traduttore;
 
@@ -215,6 +216,9 @@ fn main() -> eframe::Result {
                 }
                 if let Err(e) = elettrico::traduttore::imposta(&dir.join("dizionario.csv")) {
                     log::warn!("dizionario: {e}");
+                }
+                if let Err(e) = elettrico::tensioni::imposta(&dir.join("tensioni.csv")) {
+                    log::warn!("tensioni: {e}");
                 }
                 elettrico::multifoglio::imposta_libreria(&dir.join("Fogli memorizzati"));
                 elettrico::impostazioni::imposta_configurazioni(&dir.join("Configurazioni"));

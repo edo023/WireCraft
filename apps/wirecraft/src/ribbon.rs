@@ -33,6 +33,8 @@ pub enum Azione {
     Foratura,
     /// Finestra "Sovratemperature" (calcolo termico del quadro).
     Sovratemperature,
+    /// Finestra "Tensioni": potenziali e colori dei conduttori.
+    Tensioni,
     Cross,
     /// Salto al collegato della selezione: madre, contatti, rimando corrispondente.
     Salta,
@@ -132,7 +134,7 @@ fn schede() -> Vec<Scheda> {
                     true,
                     vec![
                         Elemento::Piccoli(vec![t(Icona::Simbologia, "Simbologia", ND), t(Icona::Settaggi, "Impostazioni", Settaggi), t(Icona::Scansione, "Verifica", Cross)]),
-                        Elemento::Piccoli(vec![t(Icona::Impianto, "Schema d'impianto", ND), t(Icona::Quadro, "Quadro corrente", Settaggi), t(Icona::Tensioni, "Tensioni", ND)]),
+                        Elemento::Piccoli(vec![t(Icona::Impianto, "Schema d'impianto", ND), t(Icona::Quadro, "Quadro corrente", Settaggi), t(Icona::Tensioni, "Tensioni", Tensioni)]),
                         Elemento::Piccoli(vec![
                             Voce::Icone(vec![p(Icona::Pianta, "Planimetria", ND)]),
                             Voce::Icone(vec![p(Icona::Aggiorna, "Aggiorna liste e tabelle", Esegui("aggiornaliste", "{}"))]),

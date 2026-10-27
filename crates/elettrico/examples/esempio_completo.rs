@@ -112,12 +112,14 @@ fn main() -> Result<(), String> {
         e("uscita", json!({"tipo": tipo}))?;
     }
     e("crossreference", json!({}))?;
+    // i fili col colore del conduttore: fasi marrone, nero e grigio, PE giallo-verde, +24V blu
+    e("colorafili", json!({}))?;
     let doc = s.doc().map_err(|e| e.to_string())?.clone();
     let byte = cadcraft_io::write(&doc, &out).map_err(|e| e.to_string())?;
     std::fs::write(&out, byte).map_err(|e| e.to_string())?;
     println!("scritto {out}");
     if let Some(pdf) = &pdf {
-        let r = s.execute("stampafogli", &json!({"file": pdf})).map_err(|e| e.to_string())?;
+        let r = s.execute("stampafogli", &json!({"file": pdf, "filiColorati": true})).map_err(|e| e.to_string())?;
         println!("{}", r["message"].as_str().unwrap_or(""));
     }
     Ok(())
