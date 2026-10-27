@@ -54,7 +54,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 
 | Comando | Cosa fa |
 |---|---|
-| `USCITA {tipo}` | disegna sui fogli: `indice`, `distinta`, `morsettiere`, `cablaggio`, `cavi`, `conduttoricavi`, `io`, `funzioni`, `simboli`, `revisioni` |
+| `USCITA {tipo}` | disegna sui fogli: `indice`, `distinta`, `morsettiere`, `cablaggio`, `cavi`, `conduttoricavi`, `io`, `funzioni`, `simboli`, `revisioni`, `termico` |
 | `DISTINTAMATERIALI`, `TABELLACABLAGGIO`, `MATERIALE`, `MATERIALI.*` | distinta e cablaggio in CSV, materiali dei componenti, archivio materiali |
 | `CAVO.DEFINISCI`, `CAVO.POSA`, `CAVO.TOGLI`, `CAVO.ELIMINA`, `CAVI`, `CAVO.CONDUTTORI` | cavi e vene |
 | `PLC.SCHEDA`, `PLC.NUMERABIT`, `PLC.COMMENTO`, `PLC.ELENCO`, `PLC.IMPORTA` | schede I/O, indirizzi, commenti, elenco I/O |
@@ -69,6 +69,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `BOX.QUADRO`, `BOX.FUNZIONE`, `BOX.UBICAZIONE` (`BOX {tipo}`) | riquadro tratto-punto che dà quadro (`+QG`), funzione (`=TR1`) o ubicazione (`++ZC`) secondo la CEI EN 81346 a madri, morsetti e connettori che racchiude; fra box dello stesso tipo vale il più piccolo |
 | `BOX.APPLICA` | riapplica i box dopo aver spostato qualcosa (lo fa anche `AGGIORNALISTE`) |
 | `DESIGNAZIONI` | etichette sopra la sigla con i livelli scelti (`=TR1++ZC+QG`), anche sui contatti con i dati della madre; regola `discordanti`: solo quello che il box non dice già; `togli` le cancella |
+| `CALCOLOTERMICO` (Sovratemperature) | bilancio termico del quadro: superficie efficace secondo l'installazione (1–7), materiale, temperature; temperatura interna, ventilatore (m³/h) o condizionatore (W), anticondensa. Misure dell'armadio dalla piastra del lay-out; potenze dal campo `DISSIPAZIONE` dei componenti o stimate. Sul foglio con `USCITA {tipo: termico}` |
 | `FORATURAPIASTRA` | fori di fissaggio a passo costante su guide e canaline, disegnati sul foglio e in CSV con le quote dall'angolo della piastra |
 
 ## Simboli (menu Simboli e Protezioni)

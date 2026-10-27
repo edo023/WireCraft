@@ -1259,7 +1259,7 @@ fn crea_blocco(s: &mut Session, sim: &Simbolo) -> Result<()> {
         let prima = h.len();
         attr(s, &mut h, "NOME", "", (x_testi, y_nome), 2.5, false)?;
         if sim.madre() {
-            for tag in ["QUADRO", "FUNZIONE_IMPIANTO", "UBICAZIONE", "FUNZIONE1", "FUNZIONE2", "CODICE", "COSTRUTTORE", "TIPO", "DESCRIZIONE"] {
+            for tag in ["QUADRO", "FUNZIONE_IMPIANTO", "UBICAZIONE", "FUNZIONE1", "FUNZIONE2", "CODICE", "COSTRUTTORE", "TIPO", "DESCRIZIONE", "DISSIPAZIONE"] {
                 attr(s, &mut h, tag, "", (x_testi, y_nome - 3.0), 1.8, true)?;
             }
         } else {
@@ -1377,7 +1377,8 @@ pub fn inserisci(s: &mut Session, sim: &Simbolo, at: P, p: &Value) -> Result<Val
         let imp = crate::impostazioni::correnti();
         let funzione = crate::norma81346::Livello::Funzione.normalizza(&testo_param(p, "funzioneImpianto").unwrap_or(imp.funzione));
         let ubicazione = crate::norma81346::Livello::Ubicazione.normalizza(&testo_param(p, "ubicazione").unwrap_or(imp.ubicazione));
-        let valori: Vec<(&str, &str)> = [("FUNZIONE_IMPIANTO", funzione.as_str()), ("UBICAZIONE", ubicazione.as_str())].into_iter().filter(|(_, v)| !v.is_empty()).collect();
+        let dissipazione = p.get("dissipazione").and_then(|v| v.as_f64().map(|x| x.to_string()).or_else(|| v.as_str().map(|t| t.trim().replace(',', ".")))).filter(|t| t.parse::<f64>().is_ok_and(|x| x.is_finite() && x >= 0.0)).unwrap_or_default();
+        let valori: Vec<(&str, &str)> = [("FUNZIONE_IMPIANTO", funzione.as_str()), ("UBICAZIONE", ubicazione.as_str()), ("DISSIPAZIONE", dissipazione.as_str())].into_iter().filter(|(_, v)| !v.is_empty()).collect();
         if !valori.is_empty() {
             crate::util::imposta_attributi(s, &h, &valori)?;
         }
@@ -1474,6 +1475,26 @@ pub fn modifica(s: &mut Session, p: &Value) -> Result<Value> {
     }
     if !valori.is_empty() {
         esegui(s, "attedit", json!({"handle": h, "values": valori}))?;
+    }
+    // designazione CEI EN 81346 e potenza dissipata: attributi che i simboli di prima non hanno
+    if c.madre() {
+        use crate::norma81346::Livello;
+        let mut extra: Vec<(&str, String)> = Vec::new();
+        if let Some(v) = testo_param(p, "funzioneImpianto") {
+            extra.push(("FUNZIONE_IMPIANTO", Livello::Funzione.normalizza(&v)));
+        }
+        if let Some(v) = testo_param(p, "ubicazione") {
+            extra.push(("UBICAZIONE", Livello::Ubicazione.normalizza(&v)));
+        }
+        if let Some(v) = p.get("dissipazione").and_then(|v| v.as_f64().map(|x| x.to_string()).or_else(|| v.as_str().map(|t| t.trim().replace(',', ".")))) {
+            if !v.is_empty() && v.parse::<f64>().map_or(true, |x| !x.is_finite() || x < 0.0) {
+                return Err(errore(format!("Potenza dissipata non valida: {v}")));
+            }
+            extra.push(("DISSIPAZIONE", v));
+        }
+        if !extra.is_empty() {
+            crate::util::imposta_attributi(s, &h, &extra.iter().map(|(t, v)| (*t, v.as_str())).collect::<Vec<_>>())?;
+        }
     }
     // contattore e testine aggiuntive: si rifà lo specchietto
     if c.madre()

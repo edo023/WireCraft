@@ -64,7 +64,7 @@ pub struct Ingombro {
 
 /// Larghezza e altezza (mm) di un componente sulla guida, dal simbolo o dalle lettere della
 /// sigla; None per quello che non sta nel quadro (motori, pulsanti, sensori, lampade, valvole).
-fn misura(id: Option<&str>, prefisso: &str, poli: usize) -> Option<(f64, f64, u8)> {
+pub(crate) fn misura(id: Option<&str>, prefisso: &str, poli: usize) -> Option<(f64, f64, u8)> {
     let per_id = match id.unwrap_or("") {
         "qf1" => Some((18.0, 90.0)),
         "qf2" | "qd2" => Some((36.0, 90.0)),
@@ -118,7 +118,7 @@ fn misura(id: Option<&str>, prefisso: &str, poli: usize) -> Option<(f64, f64, u8
 }
 
 /// Il quadro di un oggetto appartiene a quello chiesto (vuoto = quadro di default).
-fn del_quadro(q: &str, quadro: &str, senza_quadro: bool) -> bool {
+pub(crate) fn del_quadro(q: &str, quadro: &str, senza_quadro: bool) -> bool {
     if q.trim().is_empty() { senza_quadro } else { q.trim().eq_ignore_ascii_case(quadro.trim()) }
 }
 

@@ -19,6 +19,7 @@ mod progetti;
 mod settaggi;
 mod ribbon;
 mod stampa;
+mod termico;
 mod traduttore;
 
 use cadcraft_engine::Session;

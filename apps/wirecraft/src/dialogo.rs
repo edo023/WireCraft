@@ -27,6 +27,10 @@ pub struct Dialogo {
     quadro: String,
     funzione1: String,
     funzione2: String,
+    /// Designazione CEI EN 81346 e potenza dissipata (W).
+    funzione_imp: String,
+    ubicazione: String,
+    dissipazione: String,
     /// Materiali: costruttore, codice, descrizione.
     materiali: Vec<[String; 3]>,
     cerca: String,
@@ -83,6 +87,9 @@ impl Dialogo {
             quadro: impostazioni::quadro_corrente().unwrap_or_default(),
             funzione1: String::new(),
             funzione2: String::new(),
+            funzione_imp: impostazioni::correnti().funzione,
+            ubicazione: impostazioni::correnti().ubicazione,
+            dissipazione: String::new(),
             materiali: Vec::new(),
             cerca: String::new(),
             risultati: archivio::cerca("", true, 50).unwrap_or_default(),
@@ -109,6 +116,9 @@ impl Dialogo {
             quadro: b.attributo("QUADRO").to_string(),
             funzione1: b.attributo("FUNZIONE1").to_string(),
             funzione2: b.attributo("FUNZIONE2").to_string(),
+            funzione_imp: b.attributo("FUNZIONE_IMPIANTO").to_string(),
+            ubicazione: b.attributo("UBICAZIONE").to_string(),
+            dissipazione: b.attributo("DISSIPAZIONE").to_string(),
             materiali,
             cerca: String::new(),
             risultati: archivio::cerca("", true, 50).unwrap_or_default(),
@@ -126,6 +136,7 @@ impl Dialogo {
         }
         let mut p = json!({
             "quadro": self.quadro.trim(), "funzione1": self.funzione1.trim(), "funzione2": self.funzione2.trim(),
+            "funzioneImpianto": self.funzione_imp.trim(), "ubicazione": self.ubicazione.trim(), "dissipazione": self.dissipazione.trim(),
             "costruttore": unisci(0), "tipo": unisci(1), "descrizione": unisci(2),
         });
         // la sigla proposta (o nessuna) si lascia calcolare alla posa
@@ -171,11 +182,20 @@ impl Dialogo {
                     ui.label("Quadro (+)");
                     ui.text_edit_singleline(&mut self.quadro);
                     ui.end_row();
+                    ui.label("Funzione (=)");
+                    ui.text_edit_singleline(&mut self.funzione_imp);
+                    ui.end_row();
+                    ui.label("Ubicazione (++)");
+                    ui.text_edit_singleline(&mut self.ubicazione);
+                    ui.end_row();
                     ui.label("Funzione 1");
                     ui.text_edit_singleline(&mut self.funzione1);
                     ui.end_row();
                     ui.label("Funzione 2");
                     ui.text_edit_singleline(&mut self.funzione2);
+                    ui.end_row();
+                    ui.label("Potenza dissipata (W)");
+                    ui.add(egui::TextEdit::singleline(&mut self.dissipazione).hint_text("stimata se vuota").desired_width(80.0));
                     ui.end_row();
                     if self.handle.is_none() {
                         ui.label("Riferimento contatti");

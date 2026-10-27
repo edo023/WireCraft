@@ -31,6 +31,8 @@ pub enum Azione {
     LayoutQuadro,
     /// Foratura della piastra del foglio corrente (CSV).
     Foratura,
+    /// Finestra "Sovratemperature" (calcolo termico del quadro).
+    Sovratemperature,
     Cross,
     /// Salto al collegato della selezione: madre, contatti, rimando corrispondente.
     Salta,
@@ -278,7 +280,7 @@ fn schede() -> Vec<Scheda> {
                 gruppo(
                     "Layout",
                     false,
-                    vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Pianta, "Topografia Impianto", ND), g(Icona::Tensioni, "Sovratemperature", ND)],
+                    vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Pianta, "Topografia Impianto", ND), g(Icona::Tensioni, "Sovratemperature", Sovratemperature)],
                 ),
                 gruppo(
                     "CEI EN 81346",

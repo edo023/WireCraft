@@ -197,7 +197,7 @@ pub fn disegna(s: &mut Session, t: &Tabella, tipo: &str, parametri: &Value, prim
 // ---------- le uscite ----------
 
 /// Tipi di uscita.
-pub const TIPI: [(&str, &str); 10] = [
+pub const TIPI: [(&str, &str); 11] = [
     ("indice", "Lista fogli"),
     ("distinta", "Distinta materiali"),
     ("morsettiere", "Morsettiere"),
@@ -208,6 +208,7 @@ pub const TIPI: [(&str, &str); 10] = [
     ("revisioni", "Legenda revisioni"),
     ("funzioni", "Legenda funzioni"),
     ("simboli", "Legenda simboli"),
+    ("termico", "Calcolo termico del quadro"),
 ];
 
 /// La tabella di un'uscita con i dati del disegno, e i titoli del foglio (due lingue).
@@ -451,6 +452,13 @@ pub fn tabella(s: &mut Session, tipo: &str, p: &Value) -> Result<(Tabella, &'sta
                 "Symbols Legend",
             ))
         }
+        "termico" => {
+            let quadro = if quadro.trim().is_empty() { crate::impostazioni::quadro_corrente().unwrap_or_default() } else { quadro.clone() };
+            let (d, e, voci) = crate::termico::calcolo(s, &quadro, p)?;
+            let righe = crate::termico::resoconto(&quadro, &d, &e, &voci).into_iter().map(|r| r.into_iter().map(Cella::T).collect()).collect();
+            let titolo = if quadro.is_empty() { "CALCOLO TERMICO \\ THERMAL CALCULATION".to_string() } else { format!("CALCOLO TERMICO QUADRO {quadro} \\ {quadro} THERMAL CALCULATION") };
+            Ok((Tabella { titolo, colonne: col(&[("Voce\nItem", 55.0), ("Valore\nValue", 50.0), ("Note\nNotes", 110.0)]), righe, altezza_riga: 6.0 }, "Calcolo termico", "Thermal Calculation"))
+        }
         _ => Err(errore(format!("Uscita sconosciuta: {tipo} ({})", TIPI.map(|t| t.0).join(", ")))),
     }
 }
@@ -462,6 +470,12 @@ pub fn uscita(s: &mut Session, tipo: &str, p: &Value, primo: Option<u32>) -> Res
     for k in ["quadro", "morsettiera"] {
         if let Some(v) = testo_param(p, k).filter(|v| !v.is_empty()) {
             parametri.insert(k.into(), json!(v));
+        }
+    }
+    // i dati dell'armadio del calcolo termico
+    for k in ["larghezza", "altezza", "profondita", "installazione", "materiale", "tEsterna", "tMassima", "tEsternaMin", "tMinima"] {
+        if let Some(v) = p.get(k).filter(|v| !v.is_null()) {
+            parametri.insert(k.into(), v.clone());
         }
     }
     disegna(s, &t, tipo, &Value::Object(parametri), primo, t0, t1)

@@ -18,6 +18,7 @@ use crate::navigatore;
 use crate::settaggi::FinestraSettaggi;
 use crate::ribbon::Azione;
 use crate::stampa::FinestraStampa;
+use crate::termico::FinestraTermico;
 use crate::traduttore::FinestraTraduttore;
 use serde_json::json;
 
@@ -54,6 +55,7 @@ pub struct Pannelli {
     cavi: FinestraCavi,
     plc: FinestraPlc,
     traduttore: FinestraTraduttore,
+    termico: FinestraTermico,
     /// Il disegno attivo (identità e percorso): quando cambia si cerca la sua commessa.
     disegno: Option<(u64, Option<String>)>,
     commessa: Option<String>,
@@ -120,6 +122,7 @@ impl Pannelli {
         self.cavi.mostra(cad, ui.ctx());
         self.plc.mostra(cad, ui.ctx());
         self.traduttore.mostra(cad, ui.ctx());
+        self.termico.mostra(cad, ui.ctx());
     }
 
     /// Esegue l'azione di un pulsante della barra a schede.
@@ -135,6 +138,7 @@ impl Pannelli {
             Azione::Cavi => self.cavi.apri(),
             Azione::Plc => self.plc.apri(),
             Azione::Traduttore => self.traduttore.apri(),
+            Azione::Sovratemperature => self.termico.apri(cad),
             Azione::GestioneMultifoglio => {
                 self.gestione.apri();
                 self.scheda = Scheda::Fogli;
