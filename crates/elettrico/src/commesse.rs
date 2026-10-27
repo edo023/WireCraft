@@ -400,7 +400,16 @@ fn run_elenco(_s: &mut Session, p: &Value) -> Result<Value> {
 
 fn run_nuova(_s: &mut Session, p: &Value) -> Result<Value> {
     let radice = testo_param(p, "radice").map(PathBuf::from).or_else(|| percorsi().into_iter().next()).ok_or_else(|| errore("Indicare la cartella delle commesse (radice)"))?;
+    // la configurazione scelta si legge prima di creare la cartella: un nome sbagliato non lascia
+    // una commessa a metà
+    let configurazione = match testo_param(p, "configurazione").filter(|n| !n.trim().is_empty()) {
+        Some(n) => Some(crate::impostazioni::configurazione(&n)?),
+        None => None,
+    };
     let c = nuova(&radice, &testo_param(p, "nome").unwrap_or_default(), &testo_param(p, "descrizione").unwrap_or_default(), &testo_param(p, "cliente").unwrap_or_default())?;
+    if let Some(imp) = configurazione {
+        crate::impostazioni::scrivi(&crate::impostazioni::file_commessa(&c.cartella), &imp)?;
+    }
     let mut r = json_commessa(&c);
     r["message"] = json!(format!("Commessa {} creata in {}", c.nome(), radice.display()));
     Ok(r)
@@ -525,7 +534,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     let spec = |id, label, menu, params, run| CommandSpec { id, label, menu, shortcut: None, aliases: &[], params, enabled: always, run, undoable: false, interactive: None, transparent: false };
     vec![
         spec("commesse.elenco", "Elenco commesse", &[], "{radice?: cartella (default le cartelle configurate)} → {commesse: [{nome, cartella, cliente, descrizione, multifogli}]}", run_elenco as cadcraft_engine::cmd::Run),
-        spec("commessa.nuova", "Nuovo Progetto", &[], "{nome, descrizione?, cliente?, radice?: cartella delle commesse}", run_nuova),
+        spec("commessa.nuova", "Nuovo Progetto", &[], "{nome, descrizione?, cliente?, radice?: cartella delle commesse, configurazione?: nome della configurazione da usare}", run_nuova),
         spec(
             "commessa.nuovomultifoglio",
             "Nuovo Multifoglio",

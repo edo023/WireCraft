@@ -21,9 +21,10 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 ## 27 ottobre 2026 (sera): dopo la pubblicazione
 
 - **Vai al Collegato** (`SALTA`): dal contatto alla sua madre, dalla madre ai suoi contatti uno dopo l'altro, da un rimando a quello corrispondente; cambia foglio, inquadra e seleziona, così ripetendo si torna indietro.
+- **Configurazioni con nome**: le impostazioni (siglatura, numerazione fili, conduttori, morsetti, alimentazioni) si salvano con un nome, per cliente o per tipo di lavoro, e si riusano in un altro progetto o alla creazione di un progetto nuovo. Esportazione e importazione su file `.ini`, anche dai settaggi di un altro CAD elettrico. Nella finestra Impostazioni, sezione Configurazioni.
 - Etichette di menu, barra a schede e finestre riscritte con parole nostre; comandi e scorciatoie invariati.
 
-Verificato: il salto dal contatto porta alla bobina sul suo foglio e ritorno; i contatti di una madre escono in ordine di foglio; un rimando porta al suo corrispondente, uno senza coppia non porta da nessuna parte.
+Verificato: il salto dal contatto porta alla bobina sul suo foglio e ritorno; i contatti di una madre escono in ordine di foglio; un rimando porta al suo corrispondente, uno senza coppia non porta da nessuna parte. Una configurazione usata in un progetto non ne cambia il quadro corrente; un nome sbagliato non lascia un progetto creato a metà.
 
 ## 27 ottobre 2026: traduttore, quadro, connettori, pubblicazione
 

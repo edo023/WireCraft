@@ -16,6 +16,8 @@ pub struct GestioneProgetti {
     multifoglio: Option<usize>,
     cerca: String,
     nuovo_progetto: Option<[String; 3]>,
+    /// Configurazione con nome per il progetto nuovo (vuota: le impostazioni in uso).
+    configurazione: String,
     nuovo_multifoglio: Option<[String; 4]>,
     copia: Option<String>,
     nuova_cartella: String,
@@ -224,6 +226,16 @@ impl GestioneProgetti {
                     ui.add(egui::TextEdit::singleline(&mut campi[k]).desired_width(320.0));
                     ui.end_row();
                 }
+                ui.label("Configurazione");
+                let nomi = elettrico::impostazioni::configurazioni();
+                let mostra = if self.configurazione.is_empty() { "impostazioni in uso".to_string() } else { self.configurazione.clone() };
+                egui::ComboBox::from_id_salt("ce_gp_conf").selected_text(mostra).width(320.0).show_ui(ui, |ui| {
+                    ui.selectable_value(&mut self.configurazione, String::new(), "impostazioni in uso");
+                    for n in nomi {
+                        ui.selectable_value(&mut self.configurazione, n.clone(), n);
+                    }
+                });
+                ui.end_row();
             });
             ui.horizontal(|ui| {
                 fatto = ui.button("Crea").clicked();
@@ -231,7 +243,7 @@ impl GestioneProgetti {
             });
         });
         if fatto {
-            let p = json!({"nome": campi[0].trim(), "descrizione": campi[1].trim(), "cliente": campi[2].trim(), "radice": commesse::percorsi().first().map(|p| p.to_string_lossy().to_string())});
+            let p = json!({"nome": campi[0].trim(), "descrizione": campi[1].trim(), "cliente": campi[2].trim(), "radice": commesse::percorsi().first().map(|p| p.to_string_lossy().to_string()), "configurazione": self.configurazione});
             let nome = campi[0].trim().to_string();
             if self.esegui(cad, "commessa.nuova", p) {
                 self.nuovo_progetto = None;

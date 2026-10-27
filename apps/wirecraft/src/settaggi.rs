@@ -13,6 +13,16 @@ enum Sezione {
     Conduttori,
     Morsetti,
     Alimentazioni,
+    Configurazioni,
+}
+
+/// Un'operazione sulle configurazioni con nome, eseguita dopo il disegno della finestra.
+enum SuConfigurazione {
+    Usa(String),
+    SalvaCome(String),
+    Elimina(String),
+    Esporta,
+    Importa,
 }
 
 #[derive(Default)]
@@ -22,6 +32,9 @@ pub struct FinestraSettaggi {
     bozza: Option<Impostazioni>,
     nomi: String,
     messaggio: Option<(bool, String)>,
+    /// Configurazione scelta nell'elenco e nome per salvarne una nuova.
+    configurazione: Option<String>,
+    nuovo_nome: String,
 }
 
 impl FinestraSettaggi {
@@ -40,6 +53,7 @@ impl FinestraSettaggi {
         let Some(mut b) = self.bozza.take() else { return };
         let mut aperta = true;
         let mut applica = false;
+        let mut azione: Option<SuConfigurazione> = None;
         egui::Window::new("Impostazioni").id(egui::Id::new("ce_settaggi")).open(&mut aperta).default_width(620.0).default_height(440.0).show(ctx, |ui| {
             let file = impostazioni::file().map_or_else(|| "impostazioni del programma (non salvate)".to_string(), |f| f.display().to_string());
             ui.label(egui::RichText::new(format!("File: {file}")).small());
@@ -53,6 +67,7 @@ impl FinestraSettaggi {
                         (Sezione::Conduttori, "Conduttori in uso"),
                         (Sezione::Morsetti, "Morsetti"),
                         (Sezione::Alimentazioni, "Alimentazioni"),
+                        (Sezione::Configurazioni, "Configurazioni"),
                     ] {
                         ui.selectable_value(&mut self.sezione, s, t);
                     }
@@ -137,6 +152,49 @@ impl FinestraSettaggi {
                         ui.label("Nomi proposti per le alimentazioni (un gruppo per riga, nomi separati da spazi):");
                         ui.add(egui::TextEdit::multiline(&mut self.nomi).desired_rows(10).desired_width(300.0));
                     }
+                    Sezione::Configurazioni => {
+                        ui.label(egui::RichText::new("Configurazioni con nome").strong());
+                        ui.label("Un insieme di impostazioni per cliente o tipo di lavoro, da riusare nei progetti nuovi. Quadro, funzione e ubicazione correnti restano quelli del progetto.");
+                        ui.add_space(4.0);
+                        let nomi = impostazioni::configurazioni();
+                        egui::ScrollArea::vertical().max_height(160.0).id_salt("ce_set_conf").show(ui, |ui| {
+                            if nomi.is_empty() {
+                                ui.label(egui::RichText::new("Nessuna configurazione salvata.").italics());
+                            }
+                            for n in &nomi {
+                                let scelta = self.configurazione.as_deref() == Some(n.as_str());
+                                if ui.selectable_label(scelta, n).clicked() {
+                                    self.configurazione = Some(n.clone());
+                                }
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            let c = self.configurazione.clone().filter(|c| nomi.contains(c));
+                            if ui.add_enabled(c.is_some(), egui::Button::new("Usa")).on_hover_text("Usa la configurazione scelta nel progetto aperto").clicked() {
+                                azione = c.clone().map(SuConfigurazione::Usa);
+                            }
+                            if ui.add_enabled(c.is_some(), egui::Button::new("Elimina")).clicked() {
+                                azione = c.map(SuConfigurazione::Elimina);
+                            }
+                        });
+                        ui.add_space(6.0);
+                        ui.horizontal(|ui| {
+                            ui.label("Nome");
+                            ui.add(egui::TextEdit::singleline(&mut self.nuovo_nome).desired_width(180.0).hint_text("es. Cliente Rossi"));
+                            if ui.add_enabled(!self.nuovo_nome.trim().is_empty(), egui::Button::new("Salva come configurazione")).on_hover_text("Applica le impostazioni di questa finestra e le salva con questo nome").clicked() {
+                                azione = Some(SuConfigurazione::SalvaCome(self.nuovo_nome.trim().to_string()));
+                            }
+                        });
+                        ui.add_space(6.0);
+                        ui.horizontal(|ui| {
+                            if ui.button("Esporta su file…").clicked() {
+                                azione = Some(SuConfigurazione::Esporta);
+                            }
+                            if ui.button("Importa da file…").on_hover_text("Un file di impostazioni di WireCraft o i settaggi di un altro CAD elettrico (.ini)").clicked() {
+                                azione = Some(SuConfigurazione::Importa);
+                            }
+                        });
+                    }
                 });
             });
             ui.separator();
@@ -152,13 +210,42 @@ impl FinestraSettaggi {
                 }
             });
         });
-        if applica {
+        if applica || matches!(azione, Some(SuConfigurazione::SalvaCome(_) | SuConfigurazione::Esporta)) {
             b.nomi_alimentazioni = self.nomi.lines().map(str::trim).filter(|l| !l.is_empty()).map(str::to_string).collect();
             let p = impostazioni::a_json(&b);
             self.messaggio = Some(match cad.run("impostazioni", p) {
                 Ok(_) => (true, "Impostazioni salvate".to_string()),
                 Err(e) => (false, e.to_string()),
             });
+        }
+        if let Some(a) = azione {
+            let esito = match a {
+                SuConfigurazione::Usa(n) => cad.run("configurazione.usa", serde_json::json!({"nome": n})),
+                SuConfigurazione::SalvaCome(n) => cad.run("configurazione.salva", serde_json::json!({"nome": n})).inspect(|_| {
+                    self.configurazione = Some(n.clone());
+                    self.nuovo_nome.clear();
+                }),
+                SuConfigurazione::Elimina(n) => cad.run("configurazione.elimina", serde_json::json!({"nome": n})),
+                SuConfigurazione::Esporta => match rfd::FileDialog::new().add_filter("Impostazioni", &["ini"]).set_file_name("impostazioni.ini").save_file() {
+                    Some(f) => cad.run("configurazione.esporta", serde_json::json!({"file": f.to_string_lossy()})),
+                    None => Ok(serde_json::Value::Null),
+                },
+                SuConfigurazione::Importa => match rfd::FileDialog::new().add_filter("Impostazioni", &["ini"]).pick_file() {
+                    Some(f) => cad.run("configurazione.importa", serde_json::json!({"file": f.to_string_lossy()})),
+                    None => Ok(serde_json::Value::Null),
+                },
+            };
+            match esito {
+                Ok(r) => {
+                    if let Some(m) = r.get("message").and_then(serde_json::Value::as_str) {
+                        self.messaggio = Some((true, m.to_string()));
+                    }
+                    // la finestra mostra le impostazioni che ora sono in uso
+                    b = impostazioni::correnti();
+                    self.nomi = b.nomi_alimentazioni.join("\n");
+                }
+                Err(e) => self.messaggio = Some((false, e.to_string())),
+            }
         }
         self.bozza = Some(b);
         self.aperta = aperta;

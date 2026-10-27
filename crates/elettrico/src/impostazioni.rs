@@ -461,6 +461,83 @@ pub fn carica_generali(file: &Path) -> Impostazioni {
     imp
 }
 
+// ---------- configurazioni con nome ----------
+
+static CONFIGURAZIONI: Mutex<Option<PathBuf>> = Mutex::new(None);
+
+/// Imposta la cartella delle configurazioni con nome: una per cliente o per tipo di lavoro
+/// (siglatura, numerazione dei fili, conduttori, morsetti), un file `<nome>.ini` ciascuna.
+pub fn imposta_configurazioni(cartella: &Path) {
+    if let Ok(mut g) = CONFIGURAZIONI.lock() {
+        *g = Some(cartella.to_path_buf());
+    }
+}
+
+fn cartella_configurazioni() -> Result<PathBuf> {
+    CONFIGURAZIONI.lock().ok().and_then(|g| g.clone()).ok_or_else(|| errore("Cartella delle configurazioni non impostata"))
+}
+
+/// Il file della configurazione `nome` (un nome valido anche come nome di file).
+fn file_configurazione(nome: &str) -> Result<PathBuf> {
+    let n = nome.trim();
+    if n.is_empty() || n.starts_with('.') || n.chars().any(|c| matches!(c, '/' | '\\' | ':' | '*' | '?' | '"' | '<' | '>' | '|') || c.is_control()) {
+        return Err(errore(format!("Nome di configurazione non valido: \"{nome}\"")));
+    }
+    Ok(cartella_configurazioni()?.join(format!("{n}.ini")))
+}
+
+/// I nomi delle configurazioni salvate, in ordine alfabetico.
+pub fn configurazioni() -> Vec<String> {
+    let Ok(dir) = cartella_configurazioni() else { return Vec::new() };
+    let mut v: Vec<String> = std::fs::read_dir(dir)
+        .into_iter()
+        .flatten()
+        .flatten()
+        .map(|e| e.path())
+        .filter(|p| p.extension().is_some_and(|x| x.eq_ignore_ascii_case("ini")))
+        .filter_map(|p| p.file_stem().map(|s| s.to_string_lossy().to_string()))
+        .collect();
+    v.sort_by_key(|n| n.to_lowercase());
+    v
+}
+
+/// Le impostazioni di un file INI: nostro o con i settaggi del CAD elettrico d'origine.
+pub fn da_file(file: &Path) -> Result<Impostazioni> {
+    let b = std::fs::read(file).map_err(|e| errore(format!("{}: {e}", file.display())))?;
+    let testo = String::from_utf8(b.clone()).unwrap_or_else(|_| b.iter().map(|&c| char::from(c)).collect());
+    Ok(if leggi_ini(&testo).contains_key("siglatura_simboli") { da_ini_origine(&testo) } else { da_ini(&testo) })
+}
+
+/// Le impostazioni della configurazione `nome`.
+pub fn configurazione(nome: &str) -> Result<Impostazioni> {
+    let f = file_configurazione(nome)?;
+    if !f.exists() {
+        return Err(errore(format!("Configurazione \"{}\" non trovata", nome.trim())));
+    }
+    da_file(&f)
+}
+
+/// Salva le impostazioni in uso come configurazione `nome` (sostituisce quella con lo stesso nome).
+pub fn salva_configurazione(nome: &str) -> Result<PathBuf> {
+    let f = file_configurazione(nome)?;
+    scrivi(&f, &correnti())?;
+    Ok(f)
+}
+
+/// Usa le impostazioni `nuove` al posto di quelle in uso, tranne quadro, funzione e ubicazione
+/// correnti, che sono del progetto aperto; si salvano nel file in uso (la commessa).
+pub fn applica(nuove: Impostazioni) -> Result<()> {
+    cambia(|i| {
+        let (quadro, funzione, ubicazione) = (std::mem::take(&mut i.quadro), std::mem::take(&mut i.funzione), std::mem::take(&mut i.ubicazione));
+        *i = Impostazioni { quadro, funzione, ubicazione, ..nuove };
+    })
+}
+
+pub fn elimina_configurazione(nome: &str) -> Result<()> {
+    let f = file_configurazione(nome)?;
+    std::fs::remove_file(&f).map_err(|e| errore(format!("{}: {e}", f.display())))
+}
+
 // ---------- comando ----------
 
 fn conduttore_json(c: &Conduttore) -> Value {
@@ -557,10 +634,77 @@ fn run_impostazioni(_s: &mut Session, p: &Value) -> Result<Value> {
     Ok(r)
 }
 
+fn nome_param(p: &Value) -> Result<String> {
+    crate::util::testo_param(p, "nome").filter(|n| !n.trim().is_empty()).ok_or_else(|| errore("Indicare il nome della configurazione"))
+}
+
+fn run_configurazioni(_s: &mut Session, _p: &Value) -> Result<Value> {
+    Ok(json!({"configurazioni": configurazioni(), "cartella": cartella_configurazioni().ok().map(|c| c.to_string_lossy().to_string())}))
+}
+
+fn run_salva(_s: &mut Session, p: &Value) -> Result<Value> {
+    let nome = nome_param(p)?;
+    let f = salva_configurazione(&nome)?;
+    Ok(json!({"file": f.to_string_lossy(), "message": format!("Configurazione \"{}\" salvata", nome.trim())}))
+}
+
+fn run_usa(_s: &mut Session, p: &Value) -> Result<Value> {
+    let nome = nome_param(p)?;
+    applica(configurazione(&nome)?)?;
+    let mut r = a_json(&correnti());
+    r["message"] = json!(format!("Configurazione \"{}\" in uso", nome.trim()));
+    Ok(r)
+}
+
+fn run_elimina(_s: &mut Session, p: &Value) -> Result<Value> {
+    let nome = nome_param(p)?;
+    elimina_configurazione(&nome)?;
+    Ok(json!({"message": format!("Configurazione \"{}\" eliminata", nome.trim())}))
+}
+
+fn run_esporta(_s: &mut Session, p: &Value) -> Result<Value> {
+    let f = crate::util::testo_param(p, "file").map(PathBuf::from).ok_or_else(|| errore("Indicare il file"))?;
+    scrivi(&f, &correnti())?;
+    Ok(json!({"file": f.to_string_lossy(), "message": format!("Impostazioni esportate in {}", f.display())}))
+}
+
+/// Importa un file di impostazioni (nostro o del CAD elettrico d'origine): con `nome` lo salva
+/// tra le configurazioni, senza lo applica subito.
+fn run_importa(_s: &mut Session, p: &Value) -> Result<Value> {
+    let f = crate::util::testo_param(p, "file").map(PathBuf::from).ok_or_else(|| errore("Indicare il file"))?;
+    let imp = da_file(&f)?;
+    match crate::util::testo_param(p, "nome").filter(|n| !n.trim().is_empty()) {
+        Some(nome) => {
+            let dest = file_configurazione(&nome)?;
+            scrivi(&dest, &imp)?;
+            Ok(json!({"file": dest.to_string_lossy(), "message": format!("Configurazione \"{}\" importata", nome.trim())}))
+        }
+        None => {
+            applica(imp)?;
+            let mut r = a_json(&correnti());
+            r["message"] = json!(format!("Impostazioni importate da {}", f.display()));
+            Ok(r)
+        }
+    }
+}
+
 pub fn comandi() -> Vec<CommandSpec> {
-    vec![CommandSpec {
+    let spec = |id, label, menu, params, run| CommandSpec { id, label, menu, shortcut: None, aliases: &[], params, enabled: always, run, undoable: false, interactive: None, transparent: false };
+    vec![
+        impostazioni_spec(),
+        spec("configurazioni", "Configurazioni", &[], "{} → {configurazioni: [nomi], cartella}", run_configurazioni as cadcraft_engine::cmd::Run),
+        spec("configurazione.salva", "Salva Configurazione", &["Elettrico", "Configurazioni", "Salva con nome…"], "{nome} — le impostazioni in uso come configurazione con nome", run_salva),
+        spec("configurazione.usa", "Usa Configurazione", &["Elettrico", "Configurazioni", "Usa…"], "{nome} — tutto tranne quadro, funzione e ubicazione correnti", run_usa),
+        spec("configurazione.elimina", "Elimina Configurazione", &["Elettrico", "Configurazioni", "Elimina…"], "{nome}", run_elimina),
+        spec("configurazione.esporta", "Esporta Impostazioni", &["Elettrico", "Configurazioni", "Esporta su file…"], "{file}", run_esporta),
+        spec("configurazione.importa", "Importa Impostazioni", &["Elettrico", "Configurazioni", "Importa da file…"], "{file, nome?} — senza nome le applica, con nome le salva tra le configurazioni", run_importa),
+    ]
+}
+
+fn impostazioni_spec() -> CommandSpec {
+    CommandSpec {
         id: "impostazioni",
-        label: "SETTAGGI",
+        label: "Impostazioni",
         menu: &["Elettrico", "Impostazioni…"],
         shortcut: None,
         aliases: &["settaggi"],
@@ -570,7 +714,7 @@ pub fn comandi() -> Vec<CommandSpec> {
         undoable: false,
         interactive: None,
         transparent: false,
-    }]
+    }
 }
 
 #[cfg(test)]

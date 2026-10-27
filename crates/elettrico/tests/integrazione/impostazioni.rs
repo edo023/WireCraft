@@ -75,3 +75,61 @@ fn modalita_di_siglatura_e_file_della_commessa() {
     elettrico::impostazioni::usa(None, elettrico::impostazioni::Impostazioni::default());
     let _ = std::fs::remove_dir_all(&dir);
 }
+
+#[test]
+fn configurazioni_con_nome_per_cliente() {
+    let _uno_alla_volta = crate::uno_alla_volta();
+    crate::registra();
+    use elettrico::impostazioni::{self, Impostazioni, Siglatura};
+    let dir = std::env::temp_dir().join(format!("cadeo_configurazioni_{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    impostazioni::imposta_configurazioni(&dir.join("Configurazioni"));
+    let commessa = dir.join("commessa");
+    std::fs::create_dir_all(&commessa).unwrap();
+    impostazioni::carica_commessa(&commessa);
+    let mut s = Session::empty();
+    s.new_drawing(true);
+
+    // la configurazione di un cliente: siglatura incrementale, fili con prefisso
+    esegui(&mut s, "impostazioni", json!({"siglatura": "incrementale", "prefissoFili": "W", "quadro": "+QG"}));
+    esegui(&mut s, "configurazione.salva", json!({"nome": "Cliente Rossi"}));
+    // un'altra, con i settaggi di partenza
+    esegui(&mut s, "impostazioni", json!({"siglatura": "posizionale", "prefissoFili": ""}));
+    esegui(&mut s, "configurazione.salva", json!({"nome": "base"}));
+    assert_eq!(esegui(&mut s, "configurazioni", json!({}))["configurazioni"], json!(["base", "Cliente Rossi"]));
+
+    // usarla cambia tutto tranne quadro, funzione e ubicazione del progetto
+    esegui(&mut s, "impostazioni", json!({"quadro": "+BM"}));
+    esegui(&mut s, "configurazione.usa", json!({"nome": "Cliente Rossi"}));
+    let imp = impostazioni::correnti();
+    assert_eq!((imp.siglatura, imp.prefisso_fili.as_str(), imp.quadro.as_str()), (Siglatura::Incrementale, "W", "+BM"));
+    // ed è salvata nella commessa aperta
+    assert_eq!(impostazioni::carica_commessa(&commessa).siglatura, Siglatura::Incrementale);
+
+    // nomi non validi e configurazioni che non esistono
+    assert!(s.execute("configurazione.salva", &json!({"nome": "../fuori"})).is_err());
+    assert!(s.execute("configurazione.usa", &json!({"nome": "Nessuno"})).is_err());
+
+    // esporta su file e reimporta con un nome
+    let file = dir.join("esportate.ini");
+    esegui(&mut s, "configurazione.esporta", json!({"file": file.to_string_lossy()}));
+    esegui(&mut s, "configurazione.importa", json!({"file": file.to_string_lossy(), "nome": "Copia"}));
+    assert_eq!(impostazioni::configurazione("Copia").unwrap().prefisso_fili, "W");
+    // i settaggi del CAD elettrico d'origine si importano allo stesso modo
+    let origine = dir.join("Spac_cfg.ini");
+    std::fs::write(&origine, "[Siglatura_Simboli]\nTipo_Siglatura=posiz\n").unwrap();
+    esegui(&mut s, "configurazione.importa", json!({"file": origine.to_string_lossy()}));
+    assert_eq!(impostazioni::correnti().siglatura, Siglatura::Posizionale);
+
+    // un progetto nuovo nasce con la configurazione scelta
+    let c = esegui(&mut s, "commessa.nuova", json!({"radice": dir.to_string_lossy(), "nome": "Impianto Rossi", "configurazione": "Cliente Rossi"}));
+    let cartella = std::path::PathBuf::from(c["cartella"].as_str().unwrap());
+    assert_eq!(impostazioni::da_file(&impostazioni::file_commessa(&cartella)).unwrap().siglatura, Siglatura::Incrementale);
+    assert!(s.execute("commessa.nuova", &json!({"radice": dir.to_string_lossy(), "nome": "Altro", "configurazione": "Nessuno"})).is_err());
+    assert!(!dir.join("Altro").exists(), "con una configurazione sbagliata la commessa non si crea");
+
+    esegui(&mut s, "configurazione.elimina", json!({"nome": "base"}));
+    assert_eq!(impostazioni::configurazioni(), ["Cliente Rossi", "Copia"]);
+    impostazioni::usa(None, Impostazioni::default());
+    let _ = std::fs::remove_dir_all(&dir);
+}

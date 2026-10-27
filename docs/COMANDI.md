@@ -12,8 +12,10 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 
 | Comando | Cosa fa |
 |---|---|
-| `COMMESSA.NUOVA`, `COMMESSA.NUOVOMULTIFOGLIO`, `COMMESSA.APRI`, `COMMESSA.MODIFICA`, `COMMESSA.COPIA`, `COMMESSE.ELENCO` | gestione dei progetti |
+| `COMMESSA.NUOVA`, `COMMESSA.NUOVOMULTIFOGLIO`, `COMMESSA.APRI`, `COMMESSA.MODIFICA`, `COMMESSA.COPIA`, `COMMESSE.ELENCO` | gestione dei progetti | `COMMESSA.NUOVA` accetta `configurazione` per partire dalle impostazioni di un cliente. |
 | `IMPOSTAZIONI` (`SETTAGGI`) | siglatura, numerazione fili, conduttori, quadro/funzione/ubicazione correnti, morsetti, nomi delle alimentazioni |
+| `CONFIGURAZIONE.SALVA`, `.USA`, `.ELIMINA`, `CONFIGURAZIONI` | configurazioni con nome (una per cliente): salva le impostazioni in uso, usale in un altro progetto (quadro, funzione e ubicazione correnti restano), elenco |
+| `CONFIGURAZIONE.ESPORTA`, `.IMPORTA` | impostazioni su file `.ini` e ritorno; si importano anche i settaggi di un altro CAD elettrico |
 
 ### Fogli (menu Fogli)
 

@@ -216,6 +216,7 @@ fn main() -> eframe::Result {
                     log::warn!("dizionario: {e}");
                 }
                 elettrico::multifoglio::imposta_libreria(&dir.join("Fogli memorizzati"));
+                elettrico::impostazioni::imposta_configurazioni(&dir.join("Configurazioni"));
                 prepara_commesse(&dir.join("percorsi-commesse.txt"));
                 elettrico::impostazioni::carica_generali(&dir.join("impostazioni.ini"));
                 let support = dir.join("support");
