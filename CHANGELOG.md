@@ -10,10 +10,6 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 - **Esportazione Excel** delle liste; editor di morsettiera avanzato (ponticelli, multilivello).
 - **Installer per Windows** e release con l'eseguibile pronto.
 
-### Problemi noti
-
-- Nei DWG creati da altri programmi CADCraft riempie i contorni "riquadro di testo" dei tratteggi e disegna i testi delle tabelle (`TABLE`) con l'altezza dello stile invece di quella delle celle. Da correggere in CADCraft.
-
 ## 27 ottobre 2026 (sera): dopo la pubblicazione
 
 - **Vai al Collegato** (`SALTA`): dal contatto alla sua madre, dalla madre ai suoi contatti uno dopo l'altro, da un rimando a quello corrispondente; cambia foglio, inquadra e seleziona, così ripetendo si torna indietro.
@@ -23,6 +19,7 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 - **Loop diagram** (`USCITA {tipo: loop}`, `LOOPDIAGRAM`): per ogni ingresso e uscita dei PLC il percorso fino al dispositivo in campo, attraverso morsetti, cavi e rimandi su altri fogli, con i numeri dei fili e l'altro capo del dispositivo; i bit collegati direttamente a una linea di alimentazione risultano "potenziale +24V". Fogli a tre zone (campo, quadro, PLC) o tabella, aggiornabili.
 - **Tensioni e fili colorati**: tabella dei potenziali con tensione e colore del conduttore (IEC 60757; predefiniti da CEI EN 60445 e 60204-1). Le reti senza conduttore specializzato prendono il colore del loro potenziale, anche nella tabella di cablaggio; `COLORAFILI` colora i fili del disegno; la stampa "fili colorati" tiene i fili a colori e mette in nero tutto il resto.
 - **Estrazione targhette** (`TARGHETTE`): componenti (sigla e funzione), fili (una per capo collegato), morsetti (con la testata della morsettiera), cavi (una per estremità), per quadro e in ordine naturale, in CSV per la stampante. Scheda Output, gruppo Targhette.
+- **Lettura dei DWG di altri programmi** (patch a CADCraft in `patches/cadcraft`): i contorni "riquadro di testo" dei tratteggi non si riempiono più (nei cartigli comparivano rettangoli pieni sopra i campi), e le tabelle riprendono l'altezza dei testi delle celle dal disegno della tabella stessa (prima uscivano enormi e sovrapposte).
 - Etichette di menu, barra a schede e finestre riscritte con parole nostre; comandi e scorciatoie invariati.
 
 Verificato: il salto dal contatto porta alla bobina sul suo foglio e ritorno; i contatti di una madre escono in ordine di foglio; un rimando porta al suo corrispondente, uno senza coppia non porta da nessuna parte. Una configurazione usata in un progetto non ne cambia il quadro corrente; un nome sbagliato non lascia un progetto creato a metà. Fra box dello stesso tipo uno dentro l'altro vale il più piccolo; un componente spostato in un altro box prende il nuovo quadro con Aggiorna Liste e Tabelle.
