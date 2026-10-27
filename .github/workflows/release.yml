@@ -1,0 +1,59 @@
+# Compila wirecraft.exe per Windows e lo pubblica in una release.
+# Parte con un tag v* (git tag v0.2.0 && git push origin v0.2.0) o a mano da Actions → Release →
+# Run workflow (in quel caso lo zip resta tra gli artefatti della corsa, senza release).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: CADCraft con i ganci di WireCraft
+        shell: bash
+        run: |
+          BASE=$(cat patches/cadcraft/BASE)
+          git -C vendor/cadcraft checkout -q -B cadeo-hooks "$BASE"
+          git -C vendor/cadcraft -c user.name=ci -c user.email=ci@localhost am -q --3way "$PWD"/patches/cadcraft/*.patch
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Test
+        run: cargo test --release -p elettrico
+
+      - name: Compila
+        run: cargo build --release -p wirecraft
+
+      - name: Pacchetto
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist/WireCraft | Out-Null
+          Copy-Item target/release/wirecraft.exe dist/WireCraft/
+          Copy-Item README.md, CHANGELOG.md, LICENSE-MIT, LICENSE-APACHE dist/WireCraft/
+          Compress-Archive -Path dist/WireCraft -DestinationPath wirecraft-windows-x64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wirecraft-windows-x64
+          path: wirecraft-windows-x64.zip
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" wirecraft-windows-x64.zip \
+            --title "WireCraft $GITHUB_REF_NAME" \
+            --notes "WireCraft per Windows a 64 bit: scompatta lo zip e avvia wirecraft.exe. Le novità sono nel CHANGELOG."
