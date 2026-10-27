@@ -1,0 +1,2 @@
+# Le patch per CADCraft si applicano con git am: niente conversione dei fine riga
+*.patch -text
