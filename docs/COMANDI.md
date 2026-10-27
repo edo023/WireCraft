@@ -40,6 +40,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `EDITASIMBOLO` (`XS`), `CANCELLASIMBOLO`, `SPOSTASIMBOLO` | modifica, cancella e sposta mantenendo i collegamenti |
 | `SIGLECOMPONENTI` | rinumera le sigle secondo la siglatura dei settaggi e aggiorna i contatti |
 | `CROSSREFERENCE` | dove sta la madre di ogni contatto, specchietti, rimandi; elenca i problemi |
+| `SALTA` (Vai al Collegato) | dal contatto alla madre, dalla madre ai suoi contatti, da un rimando al corrispondente: cambia foglio, inquadra e seleziona |
 | `NUMERAFILI` (automatica), `NUMERAFILO` (manuale), `BLOCCAFILI`, `LISTANUMERIFILI` | numerazione dei fili |
 | `CONDUTTORE` | specializza il conduttore (sezione, colore, codice) dei fili toccati |
 | `MORSETTI`, `MORSETTIERA` | morsetti su una linea che attraversa i fili; morsettiera in tabella o CSV |

@@ -43,6 +43,8 @@ pub struct Pannelli {
     morsettiera: String,
     dialogo: Option<Dialogo>,
     edita_xs: Option<EditaXs>,
+    /// Giro tra i contatti di una madre con "Vai al Collegato": (madre, contatti, posizione).
+    giro: Option<(String, Vec<String>, usize)>,
     materiali: SchedaMateriali,
     stampa: FinestraStampa,
     gestione: GestioneMultifoglio,
@@ -141,6 +143,7 @@ impl Pannelli {
                 self.cross = Some(navigatore::verifica(cad));
                 self.scheda = Scheda::Cross;
             }
+            Azione::Salta => self.salta(cad),
             Azione::ArchivioMateriali => self.scheda = Scheda::Materiali,
             Azione::LibreriaSimboli => self.scheda = Scheda::Simboli,
             Azione::Edita => self.edita_selezionato(cad),
@@ -243,6 +246,40 @@ impl Pannelli {
 
     /// Apre la finestra di modifica per l'oggetto selezionato: un componente (Edita Simbolo)
     /// oppure un morsetto, il numero di un filo o un rimando (Edita Fili e Morsetti).
+    /// Vai al Collegato: dal contatto alla madre, dalla madre al primo contatto, tra rimandi.
+    /// Ripetuto su un contatto raggiunto dalla madre passa al contatto seguente e, dopo
+    /// l'ultimo, torna alla madre.
+    fn salta(&mut self, cad: &mut CadApp) {
+        let scelto = cad.session.selection().first().map(|h| h.hex());
+        // nel giro: il contatto seguente della stessa madre; dopo l'ultimo il salto dalla
+        // selezione (il contatto) riporta alla madre
+        let giro = self.giro.take().filter(|(_, contatti, k)| scelto.as_ref().is_some_and(|h| contatti.get(*k).is_some_and(|c| c.eq_ignore_ascii_case(h))));
+        let params = match &giro {
+            Some((madre, contatti, k)) if k + 1 < contatti.len() => json!({"handle": madre, "indice": k + 1}),
+            _ => json!({}),
+        };
+        match cad.run("salta", params) {
+            Ok(r) => {
+                let arrivi: Vec<String> = r["arrivi"].as_array().into_iter().flatten().filter_map(|a| a["handle"].as_str().map(str::to_string)).collect();
+                self.giro = match giro {
+                    Some((madre, contatti, k)) if k + 1 < contatti.len() => Some((madre, contatti, k + 1)),
+                    Some(_) => None,
+                    None if arrivi.len() > 1 => Some((r["da"].as_str().unwrap_or_default().to_string(), arrivi, 0)),
+                    None => None,
+                };
+                let posizione = self.giro.as_ref().map(|g| format!(" – {} di {}, ancora per il seguente", g.2 + 1, g.1.len())).unwrap_or_default();
+                match (r["scelto"]["descrizione"].as_str(), r["scelto"]["riferimento"].as_str()) {
+                    (Some(d), Some(rif)) => cad.set_status(format!("{d} in {rif}{posizione}")),
+                    _ => cad.set_status("Nessun elemento collegato"),
+                }
+            }
+            Err(e) => {
+                self.giro = None;
+                cad.set_status(e);
+            }
+        }
+    }
+
     fn edita_selezionato(&mut self, cad: &mut CadApp) {
         let scelti: Vec<String> = cad.session.selection().iter().map(|h| h.hex()).collect();
         if let Some(d) = scelti.iter().find_map(|h| Dialogo::modifica(cad, h)) {
@@ -402,6 +439,13 @@ impl Pannelli {
         if ui.add_sized([ui.available_width(), 22.0], egui::Button::new("Cross Reference")).clicked() {
             self.cross = Some(navigatore::verifica(cad));
             self.scheda = Scheda::Cross;
+        }
+        if ui
+            .add_sized([ui.available_width(), 22.0], egui::Button::new("Vai al Collegato"))
+            .on_hover_text("Dal contatto alla madre, dalla madre ai suoi contatti, da un rimando al corrispondente")
+            .clicked()
+        {
+            self.salta(cad);
         }
         if ui.add_sized([ui.available_width(), 22.0], egui::Button::new("Distinta materiali (CSV)…")).clicked()
             && let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).set_file_name("distinta materiali.csv").save_file()

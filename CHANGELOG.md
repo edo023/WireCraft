@@ -18,6 +18,13 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 
 - Nei DWG creati da altri programmi CADCraft riempie i contorni "riquadro di testo" dei tratteggi e disegna i testi delle tabelle (`TABLE`) con l'altezza dello stile invece di quella delle celle. Da correggere in CADCraft.
 
+## 27 ottobre 2026 (sera): dopo la pubblicazione
+
+- **Vai al Collegato** (`SALTA`): dal contatto alla sua madre, dalla madre ai suoi contatti uno dopo l'altro, da un rimando a quello corrispondente; cambia foglio, inquadra e seleziona, così ripetendo si torna indietro.
+- Etichette di menu, barra a schede e finestre riscritte con parole nostre; comandi e scorciatoie invariati.
+
+Verificato: il salto dal contatto porta alla bobina sul suo foglio e ritorno; i contatti di una madre escono in ordine di foglio; un rimando porta al suo corrispondente, uno senza coppia non porta da nessuna parte.
+
 ## 27 ottobre 2026: traduttore, quadro, connettori, pubblicazione
 
 - **Traduttore**: dizionario CSV in cinque lingue (IT, EN, DE, FR, ES) con le frasi frequenti degli schemi di macchine e quadri. Il comando `TRADUCI` rende bilingue lo schema (funzioni dei componenti, titoli dei fogli, descrizioni di colonna) ed elenca le frasi senza traduzione. Una frase scritta in maiuscolo resta in maiuscolo.

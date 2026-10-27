@@ -24,6 +24,7 @@ pub mod multifoglio;
 pub mod numerazione;
 pub mod plc;
 pub mod revisioni;
+pub mod salto;
 pub mod siglatura;
 pub mod simboli;
 pub mod specchietto;
@@ -59,6 +60,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(edita::comandi());
     v.extend(traduttore::comandi());
     v.extend(layout::comandi());
+    v.extend(salto::comandi());
     v
 }
 

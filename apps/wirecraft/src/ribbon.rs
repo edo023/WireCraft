@@ -32,6 +32,8 @@ pub enum Azione {
     /// Foratura della piastra del foglio corrente (CSV).
     Foratura,
     Cross,
+    /// Salto al collegato della selezione: madre, contatti, rimando corrispondente.
+    Salta,
     ArchivioMateriali,
     LibreriaSimboli,
     Edita,
@@ -155,7 +157,7 @@ fn schede() -> Vec<Scheda> {
                         ]),
                     ],
                 ),
-                gruppo("Cross", false, vec![g(Icona::Cross, "Cross Reference", Cross)]),
+                gruppo("Cross", false, vec![g(Icona::Cross, "Cross Reference", Cross), g(Icona::RimandoColl, "Vai al Collegato", Salta)]),
                 gruppo("Traduttore", false, vec![g(Icona::Legenda, "Traduttore", Traduttore)]),
                 gruppo(
                     "Distinta",

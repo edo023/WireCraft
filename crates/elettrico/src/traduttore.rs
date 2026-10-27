@@ -317,9 +317,11 @@ enum Scrittura {
     Titolo(u32, String, String),
 }
 
+/// Come scrivere la traduzione di un testo.
+type Scrivi = Box<dyn Fn(&str) -> Scrittura>;
+
 /// I testi traducibili del progetto, con il modo di scrivere la traduzione.
-fn testi(s: &mut Session) -> Result<Vec<(Testo, Box<dyn Fn(&str) -> Scrittura>)>> {
-    type Scrivi = Box<dyn Fn(&str) -> Scrittura>;
+fn testi(s: &mut Session) -> Result<Vec<(Testo, Scrivi)>> {
     let mut v: Vec<(Testo, Scrivi)> = Vec::new();
     for c in siglatura::componenti(s)? {
         let f1 = c.blocco.attributo("FUNZIONE1").trim().to_string();
@@ -481,7 +483,7 @@ mod tests {
 
     #[test]
     fn legge_il_dizionario_e_allinea_le_righe() {
-        let (l, f) = leggi_csv("it;en;de\nPOMPA;PUMP\n\n\"MARCIA; AVANTI\";FORWARD;VORWÄRTS\n").unwrap();
+        let (l, f) = leggi_csv("it;en;de\nPOMPA;PUMP\n\n\"MARCIA; AVANTI\";FORWARD;VORWÄRTS\n").unwrap_or_default();
         assert_eq!(l, ["IT", "EN", "DE"]);
         assert_eq!(f, vec![vec!["POMPA".to_string(), "PUMP".into(), String::new()], vec!["MARCIA; AVANTI".into(), "FORWARD".into(), "VORWÄRTS".into()]]);
         assert!(leggi_csv("solo\nPOMPA").is_err());

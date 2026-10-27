@@ -577,7 +577,7 @@ impl Rimando {
 /// prende il primo arrivo libero della stessa linea nei fogli seguenti; se non ce n'è, il più
 /// vicino nei fogli precedenti; per ultimo, uno sullo stesso foglio. Restituisce le coppie
 /// (indice partenza, indice arrivo).
-fn abbina(tutti: &[Rimando]) -> Vec<(usize, usize)> {
+pub(crate) fn abbina(tutti: &[Rimando]) -> Vec<(usize, usize)> {
     let mut partenze: Vec<usize> = (0..tutti.len()).filter(|&i| tutti[i].partenza).collect();
     let ordine = |i: &usize| {
         let r = &tutti[*i];

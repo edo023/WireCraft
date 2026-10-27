@@ -15,6 +15,7 @@ mod libreria;
 mod multifoglio;
 mod numerazione;
 mod revisioni;
+mod salto;
 mod simboli;
 mod stampa;
 mod traduttore;
