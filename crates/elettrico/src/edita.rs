@@ -44,7 +44,7 @@ pub fn riconosci(s: &mut Session, handle: &str) -> Result<(Tipo, Inserito)> {
         Tipo::Bit
     } else if pres == "M" || pres.starts_with('F') || (!b.attributo("NOME").is_empty() && pres.is_empty()) {
         Tipo::Componente
-    } else if nome == morsetti::BLOCCO_MORSETTO || nome.starts_with("_MORS") {
+    } else if nome == morsetti::BLOCCO_MORSETTO || nome == morsetti::BLOCCO_CONNETTORE || nome.starts_with("_MORS") {
         Tipo::Morsetto
     } else if nome == numerazione::BLOCCO_NUMERO || nome.starts_with("BLCOR") {
         Tipo::NumeroFilo

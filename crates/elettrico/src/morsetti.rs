@@ -4,6 +4,9 @@
 //! `docs/spac-modello-dati.md`): `MORSETTIERA` (`-XG`), `NUMM` (numero del morsetto), `NUMI` e
 //! `NUMO` (filo in ingresso e in uscita, scritti dalla numerazione fili), `QUADRO`, `LIVELLO`,
 //! `SEZIONE`. Si leggono anche i morsetti `_MORS*` dei progetti esistenti.
+//!
+//! I connettori sono pin con gli stessi dati (il connettore al posto della morsettiera, il pin
+//! al posto del numero) e il sesso (`SESSO`: M/F); escono nelle stesse liste dei morsetti.
 
 use cadcraft_engine::cmd::has_doc;
 use cadcraft_engine::{Accept, CommandSpec, Input, Interactive, Prompt, Result, Session, Step};
@@ -15,21 +18,30 @@ use crate::squadratura;
 use crate::util::{Inserito, allinea_a_destra, blocchi_definiti, blocchi_inseriti, blocco, colore, errore, esegui, handles, in_gruppo, layer_corrente, punto_param, su_layer_zero, testo_param};
 
 pub const BLOCCO_MORSETTO: &str = "CE_MORSETTO";
-const FILTRO: &str = "CE_MORSETTO,_MORS*";
+pub const BLOCCO_CONNETTORE: &str = "CE_CONNETTORE";
+const FILTRO: &str = "CE_MORSETTO,_MORS*,CE_CONNETTORE";
 const TOLL: f64 = 0.01;
 
 type P = (f64, f64);
 
 /// Il blocco del morsetto: cerchio sul filo, numero del morsetto a sinistra in alto, numero
 /// del filo a destra in alto, nome della morsettiera a destra in basso (nascosto sui morsetti
-/// che seguono il primo di una fila).
-fn crea_blocco(s: &mut Session) -> Result<()> {
-    if blocchi_definiti(s)?.iter().any(|b| b.eq_ignore_ascii_case(BLOCCO_MORSETTO)) {
+/// che seguono il primo di una fila). Il pin di connettore ha la presa (semicerchio) e la
+/// spina (rettangolo pieno) al posto del cerchio.
+fn crea_blocco(s: &mut Session, nome: &str) -> Result<()> {
+    if blocchi_definiti(s)?.iter().any(|b| b.eq_ignore_ascii_case(nome)) {
         return Ok(());
     }
+    let connettore = nome == BLOCCO_CONNETTORE;
     su_layer_zero(s, |s| {
         colore(s, "7")?;
-        let mut h = handles(&esegui(s, "circle", json!({"center": [0.0, 0.0], "radius": 1.0}))?);
+        let mut h = if connettore {
+            let mut h = handles(&esegui(s, "arc", json!({"center": [0.0, -0.4], "radius": 1.3, "start": 180.0, "end": 360.0}))?);
+            h.extend(handles(&esegui(s, "pline", json!({"vertices": [[0.0, 0.2], [0.0, 1.6]], "width": 0.9}))?));
+            h
+        } else {
+            handles(&esegui(s, "circle", json!({"center": [0.0, 0.0], "radius": 1.0}))?)
+        };
         let att = |s: &mut Session, h: &mut Vec<String>, tag: &str, at: P, alt: f64, nascosto: bool, def: &str| -> Result<String> {
             let r = esegui(s, "attdef", json!({"tag": tag, "prompt": tag, "default": def, "at": [at.0, at.1], "height": alt, "invisible": nascosto}))?;
             let n = handles(&r);
@@ -46,7 +58,10 @@ fn crea_blocco(s: &mut Session) -> Result<()> {
         for (tag, def) in [("NUMO", ""), ("QUADRO", ""), ("LIVELLO", "1"), ("SEZIONE", ""), ("COSTRUTTORE", ""), ("TIPO", ""), ("UTENZA", ""), ("NOTEM", "")] {
             att(s, &mut h, tag, (0.0, -2.0), 1.0, true, def)?;
         }
-        blocco(s, BLOCCO_MORSETTO, std::mem::take(&mut h), "Morsetto")
+        if connettore {
+            att(s, &mut h, "SESSO", (0.0, -2.0), 1.0, true, "F")?;
+        }
+        blocco(s, nome, std::mem::take(&mut h), if connettore { "Pin di connettore" } else { "Morsetto" })
     })
 }
 
@@ -91,15 +106,21 @@ fn prossimo(tutti: &[Morsetto], morsettiera: &str) -> u32 {
     tutti.iter().filter(|m| m.morsettiera.eq_ignore_ascii_case(morsettiera)).filter_map(|m| m.numero.trim().parse::<u32>().ok()).max().unwrap_or(0) + 1
 }
 
-/// Posa un morsetto in `p` con il numero dato (o il prossimo libero).
-pub fn posa(s: &mut Session, morsettiera: &str, p: P, numero: Option<String>, quadro: &str) -> Result<(String, String)> {
-    crea_blocco(s)?;
+/// Posa un morsetto (o il pin di un connettore, con il sesso) in `p` con il numero dato (o il
+/// prossimo libero).
+pub fn posa(s: &mut Session, morsettiera: &str, p: P, numero: Option<String>, quadro: &str, sesso: Option<&str>) -> Result<(String, String)> {
+    let nome = if sesso.is_some() { BLOCCO_CONNETTORE } else { BLOCCO_MORSETTO };
+    crea_blocco(s, nome)?;
     let numero = match numero {
         Some(n) => n,
         None => prossimo(&morsetti(s)?, morsettiera).to_string(),
     };
     let quadro = if quadro.trim().is_empty() { crate::impostazioni::quadro_corrente().unwrap_or_default() } else { quadro.trim().to_string() };
-    let r = esegui(s, "insert", json!({"name": BLOCCO_MORSETTO, "at": [p.0, p.1], "attribs": {"MORSETTIERA": morsettiera, "NUMM": numero, "QUADRO": quadro, "LIVELLO": "1"}}))?;
+    let mut attr = json!({"MORSETTIERA": morsettiera, "NUMM": numero, "QUADRO": quadro, "LIVELLO": "1"});
+    if let Some(x) = sesso {
+        attr["SESSO"] = json!(x);
+    }
+    let r = esegui(s, "insert", json!({"name": nome, "at": [p.0, p.1], "attribs": attr}))?;
     let h = handles(&r).into_iter().next().ok_or_else(|| errore("morsetto non inserito"))?;
     Ok((h, numero))
 }
@@ -134,9 +155,26 @@ pub fn attraversamenti(fili: &[fili::Segmento], da: P, a: P) -> Vec<P> {
 }
 
 fn run_morsetti(s: &mut Session, p: &Value) -> Result<Value> {
-    let morsettiera = testo_param(p, "morsettiera").filter(|m| !m.trim().is_empty()).ok_or_else(|| errore("Indicare la morsettiera (es. -XG)"))?;
+    posa_fila(s, p, None)
+}
+
+fn run_connettori(s: &mut Session, p: &Value) -> Result<Value> {
+    let sesso = match testo_param(p, "sesso").unwrap_or_default().trim().to_ascii_uppercase().as_str() {
+        "M" | "MASCHIO" | "MALE" => "M",
+        _ => "F",
+    };
+    posa_fila(s, p, Some(sesso))
+}
+
+/// Posa una fila di morsetti (o di pin di connettore) su un punto o sui fili attraversati.
+fn posa_fila(s: &mut Session, p: &Value, sesso: Option<&str>) -> Result<Value> {
+    let chiave = if sesso.is_some() { "connettore" } else { "morsettiera" };
+    let morsettiera = testo_param(p, chiave)
+        .or_else(|| testo_param(p, "morsettiera"))
+        .filter(|m| !m.trim().is_empty())
+        .ok_or_else(|| errore(if sesso.is_some() { "Indicare il connettore (es. -XC1)" } else { "Indicare la morsettiera (es. -XG)" }))?;
     let quadro = testo_param(p, "quadro").unwrap_or_default();
-    in_gruppo(s, "Morsetti", |s| {
+    in_gruppo(s, if sesso.is_some() { "Connettori" } else { "Morsetti" }, |s| {
         let punti = match (punto_param(p, "at"), punto_param(p, "da"), punto_param(p, "a")) {
             (Some(at), _, _) => vec![at],
             (None, Some(da), Some(a)) => {
@@ -152,7 +190,7 @@ fn run_morsetti(s: &mut Session, p: &Value) -> Result<Value> {
         let mut posati = Vec::new();
         let solo_primo = crate::impostazioni::correnti().morsettiera_solo_primo;
         for (k, q) in punti.into_iter().enumerate() {
-            let (h, n) = posa(s, &morsettiera, q, numero.take(), &quadro)?;
+            let (h, n) = posa(s, &morsettiera, q, numero.take(), &quadro, sesso)?;
             // come nei CAD elettrici diffusi il nome della morsettiera solo sul primo della fila
             if solo_primo && k > 0 {
                 mostra_attributo(s, &h, "MORSETTIERA", false)?;
@@ -161,7 +199,8 @@ fn run_morsetti(s: &mut Session, p: &Value) -> Result<Value> {
         }
         crate::numerazione::aggiorna_morsetti(s)?;
         let numeri: Vec<String> = posati.iter().filter_map(|m| m["numero"].as_str().map(str::to_string)).collect();
-        Ok(json!({"morsetti": posati, "message": format!("Morsettiera {morsettiera}: morsetti {}", numeri.join(", "))}))
+        let msg = if sesso.is_some() { format!("Connettore {morsettiera}: pin {}", numeri.join(", ")) } else { format!("Morsettiera {morsettiera}: morsetti {}", numeri.join(", ")) };
+        Ok(json!({"morsetti": posati, "message": msg}))
     })
 }
 
@@ -226,15 +265,24 @@ fn run_morsettiera(s: &mut Session, p: &Value) -> Result<Value> {
 struct PosaMorsetti {
     morsettiera: Option<String>,
     da: Option<P>,
+    /// Pin di connettore invece di morsetti.
+    connettore: bool,
+}
+
+impl PosaMorsetti {
+    fn predefinito(&self) -> &'static str {
+        if self.connettore { "-XC1" } else { "-X1" }
+    }
 }
 
 impl Interactive for PosaMorsetti {
     fn name(&self) -> &'static str {
-        "morsetti"
+        if self.connettore { "connettori" } else { "morsetti" }
     }
     fn prompt(&self, _s: &Session) -> Prompt {
         match (&self.morsettiera, self.da) {
-            (None, _) => Prompt { default: Some("-X1".into()), ..Prompt::new("Nome della morsettiera", Accept::TEXT) },
+            (None, _) if self.connettore => Prompt { default: Some(self.predefinito().into()), ..Prompt::new("Nome del connettore", Accept::TEXT) },
+            (None, _) => Prompt { default: Some(self.predefinito().into()), ..Prompt::new("Nome della morsettiera", Accept::TEXT) },
             (Some(_), None) => Prompt::new("Primo punto della linea che attraversa i fili", Accept::POINT),
             (Some(_), Some(p)) => Prompt::new("Secondo punto", Accept::POINT).base(cadcraft_engine::geom::Vec2::new(p.0, p.1)),
         }
@@ -244,11 +292,11 @@ impl Interactive for PosaMorsetti {
             Input::Cancel => Ok(Step::Cancel),
             Input::Text(t) if self.morsettiera.is_none() => {
                 let t = t.trim();
-                self.morsettiera = Some(if t.is_empty() { "-X1".into() } else if t.starts_with('-') { t.to_ascii_uppercase() } else { format!("-{}", t.to_ascii_uppercase()) });
+                self.morsettiera = Some(if t.is_empty() { self.predefinito().into() } else if t.starts_with('-') { t.to_ascii_uppercase() } else { format!("-{}", t.to_ascii_uppercase()) });
                 Ok(Step::Continue)
             }
             Input::Enter if self.morsettiera.is_none() => {
-                self.morsettiera = Some("-X1".into());
+                self.morsettiera = Some(self.predefinito().into());
                 Ok(Step::Continue)
             }
             Input::Point(q) if self.da.is_none() => {
@@ -257,7 +305,7 @@ impl Interactive for PosaMorsetti {
             }
             Input::Point(q) => {
                 let da = self.da.unwrap_or((q.x, q.y));
-                let r = s.execute("morsetti", &json!({"morsettiera": self.morsettiera.clone().unwrap_or_default(), "da": [da.0, da.1], "a": [q.x, q.y]}))?;
+                let r = s.execute(self.name(), &json!({"morsettiera": self.morsettiera.clone().unwrap_or_default(), "da": [da.0, da.1], "a": [q.x, q.y]}))?;
                 if let Some(m) = r.get("message").and_then(Value::as_str) {
                     s.echo(m.to_string());
                 }
@@ -271,7 +319,11 @@ impl Interactive for PosaMorsetti {
 }
 
 fn fabbrica(_s: &Session) -> Result<Box<dyn Interactive>> {
-    Ok(Box::new(PosaMorsetti { morsettiera: None, da: None }))
+    Ok(Box::new(PosaMorsetti { morsettiera: None, da: None, connettore: false }))
+}
+
+fn fabbrica_connettori(_s: &Session) -> Result<Box<dyn Interactive>> {
+    Ok(Box::new(PosaMorsetti { morsettiera: None, da: None, connettore: true }))
 }
 
 pub fn comandi() -> Vec<CommandSpec> {
@@ -287,6 +339,19 @@ pub fn comandi() -> Vec<CommandSpec> {
             run: run_morsetti,
             undoable: false,
             interactive: Some(fabbrica),
+            transparent: false,
+        },
+        CommandSpec {
+            id: "connettori",
+            label: "Inser CONNETTORI",
+            menu: &["ELETTRICO", "Inser CONNETTORI"],
+            shortcut: None,
+            aliases: &[],
+            params: "{connettore: \"-XC1\", sesso?: M|F (default F), at: [x,y] | da + a (linea che attraversa i fili), numero?: primo pin, quadro?} → {morsetti: [{handle, numero}]}",
+            enabled: has_doc,
+            run: run_connettori,
+            undoable: false,
+            interactive: Some(fabbrica_connettori),
             transparent: false,
         },
         CommandSpec {

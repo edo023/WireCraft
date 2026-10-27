@@ -25,6 +25,12 @@ pub enum Azione {
     Cavi,
     /// Finestra "Gestione PLC".
     Plc,
+    /// Finestra "Traduttore".
+    Traduttore,
+    /// Lay-out dell'interno del quadro corrente, su un foglio nuovo.
+    LayoutQuadro,
+    /// Foratura della piastra del foglio corrente (CSV).
+    Foratura,
     Cross,
     ArchivioMateriali,
     LibreriaSimboli,
@@ -150,6 +156,7 @@ fn schede() -> Vec<Scheda> {
                     ],
                 ),
                 gruppo("Cross", false, vec![g(Icona::Cross, "Cross Reference", Cross)]),
+                gruppo("Traduttore", false, vec![g(Icona::Legenda, "Traduttore", Traduttore)]),
                 gruppo(
                     "Distinta",
                     false,
@@ -231,7 +238,7 @@ fn schede() -> Vec<Scheda> {
                 gruppo(
                     "Morsetti e Connettori",
                     false,
-                    vec![g(Icona::Morsetti, "Inser Morsetti", Avvia("morsetti")), g(Icona::Morsettiera, "Morsettiere", Morsettiera), g(Icona::Morsetti, "Inser Connettori", ND)],
+                    vec![g(Icona::Morsetti, "Inser Morsetti", Avvia("morsetti")), g(Icona::Morsettiera, "Morsettiere", Morsettiera), g(Icona::Morsetti, "Inser Connettori", Avvia("connettori"))],
                 ),
             ],
         },
@@ -257,7 +264,7 @@ fn schede() -> Vec<Scheda> {
                 vec![
                     g(Icona::Collegamenti, "Modulo Cavi", Cavi),
                     g(Icona::Plc, "Gestione PLC", Plc),
-                    g(Icona::Legenda, "Traduttore", ND),
+                    g(Icona::Legenda, "Traduttore", Traduttore),
                     g(Icona::Impianto, "Loop Diagram", ND),
                     g(Icona::Settaggi, "Configuratore", ND),
                 ],
@@ -268,7 +275,7 @@ fn schede() -> Vec<Scheda> {
             gruppi: vec![gruppo(
                 "Quadro",
                 false,
-                vec![g(Icona::Quadro, "Interno Armadio", ND), g(Icona::Pianta, "Gestore Topografico", ND), g(Icona::Tratteggio, "Foratura Piastra", ND), g(Icona::Tensioni, "Sovratemperature", ND)],
+                vec![g(Icona::Quadro, "Interno Armadio", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Pianta, "Gestore Topografico", ND), g(Icona::Tensioni, "Sovratemperature", ND)],
             )],
         },
         Scheda {

@@ -116,3 +116,23 @@ fn edita_rimando_ricollega_i_riferimenti() {
     assert_eq!(v["senzaCoppia"], 2, "{v}");
     assert_eq!(blocchi(&mut s, "_SIGN_*", "2")[0].2["#LINEA"], "Consenso");
 }
+
+#[test]
+fn connettori_come_morsetti() {
+    let _uno_alla_volta = crate::uno_alla_volta();
+    let mut s = prepara(1);
+    for x in [100.0, 150.0, 200.0] {
+        esegui(&mut s, "filo", json!({"points": [[x, 250.0], [x, 100.0]]}));
+    }
+    let r = esegui(&mut s, "connettori", json!({"connettore": "-XC1", "sesso": "M", "da": [90.0, 180.0], "a": [210.0, 180.0]}));
+    assert_eq!(r["morsetti"].as_array().unwrap().len(), 3, "{r}");
+    let c = blocchi(&mut s, "CE_CONNETTORE", "1");
+    assert_eq!(c.iter().map(|x| x.2["NUMM"].as_str().unwrap()).collect::<Vec<_>>(), ["1", "2", "3"]);
+    assert!(c.iter().all(|x| x.2["SESSO"] == "M" && x.2["MORSETTIERA"] == "-XC1"));
+    // il pin si edita come un morsetto, e i fili numerati arrivano sui pin
+    assert_eq!(esegui(&mut s, "xs.riconosci", json!({"handle": c[0].0}))["tipo"], "morsetto");
+    esegui(&mut s, "numerafili", json!({}));
+    let righe = elettrico::morsetti::righe(&mut s, "-XC1").unwrap();
+    assert_eq!(righe.len(), 3);
+    assert_eq!(righe[0][1], "01.01");
+}

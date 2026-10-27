@@ -18,6 +18,7 @@ pub mod edita;
 pub mod fili;
 pub mod fogli;
 pub mod impostazioni;
+pub mod layout;
 pub mod morsetti;
 pub mod multifoglio;
 pub mod numerazione;
@@ -28,6 +29,7 @@ pub mod simboli;
 pub mod specchietto;
 pub mod squadratura;
 pub mod stampa;
+pub mod traduttore;
 pub mod uscite;
 mod util;
 
@@ -55,6 +57,8 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(plc::comandi());
     v.extend(revisioni::comandi());
     v.extend(edita::comandi());
+    v.extend(traduttore::comandi());
+    v.extend(layout::comandi());
     v
 }
 

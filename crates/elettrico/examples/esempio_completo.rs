@@ -1,5 +1,6 @@
 //! Un progetto d'esempio completo: alimentazione, motore con avviamento diretto, comandi,
-//! morsettiera, cavi, PLC e le liste sui fogli; salvato in DXF e stampato in PDF.
+//! morsettiera, cavi, PLC, lay-out del quadro e le liste sui fogli; salvato in DXF e stampato
+//! in PDF.
 //!
 //! `cargo run --example esempio_completo -- esempio.dxf [esempio.pdf]`
 
@@ -96,6 +97,11 @@ fn main() -> Result<(), String> {
 
     e("numerafili", json!({"tutti": true}))?;
     e("siglecomponenti", json!({}))?;
+    // la seconda lingua dove manca, dal dizionario
+    e("traduci", json!({"a": "EN"}))?;
+    // lay-out dell'interno del quadro e foratura della piastra
+    let layout = e("layoutquadro", json!({}))?;
+    e("foraturapiastra", json!({"foglio": layout["foglio"]}))?;
     for tipo in ["indice", "distinta", "morsettiere", "cablaggio", "cavi", "io", "funzioni", "simboli"] {
         e("uscita", json!({"tipo": tipo}))?;
     }

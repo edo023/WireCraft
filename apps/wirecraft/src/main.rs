@@ -19,6 +19,7 @@ mod progetti;
 mod settaggi;
 mod ribbon;
 mod stampa;
+mod traduttore;
 
 use cadcraft_engine::Session;
 use cadcraft_ui_egui::{CadApp, Services, i18n};
@@ -210,6 +211,9 @@ fn main() -> eframe::Result {
                 app.enable_autosave(&dir.join("autosave"));
                 if let Err(e) = elettrico::archivio::imposta(&dir.join("materiali.csv")) {
                     log::warn!("archivio materiali: {e}");
+                }
+                if let Err(e) = elettrico::traduttore::imposta(&dir.join("dizionario.csv")) {
+                    log::warn!("dizionario: {e}");
                 }
                 elettrico::multifoglio::imposta_libreria(&dir.join("Fogli memorizzati"));
                 prepara_commesse(&dir.join("percorsi-commesse.txt"));

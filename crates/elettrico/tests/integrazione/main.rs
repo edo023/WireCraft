@@ -10,12 +10,14 @@ mod edita;
 mod fili;
 mod fogli;
 mod impostazioni;
+mod layout;
 mod libreria;
 mod multifoglio;
 mod numerazione;
 mod revisioni;
 mod simboli;
 mod stampa;
+mod traduttore;
 mod uscite;
 
 /// Registra i comandi elettrici e i formati di file (con la stampa) una volta sola.

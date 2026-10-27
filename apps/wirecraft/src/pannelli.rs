@@ -18,6 +18,7 @@ use crate::navigatore;
 use crate::settaggi::FinestraSettaggi;
 use crate::ribbon::Azione;
 use crate::stampa::FinestraStampa;
+use crate::traduttore::FinestraTraduttore;
 use serde_json::json;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -50,6 +51,7 @@ pub struct Pannelli {
     liste: FinestraListe,
     cavi: FinestraCavi,
     plc: FinestraPlc,
+    traduttore: FinestraTraduttore,
     /// Il disegno attivo (identità e percorso): quando cambia si cerca la sua commessa.
     disegno: Option<(u64, Option<String>)>,
     commessa: Option<String>,
@@ -115,6 +117,7 @@ impl Pannelli {
         self.liste.mostra(cad, ui.ctx());
         self.cavi.mostra(cad, ui.ctx());
         self.plc.mostra(cad, ui.ctx());
+        self.traduttore.mostra(cad, ui.ctx());
     }
 
     /// Esegue l'azione di un pulsante della barra a schede.
@@ -129,6 +132,7 @@ impl Pannelli {
             Azione::Liste(tipo) => self.liste.apri(tipo),
             Azione::Cavi => self.cavi.apri(),
             Azione::Plc => self.plc.apri(),
+            Azione::Traduttore => self.traduttore.apri(),
             Azione::GestioneMultifoglio => {
                 self.gestione.apri();
                 self.scheda = Scheda::Fogli;
@@ -144,6 +148,20 @@ impl Pannelli {
                 let nome = if per_tipo { "distinta materiali per tipo.csv" } else { "distinta materiali per sigla.csv" };
                 if let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).set_file_name(nome).save_file() {
                     let _ = cad.run("distintamateriali", json!({"ordine": if per_tipo { "tipo" } else { "sigla" }, "file": p.to_string_lossy()}));
+                }
+            }
+            Azione::LayoutQuadro => match cad.run("layoutquadro", json!({})) {
+                Ok(r) => {
+                    if let Some(n) = r.get("foglio").and_then(serde_json::Value::as_u64) {
+                        let _ = cad.run("cambiofoglio", json!({"foglio": n}));
+                        let _ = cad.run("zoom.extents", json!({}));
+                    }
+                }
+                Err(e) => cad.set_status(e),
+            },
+            Azione::Foratura => {
+                if let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).set_file_name("foratura piastra.csv").save_file() {
+                    let _ = cad.run("foraturapiastra", json!({"file": p.to_string_lossy()}));
                 }
             }
             Azione::ImportaListino => {
