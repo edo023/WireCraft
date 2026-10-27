@@ -1,7 +1,7 @@
 //! Libreria simboli IEC 60617 (disegni nostri) e inserimento sullo schema.
 //!
-//! Ogni simbolo è un blocco con gli attributi del modello dati dei CAD elettrici diffusi (vedi
-//! `docs/spac-modello-dati.md`): `NOME`, `PRES` (M = madre, FA/FC/FS/FAP3… = figlio), `PINAk` e
+//! Ogni simbolo è un blocco con gli attributi del modello dati dei CAD elettrici diffusi:
+//! `NOME`, `PRES` (M = madre, FA/FC/FS/FAP3… = figlio), `PINAk` e
 //! `PINBk` (morsetti dei poli), più `QUADRO`, `FUNZIONE1`, `FUNZIONE2`, `CODICE`, `COSTRUTTORE`,
 //! `TIPO`, `DESCRIZIONE` per le madri e `REG` (dove sta la madre) per i figli. I simboli senza
 //! `PRES` (terra, massa) sono solo grafica.

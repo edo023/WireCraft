@@ -2,8 +2,8 @@
 //! numerazione dei fogli.
 //!
 //! Disegno nostro: misure in mm, origine nell'angolo in basso a sinistra del foglio A3. Nomi dei
-//! blocchi e degli attributi come nei progetti dei CAD elettrici diffusi (vedi
-//! `docs/spac-modello-dati.md`), così i progetti si scambiano:
+//! blocchi e degli attributi come nei progetti dei CAD elettrici diffusi,
+//! così i progetti si scambiano:
 //! - `MASTER_A3` sul foglio 0: cornice, riferimenti e cartiglio con i dati della commessa;
 //! - su ogni foglio `NUMFG`, `NUMFGP`, `NUMFGS`, `NUMFGT` (numero, precedente, seguente,
 //!   totale) e `TITOLO1` (titolo del foglio in due lingue).

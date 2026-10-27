@@ -1,6 +1,6 @@
 //! Siglatura dei componenti e cross reference figlio → madre.
 //!
-//! Come nei progetti dei CAD elettrici diffusi (vedi `docs/spac-modello-dati.md`):
+//! Come nei progetti dei CAD elettrici diffusi:
 //! - la **madre** (bobina, interruttore, pulsante…) ha `PRES=M` e la sigla in `NOME`;
 //! - un **figlio** (contatto) ha `PRES` che inizia con `F` (`FA`, `FC`, `FS`, `FAP3`…), in
 //!   `NOME` la sigla della sua madre e in `REG` dove si trova la madre (`08/4E`);

@@ -1,6 +1,6 @@
 //! Specchietto dei contatti (riferimento di registrazione) sotto le bobine.
 //!
-//! Come nei progetti dei CAD elettrici diffusi (vedi `docs/spac-modello-dati.md`): la madre ha in
+//! Come nei progetti dei CAD elettrici diffusi: la madre ha in
 //! `CODICE` il nome del blocco di riferimento; il blocco (`PRES=R`, `MADRE` = sigla) ha una riga
 //! per contatto disponibile, con `PINAk`/`PINBk` (`PINCk` per lo scambio) e `REGk` = dove è
 //! disegnato il contatto che usa quella riga. Ogni contatto figlio occupa righe compatibili e ne

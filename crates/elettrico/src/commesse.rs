@@ -1,8 +1,8 @@
 //! Commesse (progetti): una cartella con l'elenco dei suoi multifogli, i settaggi in `CFG` e i
 //! file di uscita (`PDF`…).
 //!
-//! L'elenco sta in `Job-Description._sp`, nello stesso formato dei CAD elettrici diffusi (vedi
-//! `docs/spac-modello-dati.md`), così le commesse si aprono con entrambi:
+//! L'elenco sta in `Job-Description._sp`, nello stesso formato dei CAD elettrici diffusi,
+//! così le commesse si aprono con entrambi:
 //!
 //! ```text
 //! ("RELEASE" . "2026")

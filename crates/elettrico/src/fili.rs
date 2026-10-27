@@ -1,7 +1,7 @@
 //! Fili e collegamenti: filo, connessione, alimentazioni, collegamenti a N fili, rimandi,
 //! quick filo verticale/orizzontale, aggiornamento dei rimandi tra fogli.
 //!
-//! Come nei CAD elettrici diffusi (vedi `docs/spac-modello-dati.md`): un filo è una LINE sul
+//! Come nei CAD elettrici diffusi: un filo è una LINE sul
 //! layer del foglio (le linee di colore 5 sono grafica, non fili); il nodo è il blocco `Nodo`; i
 //! rimandi sono i blocchi `_ALIM_n` (alimentazioni) e `_SIGN_n` (collegamenti), uno per tipo e
 //! rotazione, con gli attributi `PRES` (P/A), `SEGNALE`, `#LINEA` e `REG` (riferimento).

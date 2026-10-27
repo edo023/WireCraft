@@ -1,7 +1,7 @@
 //! Morsetti e morsettiere.
 //!
-//! Un morsetto è un blocco posato su un filo, con gli attributi dei CAD elettrici diffusi (vedi
-//! `docs/spac-modello-dati.md`): `MORSETTIERA` (`-XG`), `NUMM` (numero del morsetto), `NUMI` e
+//! Un morsetto è un blocco posato su un filo, con gli attributi dei CAD elettrici diffusi:
+//! `MORSETTIERA` (`-XG`), `NUMM` (numero del morsetto), `NUMI` e
 //! `NUMO` (filo in ingresso e in uscita, scritti dalla numerazione fili), `QUADRO`, `LIVELLO`,
 //! `SEZIONE`. Si leggono anche i morsetti `_MORS*` dei progetti esistenti.
 //!
