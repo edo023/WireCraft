@@ -31,7 +31,7 @@ pub const TIPI: [&str; 4] = ["componenti", "fili", "morsetti", "cavi"];
 pub const INTESTAZIONE: [&str; 4] = ["Testo", "Descrizione", "Quadro", "Copie"];
 
 /// Chiave d'ordine "naturale": i gruppi di cifre come numeri.
-fn naturale(t: &str) -> Vec<(u8, u64, String)> {
+pub(crate) fn naturale(t: &str) -> Vec<(u8, u64, String)> {
     let mut v = Vec::new();
     let mut cifre = String::new();
     let mut lettere = String::new();

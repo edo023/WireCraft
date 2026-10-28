@@ -49,6 +49,7 @@ pub enum Azione {
     Edita,
     Distinta { per_tipo: bool },
     ImportaListino,
+    /// Finestra "Editor Morsettiere".
     Morsettiera,
     /// Finestra "Stampa e PDF Fogli".
     StampaFogli,

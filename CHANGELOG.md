@@ -5,7 +5,6 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 ## Prossimi passi
 
 - **Gestore topografico**: posizione dei componenti nell'impianto.
-- **Editor di morsettiera** avanzato (ordine, multilivello).
 - **Installer per Windows**.
 
 ## 28 ottobre 2026: schema unifilare e prima release
@@ -20,6 +19,9 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 - Finestra **Schema Unifilare** (scheda Quadro, gruppo Distribuzione): elenco dei circuiti con la verifica in verde o rosso, modulo per disegnare un circuito o l'arrivo, scelta di un circuito dall'elenco per modificarlo.
 - Il progetto d'esempio ha un foglio in più: il quadro di distribuzione del reparto che alimenta la macchina.
 - **Progetto d'esempio dall'app** (`COMMESSA.ESEMPIO`): il pulsante "Progetto d'esempio" in Gestione Progetti crea e apre la commessa "Esempio WireCraft" con lo stesso progetto completo, così chi scarica il programma ha subito qualcosa da guardare. Un test lo crea, lo salva, lo riapre e controlla che fogli, componenti, rimandi, materiali, circuiti e liste siano gli stessi, anche dopo Aggiorna Liste e Tabelle.
+- **Editor Morsettiere** (pulsante Morsettiere): elenco delle morsettiere e dei connettori, morsetti in ordine con livello, filo, ponte e posizione, "Vai" al morsetto nello schema; ordine a mano (su, giù) e rinumerazione secondo lo schema, i fili o compattata, dal numero e con il passo voluti (`MORSETTIERA.ORDINE`); ponticelli; rinomina e unione (`MORSETTIERA.RINOMINA`); CSV. I livelli di un morsetto multiplo restano insieme, `PE` e `N` restano dove sono.
+- Corretto: Modifica Morsetto non permetteva di mettere al livello 2 un morsetto con lo stesso numero di un altro (il controllo dei doppioni guardava il livello vecchio).
+- **Test di robustezza**: ogni comando con parametri vuoti o sbagliati dà un errore, mai un arresto del programma.
 - I file delle commesse si scrivono con le barre dei percorsi singole, come nei file d'origine (prima venivano raddoppiate).
 
 Verificato: 10 kW trifase su 50 m passano da 1,5 a 2,5 mm² per la caduta di tensione; le prese non scendono sotto 2,5 mm²; cambiata la protezione, il blocco cambia e i dati restano; cancellato un circuito, Aggiorna Liste toglie utenza, conduttori, sbarre e intestazioni del foglio rimasto vuoto.

@@ -23,6 +23,7 @@ pub mod impostazioni;
 pub mod layout;
 pub mod loopdiagram;
 pub mod morsetti;
+pub mod morsettiere;
 pub mod multifoglio;
 pub mod norma81346;
 pub mod numerazione;
@@ -56,6 +57,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(siglatura::comandi());
     v.extend(numerazione::comandi());
     v.extend(morsetti::comandi());
+    v.extend(morsettiere::comandi());
     v.extend(distinta::comandi());
     v.extend(archivio::comandi());
     v.extend(stampa::comandi());

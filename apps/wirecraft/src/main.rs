@@ -14,6 +14,7 @@ mod edita_xs;
 mod gestione;
 mod icone;
 mod liste;
+mod morsettiere;
 mod navigatore;
 mod pannelli;
 mod progetti;

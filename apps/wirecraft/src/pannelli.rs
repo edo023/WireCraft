@@ -14,6 +14,7 @@ use crate::edita_xs::EditaXs;
 use crate::gestione::GestioneMultifoglio;
 use crate::progetti::GestioneProgetti;
 use crate::liste::FinestraListe;
+use crate::morsettiere::FinestraMorsettiere;
 use crate::navigatore;
 use crate::settaggi::FinestraSettaggi;
 use crate::ribbon::Azione;
@@ -64,6 +65,7 @@ pub struct Pannelli {
     tensioni: FinestraTensioni,
     configuratore: FinestraConfiguratore,
     unifilare: FinestraUnifilare,
+    morsettiere: FinestraMorsettiere,
     /// Il disegno attivo (identità e percorso): quando cambia si cerca la sua commessa.
     disegno: Option<(u64, Option<String>)>,
     commessa: Option<String>,
@@ -134,6 +136,7 @@ impl Pannelli {
         self.tensioni.mostra(cad, ui.ctx());
         self.configuratore.mostra(cad, ui.ctx());
         self.unifilare.mostra(cad, ui.ctx());
+        self.morsettiere.mostra(cad, ui.ctx());
     }
 
     /// Esegue l'azione di un pulsante della barra a schede.
@@ -199,14 +202,7 @@ impl Pannelli {
                 }
                 self.scheda = Scheda::Materiali;
             }
-            Azione::Morsettiera => {
-                let nome = self.morsettiera.trim().to_string();
-                if nome.is_empty() {
-                    cad.set_status("Scrivere il nome della morsettiera (es. -XG) nella tavolozza a destra");
-                } else if let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).set_file_name(format!("morsettiera {nome}.csv")).save_file() {
-                    let _ = cad.run("morsettiera", json!({"morsettiera": nome, "file": p.to_string_lossy()}));
-                }
-            }
+            Azione::Morsettiera => self.morsettiere.apri(cad),
             Azione::StampaFogli => {
                 if self.fogli.is_empty() {
                     cad.set_status("Il disegno non ha fogli: usa Gestione Fogli");

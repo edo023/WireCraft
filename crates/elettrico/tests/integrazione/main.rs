@@ -16,6 +16,7 @@ mod impostazioni;
 mod layout;
 mod libreria;
 mod loopdiagram;
+mod morsettiere;
 mod multifoglio;
 mod norma81346;
 mod numerazione;

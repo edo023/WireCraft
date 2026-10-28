@@ -74,7 +74,10 @@ fn run_morsetto(s: &mut Session, p: &Value) -> Result<Value> {
         }
         let morsettiera = testo_param(p, "morsettiera").unwrap_or_else(|| b.attributo("MORSETTIERA").to_string());
         let numero = testo_param(p, "numero").unwrap_or_else(|| b.attributo("NUMM").to_string());
-        let doppio = morsetti::morsetti(s)?.into_iter().any(|m| m.blocco.handle != b.handle && m.morsettiera.eq_ignore_ascii_case(&morsettiera) && m.numero == numero && m.blocco.attributo("LIVELLO") == b.attributo("LIVELLO"));
+        // stesso numero vuol dire stesso morsetto solo allo stesso livello (vuoto = 1): quello nuovo
+        let livello_di = |t: &str| if t.trim().is_empty() { "1".to_string() } else { t.trim().to_string() };
+        let livello = livello_di(&testo_param(p, "livello").unwrap_or_else(|| b.attributo("LIVELLO").to_string()));
+        let doppio = morsetti::morsetti(s)?.into_iter().any(|m| m.blocco.handle != b.handle && m.morsettiera.eq_ignore_ascii_case(&morsettiera) && m.numero == numero && livello_di(m.blocco.attributo("LIVELLO")) == livello);
         if doppio {
             return Err(errore(format!("Il morsetto {numero} esiste già nella morsettiera {morsettiera}")));
         }
