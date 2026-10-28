@@ -72,6 +72,13 @@ impl FinestraListe {
                     let r = cad.run("uscita", p).map_err(|e| e.to_string());
                     self.esito(r);
                 }
+                if ui.button("Excel…").on_hover_text("La lista in un file Excel (.xlsx)").clicked() {
+                    let (tipo, nome) = TIPI.get(self.tipo).copied().unwrap_or(("distinta", "Distinta materiali"));
+                    if let Some(f) = rfd::FileDialog::new().add_filter("Excel", &["xlsx"]).set_file_name(format!("{}.xlsx", nome.to_lowercase())).save_file() {
+                        let r = cad.run("excel", json!({"tipo": tipo, "file": f.to_string_lossy(), "quadro": self.quadro.trim(), "morsettiera": self.morsettiera.trim()})).map_err(|e| e.to_string());
+                        self.esito(r);
+                    }
+                }
                 if ui.button("Aggiorna Liste e Tabelle").on_hover_text("Ridisegna tutte le liste già sui fogli con i dati attuali").clicked() {
                     let r = cad.run("aggiornaliste", json!({})).map_err(|e| e.to_string());
                     self.esito(r);

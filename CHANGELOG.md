@@ -7,7 +7,7 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 - **Configuratore macchina**: opzioni con codici e regole di esclusione; lo schema si genera con le sole opzioni scelte.
 - **Gestore topografico e pulsantiere**: posizione dei componenti nell'impianto, fronte e retro delle pulsantiere.
 - **Schema unifilare** per i quadri di distribuzione, con la tabella dati di ogni circuito.
-- **Esportazione Excel** delle liste; editor di morsettiera avanzato (ordine, multilivello).
+- **Editor di morsettiera** avanzato (ordine, multilivello).
 - **Installer per Windows** e release con l'eseguibile pronto.
 
 ## 27 ottobre 2026 (sera): dopo la pubblicazione
@@ -21,6 +21,7 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 - **Estrazione targhette** (`TARGHETTE`): componenti (sigla e funzione), fili (una per capo collegato), morsetti (con la testata della morsettiera), cavi (una per estremità), per quadro e in ordine naturale, in CSV per la stampante. Scheda Output, gruppo Targhette.
 - **Lettura dei DWG di altri programmi** (patch a CADCraft in `patches/cadcraft`): i contorni "riquadro di testo" dei tratteggi non si riempiono più (nei cartigli comparivano rettangoli pieni sopra i campi), e le tabelle riprendono l'altezza dei testi delle celle dal disegno della tabella stessa (prima uscivano enormi e sovrapposte).
 - **Ponticelli** tra i morsetti (`PONTICELLO`, `PONTICELLI.AUTO`): a mano su un elenco di morsetti (`1-4, 7`) o automatici tra morsetti vicini sullo stesso filo (N, PE, +24V distribuiti); gruppo nell'attributo `PONTE`, colonna nella lista delle morsettiere e nel CSV. Nella tavolozza, sezione Morsetti.
+- **Liste in Excel** (`EXCEL {tipo, file}`): ogni lista (distinta, morsettiere, cablaggio, cavi, I/O, loop, calcolo termico, legende) in un file `.xlsx` con titolo, intestazioni e larghezze di colonna; i numeri dei fili restano testo. Pulsante "Excel…" nella finestra Liste e Tabelle.
 - Etichette di menu, barra a schede e finestre riscritte con parole nostre; comandi e scorciatoie invariati.
 
 Verificato: il salto dal contatto porta alla bobina sul suo foglio e ritorno; i contatti di una madre escono in ordine di foglio; un rimando porta al suo corrispondente, uno senza coppia non porta da nessuna parte. Una configurazione usata in un progetto non ne cambia il quadro corrente; un nome sbagliato non lascia un progetto creato a metà. Fra box dello stesso tipo uno dentro l'altro vale il più piccolo; un componente spostato in un altro box prende il nuovo quadro con Aggiorna Liste e Tabelle.

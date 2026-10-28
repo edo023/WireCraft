@@ -7,6 +7,7 @@ mod compatibilita_spac;
 mod cavi_plc;
 mod cross;
 mod edita;
+mod excel;
 mod fili;
 mod fogli;
 mod impostazioni;

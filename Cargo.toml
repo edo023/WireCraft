@@ -20,6 +20,8 @@ log = "0.4"
 egui = "0.36"
 eframe = { version = "0.36", default-features = false }
 rfd = "0.17"
+# Liste in Excel (.xlsx): MIT OR Apache-2.0
+rust_xlsxwriter = "0.80"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

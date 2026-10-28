@@ -11,6 +11,9 @@ workspace = true
 [dependencies]
 cadcraft-engine = { workspace = true }
 serde_json = { workspace = true }
+rust_xlsxwriter = { workspace = true }
 
 [dev-dependencies]
 cadcraft-io = { workspace = true }
+# per leggere i file Excel nei test (già tra le dipendenze di rust_xlsxwriter)
+zip = { version = "2", default-features = false, features = ["deflate"] }

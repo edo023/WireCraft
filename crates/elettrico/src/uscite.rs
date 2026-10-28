@@ -569,7 +569,61 @@ pub fn comandi() -> Vec<CommandSpec> {
             run_uscita as cadcraft_engine::cmd::Run,
         ),
         spec("aggiornaliste", "Aggiorna Liste e Tabelle", &["Elettrico", "Aggiorna Liste e Tabelle"], "{} — cross reference, rimandi e uscite già disegnate", run_aggiorna),
+        spec(
+            "excel",
+            "Liste in Excel",
+            &["Progetto", "Liste in Excel…"],
+            "{tipo: come USCITA, file: .xlsx, quadro?, morsettiera?} — la lista in un foglio Excel → {righe}",
+            run_excel,
+        ),
     ]
+}
+
+/// Il nome di un foglio di lavoro Excel: al massimo 31 caratteri, senza `[]:*?/\`.
+fn nome_foglio_excel(t: &str) -> String {
+    let n: String = t.chars().filter(|c| !matches!(c, '[' | ']' | ':' | '*' | '?' | '/' | '\\')).take(31).collect();
+    if n.trim().is_empty() { "Lista".into() } else { n.trim().to_string() }
+}
+
+/// Scrive la tabella in un file Excel: titolo, intestazioni in grassetto, una riga per riga;
+/// colonne larghe come sui fogli. I testi restano testi (i numeri dei fili come `01.10`).
+pub fn excel(t: &Tabella, nome: &str, file: &str) -> Result<()> {
+    use rust_xlsxwriter::{Format, FormatBorder, Workbook};
+    let e = |x: rust_xlsxwriter::XlsxError| errore(format!("Excel: {x}"));
+    let mut libro = Workbook::new();
+    let foglio = libro.add_worksheet();
+    foglio.set_name(nome_foglio_excel(nome)).map_err(e)?;
+    let titolo = Format::new().set_bold().set_font_size(14);
+    let intestazione = Format::new().set_bold().set_border_bottom(FormatBorder::Thin);
+    foglio.write_string_with_format(0, 0, t.titolo.replace('\\', "/"), &titolo).map_err(e)?;
+    for (k, (testo, larghezza)) in t.colonne.iter().enumerate() {
+        let c = u16::try_from(k).map_err(|_| errore("Troppe colonne"))?;
+        foglio.write_string_with_format(2, c, testo.replace('\n', " / "), &intestazione).map_err(e)?;
+        // da mm sul foglio a caratteri di Excel, mai troppo strette
+        foglio.set_column_width(c, (larghezza / 2.0).max(8.0)).map_err(e)?;
+    }
+    for (i, riga) in t.righe.iter().enumerate() {
+        let r = u32::try_from(i + 3).map_err(|_| errore("Troppe righe"))?;
+        for (k, cella) in riga.iter().enumerate() {
+            let c = u16::try_from(k).map_err(|_| errore("Troppe colonne"))?;
+            let testo = match cella {
+                Cella::T(v) => v.clone(),
+                Cella::Blocco(b) => simboli::trova(b).map_or_else(|| b.clone(), |s| s.etichetta.to_string()),
+            };
+            if !testo.is_empty() {
+                foglio.write_string(r, c, testo).map_err(e)?;
+            }
+        }
+    }
+    libro.save(file).map_err(e)
+}
+
+fn run_excel(s: &mut Session, p: &Value) -> Result<Value> {
+    let tipo = testo_param(p, "tipo").ok_or_else(|| errore(format!("Indicare il tipo di lista: {}", TIPI.map(|t| t.0).join(", "))))?;
+    let file = testo_param(p, "file").filter(|f| !f.trim().is_empty()).ok_or_else(|| errore("Indicare il file .xlsx"))?;
+    let (t, nome, _) = tabella(s, &tipo, p)?;
+    excel(&t, nome, &file)?;
+    Ok(json!({"righe": t.righe.len(), "file": file, "message": format!("{nome}: {} righe in {file}", t.righe.len())}))
 }
 
 #[cfg(test)]
