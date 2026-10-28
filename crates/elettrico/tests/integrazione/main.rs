@@ -21,6 +21,7 @@ mod norma81346;
 mod numerazione;
 mod ponticelli;
 mod pulsantiera;
+mod robustezza;
 mod revisioni;
 mod salto;
 mod simboli;
