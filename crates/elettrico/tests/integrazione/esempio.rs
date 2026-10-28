@@ -56,7 +56,7 @@ fn progetto_d_esempio_salvato_e_riaperto() {
     assert!(file.ends_with("SCHEMA.dxf") && std::path::Path::new(&file).exists(), "{r}");
     let c = elettrico::commesse::leggi(&radice.join("Esempio WireCraft")).unwrap();
     assert_eq!((c.cliente.as_str(), c.multifogli.len()), ("Officina di prova", 1));
-    assert_eq!(elettrico::fogli::elenco(&mut s).unwrap().len(), 21);
+    assert_eq!(elettrico::fogli::elenco(&mut s).unwrap().len(), 22);
     let prima = istantanea(&mut s);
     assert!(prima.iter().filter(|r| r.starts_with("circuito")).all(|r| r.ends_with(" OK") || r.ends_with(" -")), "{prima:#?}");
 
@@ -72,7 +72,7 @@ fn progetto_d_esempio_salvato_e_riaperto() {
     let ancora = istantanea(&mut s2);
     let diverse: Vec<(&String, &String)> = prima.iter().zip(&ancora).filter(|(a, b)| a != b).take(10).collect();
     assert!(diverse.is_empty() && prima.len() == ancora.len(), "{} righe prima, {} dopo l'aggiornamento; prime differenze: {diverse:#?}", prima.len(), ancora.len());
-    assert_eq!(elettrico::fogli::elenco(&mut s2).unwrap().len(), 21);
+    assert_eq!(elettrico::fogli::elenco(&mut s2).unwrap().len(), 22);
 
     elettrico::commesse::attiva_disegno(None);
     elettrico::impostazioni::usa(None, elettrico::impostazioni::Impostazioni::default());

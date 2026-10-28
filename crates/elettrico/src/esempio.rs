@@ -102,6 +102,9 @@ pub fn disegna(s: &mut Session, testata: &Value) -> Result<()> {
         e("unifilare.circuito", json!({"quadro": "+QD", "utenza": utenza, "sistema": sistema, "potenza": kw, "denominazione": nome, "lunghezza": l, "protezione": prot, "costruttore": "ABB"}))?;
     }
 
+    // il cavo che dal quadro di distribuzione alimenta il quadro della macchina
+    e("cavo.definisci", json!({"formazione": "4G1,5", "codice": "FG16OR16 4G1,5", "funzione": "Alimentazione quadro macchina", "daQuadro": "+QD", "aQuadro": "+QG", "lunghezza": "30"}))?;
+
     e("numerafili", json!({"tutti": true}))?;
     e("siglecomponenti", json!({}))?;
     // designazione CEI EN 81346 sopra le sigle del foglio del motore, dove il box non la dice già
@@ -115,7 +118,7 @@ pub fn disegna(s: &mut Session, testata: &Value) -> Result<()> {
     e("uscita", json!({"tipo": "termico", "quadro": "+QG"}))?;
     // la pulsantiera sulla porta, con la foratura
     e("uscita", json!({"tipo": "pulsantiera", "quadro": "+QG"}))?;
-    for tipo in ["indice", "distinta", "morsettiere", "disegnomorsettiere", "cablaggio", "cavi", "io", "loop", "circuiti", "funzioni", "simboli"] {
+    for tipo in ["indice", "distinta", "morsettiere", "disegnomorsettiere", "cablaggio", "cavi", "impianto", "io", "loop", "circuiti", "funzioni", "simboli"] {
         e("uscita", json!({"tipo": tipo}))?;
     }
     e("crossreference", json!({}))?;

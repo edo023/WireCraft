@@ -216,7 +216,7 @@ pub fn disegna_con(
 // ---------- le uscite ----------
 
 /// Tipi di uscita.
-pub const TIPI: [(&str, &str); 15] = [
+pub const TIPI: [(&str, &str); 16] = [
     ("indice", "Lista fogli"),
     ("distinta", "Distinta materiali"),
     ("morsettiere", "Morsettiere"),
@@ -232,6 +232,7 @@ pub const TIPI: [(&str, &str); 15] = [
     ("loop", "Loop diagram"),
     ("pulsantiera", "Pulsantiera"),
     ("circuiti", "Tabella dei circuiti"),
+    ("impianto", "Schema d'impianto"),
 ];
 
 /// La tabella di un'uscita con i dati del disegno, e i titoli del foglio (due lingue).
@@ -480,6 +481,7 @@ pub fn tabella(s: &mut Session, tipo: &str, p: &Value) -> Result<(Tabella, &'sta
         "pulsantiera" => Ok((crate::pulsantiera::tabella(s, p)?, "Pulsantiera", "Control Panel")),
         "circuiti" => Ok((crate::unifilare::tabella(s, p)?, "Tabella dei circuiti", "Circuit Schedule")),
         "disegnomorsettiere" => Ok((crate::morsettiere::tabella(s, p)?, "Disegno morsettiere", "Terminal strips")),
+        "impianto" => Ok((crate::impianto::tabella(s, p)?, "Schema d'impianto", "Plant Diagram")),
         "termico" => {
             let quadro = if quadro.trim().is_empty() { crate::impostazioni::quadro_corrente().unwrap_or_default() } else { quadro.clone() };
             let (d, e, voci) = crate::termico::calcolo(s, &quadro, p)?;
@@ -502,6 +504,9 @@ pub fn uscita(s: &mut Session, tipo: &str, p: &Value, primo: Option<u32>) -> Res
     }
     if tipo == "disegnomorsettiere" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
         return crate::morsettiere::uscita(s, p, primo);
+    }
+    if tipo == "impianto" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
+        return crate::impianto::uscita(s, primo);
     }
     let (t, t0, t1) = tabella(s, tipo, p)?;
     let mut parametri = serde_json::Map::new();

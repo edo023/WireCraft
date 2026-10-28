@@ -12,6 +12,7 @@ mod esempio;
 mod excel;
 mod fili;
 mod fogli;
+mod impianto;
 mod impostazioni;
 mod layout;
 mod libreria;

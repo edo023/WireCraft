@@ -6,6 +6,11 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 
 - **Installer per Windows**.
 
+## 29 ottobre 2026: schema d'impianto
+
+- **Schema d'impianto** (`USCITA {tipo: impianto}`, pulsante "Schema d'impianto" nella scheda WireCraft): i quadri del progetto come blocchi, con la descrizione del box del quadro e il numero di componenti, collegati dai cavi con sigla, formazione, lunghezza e funzione. Il percorso di un cavo viene dalla sua definizione o, se manca, dai componenti a cui arrivano le sue vene. Le tratte corte stanno vicino ai quadri e quelle lunghe all'esterno, senza incrociarsi; la funzione si scrive se c'è posto. Anche in Excel; nel progetto d'esempio (22 fogli), con il cavo che dal quadro di distribuzione alimenta il quadro macchina.
+- Il pulsante "Simbologia" apre la libreria dei simboli IEC 60617.
+
 ## 28 ottobre 2026: schema unifilare, prima release, morsettiere, topografico
 
 - **WireCraft 0.2.0**, la prima release: `wirecraft-windows-x64.zip` con l'eseguibile pronto, compilato e provato da GitHub Actions a ogni tag `v*`, con le note della versione.

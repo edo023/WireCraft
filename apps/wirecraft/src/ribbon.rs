@@ -142,8 +142,8 @@ fn schede() -> Vec<Scheda> {
                     "Generale",
                     true,
                     vec![
-                        Elemento::Piccoli(vec![t(Icona::Simbologia, "Simbologia", ND), t(Icona::Settaggi, "Impostazioni", Settaggi), t(Icona::Scansione, "Verifica", Cross)]),
-                        Elemento::Piccoli(vec![t(Icona::Impianto, "Schema d'impianto", ND), t(Icona::Quadro, "Quadro corrente", Settaggi), t(Icona::Tensioni, "Tensioni", Tensioni)]),
+                        Elemento::Piccoli(vec![t(Icona::Simbologia, "Simbologia", LibreriaSimboli), t(Icona::Settaggi, "Impostazioni", Settaggi), t(Icona::Scansione, "Verifica", Cross)]),
+                        Elemento::Piccoli(vec![t(Icona::Impianto, "Schema d'impianto", Liste(Some("impianto"))), t(Icona::Quadro, "Quadro corrente", Settaggi), t(Icona::Tensioni, "Tensioni", Tensioni)]),
                         Elemento::Piccoli(vec![
                             Voce::Icone(vec![p(Icona::Pianta, "Planimetria", ND)]),
                             Voce::Icone(vec![p(Icona::Aggiorna, "Aggiorna liste e tabelle", Esegui("aggiornaliste", "{}"))]),

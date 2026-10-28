@@ -19,6 +19,7 @@ pub mod edita;
 pub mod esempio;
 pub mod fili;
 pub mod fogli;
+pub mod impianto;
 pub mod impostazioni;
 pub mod layout;
 pub mod loopdiagram;
