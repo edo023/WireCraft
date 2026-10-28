@@ -95,3 +95,38 @@ fn rinumera_e_rinomina_le_morsettiere() {
     assert_eq!(primo["posizione"].as_str().unwrap(), elettrico::squadratura::riferimento(1, primo["x"].as_f64().unwrap(), primo["y"].as_f64().unwrap()));
     assert!(s.execute("morsettiera.ordine", &json!({"morsettiera": "-X9"})).is_err());
 }
+
+#[test]
+fn disegno_della_morsettiera_con_i_collegamenti() {
+    let _uno_alla_volta = crate::uno_alla_volta();
+    crate::registra();
+    let mut s = Session::empty();
+    s.new_drawing(true);
+    esegui(&mut s, "nuovomultifoglio", json!({"fogli": 1}));
+    esegui(&mut s, "cambiofoglio", json!({"foglio": 1}));
+    // sopra il morsetto un magnetotermico, sotto una lampada; accanto il PE
+    esegui(&mut s, "filo", json!({"points": [[60.0, 250.0], [60.0, 80.0]]}));
+    esegui(&mut s, "filo", json!({"points": [[100.0, 250.0], [100.0, 80.0]]}));
+    let qf = esegui(&mut s, "simbolo.qf1", json!({"at": [60.0, 220.0]}))["nome"].as_str().unwrap().to_string();
+    let hl = esegui(&mut s, "simbolo.hl", json!({"at": [60.0, 120.0]}))["nome"].as_str().unwrap().to_string();
+    esegui(&mut s, "morsetti", json!({"morsettiera": "-X1", "at": [60.0, 160.0]}));
+    esegui(&mut s, "morsetti", json!({"morsettiera": "-X1", "at": [100.0, 160.0], "numero": "PE"}));
+    esegui(&mut s, "ponticello", json!({"morsettiera": "-X1", "morsetti": ["1", "PE"]}));
+    esegui(&mut s, "numerafili", json!({"tutti": true}));
+
+    let c = elettrico::morsettiere::collegati(&mut s, "-X1").unwrap();
+    assert_eq!(c.len(), 2);
+    assert_eq!((c[0].interno.as_str(), c[0].esterno.as_str()), (format!("{qf}:2").as_str(), format!("{hl}:X1").as_str()), "{c:?}");
+    assert!(!c[0].pe && c[1].pe);
+    assert_eq!(c[0].ponte, c[1].ponte);
+
+    // sul foglio e in Excel
+    let u = esegui(&mut s, "uscita", json!({"tipo": "disegnomorsettiere", "morsettiera": "-X1"}));
+    assert_eq!(u["fogli"].as_array().unwrap().len(), 1);
+    let dir = std::env::temp_dir().join(format!("cadeo_dismors_{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let r = esegui(&mut s, "excel", json!({"tipo": "disegnomorsettiere", "file": dir.join("m.xlsx").to_string_lossy()}));
+    assert_eq!(r["righe"], 2);
+    let _ = std::fs::remove_dir_all(&dir);
+    esegui(&mut s, "aggiornaliste", json!({}));
+}

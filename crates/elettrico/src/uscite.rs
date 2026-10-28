@@ -216,10 +216,11 @@ pub fn disegna_con(
 // ---------- le uscite ----------
 
 /// Tipi di uscita.
-pub const TIPI: [(&str, &str); 14] = [
+pub const TIPI: [(&str, &str); 15] = [
     ("indice", "Lista fogli"),
     ("distinta", "Distinta materiali"),
     ("morsettiere", "Morsettiere"),
+    ("disegnomorsettiere", "Disegno morsettiere"),
     ("cablaggio", "Tabella di cablaggio"),
     ("cavi", "Lista cavi"),
     ("conduttoricavi", "Tabella conduttori dei cavi"),
@@ -478,6 +479,7 @@ pub fn tabella(s: &mut Session, tipo: &str, p: &Value) -> Result<(Tabella, &'sta
         "loop" => Ok((crate::loopdiagram::tabella(s)?, "Loop diagram", "Loop Diagram")),
         "pulsantiera" => Ok((crate::pulsantiera::tabella(s, p)?, "Pulsantiera", "Control Panel")),
         "circuiti" => Ok((crate::unifilare::tabella(s, p)?, "Tabella dei circuiti", "Circuit Schedule")),
+        "disegnomorsettiere" => Ok((crate::morsettiere::tabella(s, p)?, "Disegno morsettiere", "Terminal strips")),
         "termico" => {
             let quadro = if quadro.trim().is_empty() { crate::impostazioni::quadro_corrente().unwrap_or_default() } else { quadro.clone() };
             let (d, e, voci) = crate::termico::calcolo(s, &quadro, p)?;
@@ -497,6 +499,9 @@ pub fn uscita(s: &mut Session, tipo: &str, p: &Value, primo: Option<u32>) -> Res
     }
     if tipo == "pulsantiera" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
         return crate::pulsantiera::uscita(s, p, primo);
+    }
+    if tipo == "disegnomorsettiere" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
+        return crate::morsettiere::uscita(s, p, primo);
     }
     let (t, t0, t1) = tabella(s, tipo, p)?;
     let mut parametri = serde_json::Map::new();

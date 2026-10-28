@@ -115,7 +115,7 @@ pub fn disegna(s: &mut Session, testata: &Value) -> Result<()> {
     e("uscita", json!({"tipo": "termico", "quadro": "+QG"}))?;
     // la pulsantiera sulla porta, con la foratura
     e("uscita", json!({"tipo": "pulsantiera", "quadro": "+QG"}))?;
-    for tipo in ["indice", "distinta", "morsettiere", "cablaggio", "cavi", "io", "loop", "circuiti", "funzioni", "simboli"] {
+    for tipo in ["indice", "distinta", "morsettiere", "disegnomorsettiere", "cablaggio", "cavi", "io", "loop", "circuiti", "funzioni", "simboli"] {
         e("uscita", json!({"tipo": tipo}))?;
     }
     e("crossreference", json!({}))?;

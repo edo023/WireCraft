@@ -12,7 +12,7 @@ Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artifici
 <img alt="Rust" src="https://img.shields.io/badge/Rust-1.95%2B-b7410e?logo=rust">
 <img alt="Windows" src="https://img.shields.io/badge/piattaforma-Windows-0078d6">
 <img alt="Stato alpha" src="https://img.shields.io/badge/stato-alpha-orange">
-<img alt="60 test di integrazione" src="https://img.shields.io/badge/test-60%20passati-brightgreen">
+<img alt="61 test di integrazione" src="https://img.shields.io/badge/test-61%20passati-brightgreen">
 </p>
 
 <p align="center"><img src="docs/img/schema.png" alt="WireCraft: lo schema di potenza di un motore, con i fogli del progetto a sinistra e i comandi elettrici a destra" width="100%"></p>
@@ -67,6 +67,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 **🔌 Morsetti, connettori, cavi, PLC**
 - morsettiere posate con una linea attraverso i fili, con ponticelli a mano o automatici
 - editor delle morsettiere: ordine a mano o secondo schema e fili, rinumerazione, morsetti a più livelli, rinomina
+- disegno delle morsettiere con i collegamenti interni ed esterni di ogni morsetto, per l'officina
 - connettori con pin maschio/femmina
 - cavi con le vene posate sui fili e i segnalini
 - schede I/O PLC con indirizzi e commenti in due lingue
@@ -142,7 +143,7 @@ scripts/aggiorna-cadcraft.sh          # prepara il motore CAD con i ganci di Wir
 cargo run --release -p wirecraft      # avvia il programma
 ```
 
-Vuoi vedere subito un progetto completo? Questo comando genera un impianto di esempio da 19 fogli (alimentazione, motore, ausiliari, PLC, quadro di distribuzione in unifilare, lay-out del quadro, calcolo termico, pulsantiera, loop diagram, liste e legende) e lo stampa in PDF:
+Vuoi vedere subito un progetto completo? Questo comando genera un impianto di esempio da 21 fogli (alimentazione, motore, ausiliari, PLC, quadro di distribuzione in unifilare, lay-out del quadro, calcolo termico, pulsantiera, disegno delle morsettiere, loop diagram, liste e legende) e lo stampa in PDF:
 
 ```sh
 cargo run --release -p elettrico --example esempio_completo -- esempio.dxf esempio.pdf
@@ -167,8 +168,8 @@ Dall'idea alla prima versione pubblica in cinque giorni. La storia completa, gio
 | 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346, calcolo termico del quadro, loop diagram, tensioni e fili colorati, targhette, ponticelli, liste in Excel, configuratore macchina, pulsantiera; lettura migliore dei DWG di altri programmi | ✅ |
 | 28 ottobre | Schema unifilare dei quadri di distribuzione, con dimensionamento e verifica di protezioni e cavi | ✅ |
 | 28 ottobre | **Prima release**: [WireCraft 0.2.0](https://github.com/edo023/WireCraft/releases/tag/v0.2.0), l'eseguibile per Windows pronto da scaricare | ✅ |
-| 28 ottobre | Editor delle morsettiere, gestore topografico del quadro; progetto d'esempio dall'app; test di salvataggio e riapertura e di robustezza di tutti i comandi | ✅ |
-| Prossimi passi | Disegno della morsettiera con i collegamenti a monte e a valle | 🔜 |
+| 28 ottobre | Editor e disegno delle morsettiere, gestore topografico del quadro; progetto d'esempio dall'app; test di salvataggio e riapertura e di robustezza di tutti i comandi | ✅ |
+| Prossimi passi | Schema d'impianto e planimetria | 🔜 |
 | | Installer per Windows | 🔜 |
 
 ## Com'è fatto
@@ -178,7 +179,7 @@ WireCraft è un livello elettrico sopra [CADCraft](https://github.com/storytold/
 | Cartella | Contenuto |
 |---|---|
 | `apps/wirecraft` | il programma desktop (`wirecraft.exe`): barra a schede, pannelli, finestre |
-| `crates/elettrico` | tutti i comandi elettrici, con 60 test di integrazione in `tests/integrazione` |
+| `crates/elettrico` | tutti i comandi elettrici, con 61 test di integrazione in `tests/integrazione` |
 | `crates/elettrico/examples` | `esempio_completo` (un progetto con tutte le funzioni), `multifoglio`, `analizza` (blocchi e attributi di un DWG) |
 | `vendor/cadcraft` | CADCraft, come git submodule |
 | `patches/cadcraft` | i piccoli ganci che servono a CADCraft (comandi e menu di un'applicazione) e la versione su cui si applicano |

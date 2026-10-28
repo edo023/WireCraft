@@ -253,3 +253,266 @@ pub fn comandi() -> Vec<CommandSpec> {
         spec("morsettiera.rinomina", "Rinomina morsettiera", &["Elettrico", "Morsettiere", "Rinomina…"], "{morsettiera, nome: nuovo nome, unisci?: bool (in una morsettiera che esiste)}", run_rinomina),
     ]
 }
+
+// ---------- disegno della morsettiera ----------
+
+use crate::collegamenti::{Capo, TipoCapo};
+use crate::fili::Segmento;
+use crate::numerazione::su;
+use crate::uscite;
+
+type P = (f64, f64);
+
+fn stesso_punto(a: P, b: P) -> bool {
+    (a.0 - b.0).abs() < 0.01 && (a.1 - b.1).abs() < 0.01
+}
+
+/// Il punto dove due segmenti si toccano (un estremo dell'uno sull'altro).
+fn contatto(a: &Segmento, b: &Segmento) -> Option<P> {
+    [b.a, b.b].into_iter().find(|p| su(a, *p)).or_else(|| [a.a, a.b].into_iter().find(|p| su(b, *p)))
+}
+
+/// I capi raggiunti dal morsetto in `p` lungo i fili, da una parte (verso l'alto, o verso
+/// sinistra su un filo orizzontale: il lato interno) e dall'altra (il lato esterno), nell'ordine
+/// in cui si incontrano. Il morsetto non interrompe il filo: lo si divide in `p`.
+pub fn lati(segmenti: &[Segmento], capi: &[Capo], p: P) -> (Vec<Capo>, Vec<Capo>) {
+    let Some(i) = segmenti.iter().position(|f| su(f, p)) else { return (Vec::new(), Vec::new()) };
+    let f = &segmenti[i];
+    let verticale = (f.a.0 - f.b.0).abs() < 0.01;
+    let (primo, secondo) = if verticale {
+        if f.a.1 >= f.b.1 { (f.a, f.b) } else { (f.b, f.a) }
+    } else if f.a.0 <= f.b.0 {
+        (f.a, f.b)
+    } else {
+        (f.b, f.a)
+    };
+    let lato = |fine: P| -> Vec<Capo> {
+        if stesso_punto(p, fine) {
+            return Vec::new();
+        }
+        let meta = Segmento { a: p, b: fine, handle: String::new() };
+        // in ampiezza dai segmenti toccati, senza ripassare dal morsetto
+        let mut visti = vec![false; segmenti.len()];
+        visti[i] = true;
+        let mut ordine: Vec<Segmento> = vec![meta];
+        let mut k = 0;
+        while k < ordine.len() {
+            let c = ordine[k].clone();
+            for (j, g) in segmenti.iter().enumerate() {
+                if !visti[j] && contatto(&c, g).is_some_and(|q| !stesso_punto(q, p)) {
+                    visti[j] = true;
+                    ordine.push(g.clone());
+                }
+            }
+            k += 1;
+        }
+        let mut v: Vec<Capo> = Vec::new();
+        for g in &ordine {
+            let mut qui: Vec<&Capo> = capi.iter().filter(|c| su(g, c.pos) && !stesso_punto(c.pos, p) && !v.iter().any(|x| x == *c)).collect();
+            qui.sort_by(|a, b| (a.pos.0 - p.0).hypot(a.pos.1 - p.1).total_cmp(&(b.pos.0 - p.0).hypot(b.pos.1 - p.1)));
+            v.extend(qui.into_iter().cloned());
+        }
+        v
+    };
+    (lato(primo), lato(secondo))
+}
+
+fn testo_capi(v: &[Capo]) -> String {
+    let t: Vec<String> = v.iter().take(2).map(|c| if c.tipo == TipoCapo::Rimando { format!("→ {}", c.sigla) } else { c.testo() }).collect();
+    let mut t = t.join(", ");
+    if v.len() > 2 {
+        t.push_str(&format!(" +{}", v.len() - 2));
+    }
+    t
+}
+
+/// Un morsetto con quello che ha collegato da una parte e dall'altra.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Collegato {
+    pub numero: String,
+    pub livello: u32,
+    pub ponte: String,
+    pub filo: String,
+    pub interno: String,
+    pub esterno: String,
+    pub posizione: String,
+    pub pe: bool,
+}
+
+/// I morsetti della morsettiera in ordine, con quello che hanno collegato da una parte e
+/// dall'altra.
+pub fn collegati(s: &mut Session, morsettiera: &str) -> Result<Vec<Collegato>> {
+    let v = in_ordine(s, morsettiera)?;
+    let mut fogli_m: Vec<u32> = v.iter().map(|m| m.foglio).filter(|f| *f > 0).collect();
+    fogli_m.sort_unstable();
+    fogli_m.dedup();
+    let reti = if fogli_m.is_empty() { Vec::new() } else { crate::collegamenti::reti(s, &fogli_m)? };
+    let mut segmenti: Vec<(u32, Vec<Segmento>)> = Vec::new();
+    for f in &fogli_m {
+        segmenti.push((*f, crate::fili::fili(s, &crate::fogli::nome_layer(*f))?));
+    }
+    Ok(v
+        .iter()
+        .map(|m| {
+            let capi: Vec<Capo> = reti.iter().filter(|r| r.foglio == m.foglio).flat_map(|r| r.capi.iter().filter(|c| c.blocco != m.blocco.handle).cloned()).collect();
+            let seg = segmenti.iter().find(|(f, _)| *f == m.foglio).map_or(&[][..], |(_, s)| s.as_slice());
+            let (interno, esterno) = lati(seg, &capi, m.blocco.pos);
+            let f = filo(m);
+            Collegato {
+                numero: m.numero.clone(),
+                livello: livello(m),
+                ponte: m.blocco.attributo("PONTE").to_string(),
+                pe: m.numero.trim().eq_ignore_ascii_case("PE") || f.eq_ignore_ascii_case("PE"),
+                filo: f,
+                interno: testo_capi(&interno),
+                esterno: testo_capi(&esterno),
+                posizione: squadratura::riferimento(m.foglio, m.blocco.pos.0, m.blocco.pos.1),
+            }
+        })
+        .collect())
+}
+
+/// Larghezza di una colonna (un morsetto) e ascissa della prima, nel disegno.
+const COLONNA: f64 = 7.0;
+const X_PRIMA: f64 = 45.0;
+/// Le fasce del disegno, dall'alto: (inizio, fine) in mm sotto il bordo dell'area.
+const INTERNO: (f64, f64) = (-12.0, -72.0);
+const FILO: (f64, f64) = (-72.0, -88.0);
+const MORSETTO: (f64, f64) = (-88.0, -100.0);
+const PONTE: (f64, f64) = (-100.0, -106.0);
+const ESTERNO: (f64, f64) = (-106.0, -166.0);
+
+fn colonne_per_pagina() -> usize {
+    ((uscite::AREA.0 - X_PRIMA) / COLONNA).floor() as usize
+}
+
+/// Una pagina del disegno: la morsettiera, i suoi morsetti, la pagina e quante sono.
+struct Pagina {
+    nome: String,
+    righe: Vec<Collegato>,
+    k: usize,
+    n: usize,
+}
+
+fn pagine(s: &mut Session, morsettiera: Option<&str>) -> Result<Vec<Pagina>> {
+    let mut out = Vec::new();
+    for nome in nomi(s)?.into_iter().filter(|n| morsettiera.is_none_or(|m| m.trim().eq_ignore_ascii_case(n))) {
+        let righe = collegati(s, &nome)?;
+        let per = colonne_per_pagina().max(1);
+        let n = righe.len().div_ceil(per).max(1);
+        for (k, pezzo) in righe.chunks(per).enumerate() {
+            out.push(Pagina { nome: nome.clone(), righe: pezzo.to_vec(), k, n });
+        }
+    }
+    Ok(out)
+}
+
+fn ruotato(s: &mut Session, h: &mut Vec<String>, at: P, t: &str, alt: f64, come: cadcraft_engine::doc::HAlign) -> Result<()> {
+    if t.trim().is_empty() {
+        return Ok(());
+    }
+    crate::util::testo(s, h, at, t, alt, "L")?;
+    if let Some(ultimo) = h.last().cloned() {
+        crate::util::ruota_testo(s, &ultimo, 90.0, come)?;
+    }
+    Ok(())
+}
+
+fn disegna_pagina(s: &mut Session, p: &Pagina, h: &mut Vec<String>) -> Result<()> {
+    use crate::util::{colore, linea, testo};
+    use cadcraft_engine::doc::HAlign;
+    let fine = X_PRIMA + COLONNA * p.righe.len() as f64;
+    colore(s, "7")?;
+    let pagina = if p.n > 1 { format!(" ({}/{})", p.k + 1, p.n) } else { String::new() };
+    testo(s, h, (uscite::AREA.0 / 2.0, -4.5), &format!("MORSETTIERA {} \\ TERMINAL STRIP {}{pagina}", p.nome, p.nome), 4.0, "MC")?;
+    // le fasce con le intestazioni a sinistra
+    for (fascia, it, en) in [(INTERNO, "Collegamenti interni", "Internal connections"), (FILO, "Filo", "Wire"), (MORSETTO, "Morsetto", "Terminal"), (PONTE, "Ponte", "Bridge"), (ESTERNO, "Collegamenti esterni", "External connections")] {
+        let y = (fascia.0 + fascia.1) / 2.0;
+        testo(s, h, (2.0, y + 0.6), it, 2.0, "L")?;
+        if fascia.0 - fascia.1 > 8.0 {
+            colore(s, "8")?;
+            testo(s, h, (2.0, y - 2.6), en, 1.6, "L")?;
+            colore(s, "7")?;
+        }
+        linea(s, h, &[(0.0, fascia.0), (fine, fascia.0)], false)?;
+    }
+    linea(s, h, &[(0.0, ESTERNO.1), (fine, ESTERNO.1)], false)?;
+    linea(s, h, &[(0.0, INTERNO.0), (0.0, ESTERNO.1)], false)?;
+    linea(s, h, &[(X_PRIMA, INTERNO.0), (X_PRIMA, ESTERNO.1)], false)?;
+    for (i, r) in p.righe.iter().enumerate() {
+        let x0 = X_PRIMA + COLONNA * i as f64;
+        let x = x0 + COLONNA / 2.0;
+        colore(s, "7")?;
+        ruotato(s, h, (x + 0.9, INTERNO.1 + 2.0), &r.interno, 1.8, HAlign::Left)?;
+        ruotato(s, h, (x + 0.9, FILO.1 + 2.0), &r.filo, 1.8, HAlign::Left)?;
+        ruotato(s, h, (x + 0.9, ESTERNO.0 - 2.0), &r.esterno, 1.8, HAlign::Right)?;
+        // il morsetto: il PE in verde
+        colore(s, if r.pe { "3" } else { "7" })?;
+        linea(s, h, &[(x0, MORSETTO.0), (x0 + COLONNA, MORSETTO.0), (x0 + COLONNA, MORSETTO.1), (x0, MORSETTO.1)], true)?;
+        let alt = if r.numero.chars().count() > 3 { 1.5 } else { 2.2 };
+        testo(s, h, (x, (MORSETTO.0 + MORSETTO.1) / 2.0 + if r.livello > 1 { 1.2 } else { 0.0 }), &r.numero, alt, "MC")?;
+        if r.livello > 1 {
+            testo(s, h, (x, MORSETTO.1 + 2.0), &format!("L{}", r.livello), 1.4, "MC")?;
+        }
+    }
+    // i ponticelli: una linea con un punto su ogni morsetto del gruppo
+    colore(s, "1")?;
+    let y = (PONTE.0 + PONTE.1) / 2.0;
+    let mut gruppi: Vec<&str> = p.righe.iter().map(|r| r.ponte.as_str()).filter(|g| !g.trim().is_empty()).collect();
+    gruppi.sort_unstable();
+    gruppi.dedup();
+    for g in gruppi {
+        let xs: Vec<f64> = p.righe.iter().enumerate().filter(|(_, r)| r.ponte == g).map(|(i, _)| X_PRIMA + COLONNA * (i as f64 + 0.5)).collect();
+        if let (Some(a), Some(b)) = (xs.first(), xs.last()) {
+            linea(s, h, &[(*a, y), (*b, y)], false)?;
+        }
+        for x in xs {
+            h.extend(crate::util::handles(&crate::util::esegui(s, "circle", json!({"center": [x, y], "radius": 0.6}))?));
+        }
+    }
+    colore(s, "7")
+}
+
+/// Disegna le morsettiere (tutte, o `morsettiera`) dal foglio `primo` (default dopo l'ultimo).
+pub fn uscita(s: &mut Session, p: &Value, primo: Option<u32>) -> Result<Vec<u32>> {
+    let solo = testo_param(p, "morsettiera").filter(|m| !m.trim().is_empty());
+    let v = pagine(s, solo.as_deref())?;
+    if v.is_empty() {
+        return Err(errore("Nessuna morsettiera da disegnare"));
+    }
+    let mut par = serde_json::Map::new();
+    if let Some(m) = &solo {
+        par.insert("morsettiera".into(), json!(m));
+    }
+    uscite::disegna_con(s, v.len(), "disegnomorsettiere", &Value::Object(par), primo, "Disegno morsettiere", "Terminal strips", |s, k, h| match v.get(k) {
+        Some(pg) => disegna_pagina(s, pg, h),
+        None => Ok(()),
+    })
+}
+
+/// La stessa cosa in tabella (Excel).
+pub fn tabella(s: &mut Session, p: &Value) -> Result<uscite::Tabella> {
+    let solo = testo_param(p, "morsettiera").filter(|m| !m.trim().is_empty());
+    let mut righe = Vec::new();
+    for nome in nomi(s)?.into_iter().filter(|n| solo.as_ref().is_none_or(|m| m.trim().eq_ignore_ascii_case(n))) {
+        for r in collegati(s, &nome)? {
+            righe.push([nome.clone(), r.numero, r.livello.to_string(), r.ponte, r.filo, r.interno, r.esterno, r.posizione].into_iter().map(uscite::Cella::T).collect());
+        }
+    }
+    let col = |v: &[(&str, f64)]| v.iter().map(|(t, w)| ((*t).to_string(), *w)).collect::<Vec<_>>();
+    Ok(uscite::Tabella {
+        titolo: "DISEGNO MORSETTIERE \\ TERMINAL STRIPS".into(),
+        colonne: col(&[
+            ("Morsettiera\nTerminal strip", 26.0),
+            ("Morsetto\nTerminal", 18.0),
+            ("Liv.\nLevel", 12.0),
+            ("Ponte\nBridge", 14.0),
+            ("Filo\nWire", 20.0),
+            ("Collegamento interno\nInternal connection", 90.0),
+            ("Collegamento esterno\nExternal connection", 90.0),
+            ("Posizione\nPosition", 22.0),
+        ]),
+        righe,
+        altezza_riga: 6.0,
+    })
+}

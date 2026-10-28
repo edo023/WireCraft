@@ -241,6 +241,9 @@ impl FinestraMorsettiere {
                             self.nuovo_nome.clear();
                         }
                         ui.separator();
+                        if ui.button("Disegno sul foglio").on_hover_text("Il disegno della morsettiera con i collegamenti interni ed esterni, su un foglio nuovo").clicked() {
+                            azione = Some(("uscita", json!({"tipo": "disegnomorsettiere", "morsettiera": nome})));
+                        }
                         csv = ui.button("CSV…").clicked();
                     });
                 });

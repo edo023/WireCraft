@@ -13,7 +13,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | Comando | Cosa fa |
 |---|---|
 | `COMMESSA.NUOVA`, `COMMESSA.NUOVOMULTIFOGLIO`, `COMMESSA.APRI`, `COMMESSA.MODIFICA`, `COMMESSA.COPIA`, `COMMESSE.ELENCO` | gestione dei progetti | `COMMESSA.NUOVA` accetta `configurazione` per partire dalle impostazioni di un cliente. |
-| `COMMESSA.ESEMPIO` | progetto d'esempio | Crea la commessa "Esempio WireCraft" con un progetto completo (19 fogli), la salva e la apre. Pulsante "Progetto d'esempio" in Gestione Progetti. |
+| `COMMESSA.ESEMPIO` | progetto d'esempio | Crea la commessa "Esempio WireCraft" con un progetto completo (21 fogli), la salva e la apre. Pulsante "Progetto d'esempio" in Gestione Progetti. |
 | `IMPOSTAZIONI` (`SETTAGGI`) | siglatura, numerazione fili, conduttori, quadro/funzione/ubicazione correnti, morsetti, nomi delle alimentazioni |
 | `CONFIGURAZIONE.SALVA`, `.USA`, `.ELIMINA`, `CONFIGURAZIONI` | configurazioni con nome (una per cliente): salva le impostazioni in uso, usale in un altro progetto (quadro, funzione e ubicazione correnti restano), elenco |
 | `CONFIGURAZIONE.ESPORTA`, `.IMPORTA` | impostazioni su file `.ini` e ritorno; si importano anche i settaggi di un altro CAD elettrico |
@@ -51,6 +51,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `MORSETTI`, `MORSETTIERA` | morsetti su una linea che attraversa i fili; morsettiera in tabella o CSV |
 | `MORSETTIERA.ORDINE` | rinumera una morsettiera: `ordine` `schema` (foglio per foglio, da sinistra e dall'alto), `fili` (per numero di filo), `attuale` (compatta), oppure `numeri` nell'ordine voluto; `da` e `passo`. I livelli di un morsetto multiplo restano insieme, i nomi non numerici (`PE`, `N`) restano |
 | `MORSETTIERA.RINOMINA` | cambia il nome di una morsettiera (`nome`); con `unisci` la aggiunge in fondo a una che esiste già |
+| `USCITA {tipo: disegnomorsettiere}` | disegno delle morsettiere (tutte o `morsettiera`): un morsetto per colonna con i collegamenti interni (verso l'alto nello schema) ed esterni, il filo, il livello, i ponticelli e il PE in verde; anche in Excel |
 | `MORSETTIERA.ELENCO` | morsettiere e connettori con i morsetti in ordine (numero, livello, filo, ponte, posizione); finestra Editor Morsettiere |
 | `PONTICELLO`, `PONTICELLI.AUTO` | ponticelli tra morsetti della stessa morsettiera: a mano (`morsetti: "1-4, 7"`, `togli`) o automatici tra morsetti vicini sullo stesso filo |
 | `CONNETTORI` | pin di connettore (sesso M/F) su una linea che attraversa i fili; escono nelle stesse liste dei morsetti |
