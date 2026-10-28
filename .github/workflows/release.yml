@@ -54,6 +54,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" wirecraft-windows-x64.zip \
-            --title "WireCraft $GITHUB_REF_NAME" \
-            --notes "WireCraft per Windows a 64 bit: scompatta lo zip e avvia wirecraft.exe. Le novità sono nel CHANGELOG."
+          # le note della versione, se ci sono, da .github/note-release/<tag>.md
+          NOTE=".github/note-release/$GITHUB_REF_NAME.md"
+          if [ -f "$NOTE" ]; then
+            ARG=(--notes-file "$NOTE")
+          else
+            ARG=(--notes "WireCraft per Windows a 64 bit: scompatta lo zip e avvia wirecraft.exe. Le novità sono nel CHANGELOG.")
+          fi
+          gh release create "$GITHUB_REF_NAME" wirecraft-windows-x64.zip --title "WireCraft $GITHUB_REF_NAME" "${ARG[@]}"
