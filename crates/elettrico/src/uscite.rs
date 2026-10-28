@@ -280,7 +280,7 @@ pub fn tabella(s: &mut Session, tipo: &str, p: &Value) -> Result<(Tabella, &'sta
             for m in &tutte {
                 let chiave = format!("{} {}", m.blocco.attributo("QUADRO"), m.morsettiera);
                 if chiave != prec {
-                    righe.push(vec![Cella::T(chiave.trim().to_string()), "".into(), "".into(), "".into(), "".into(), "".into()]);
+                    righe.push(vec![Cella::T(chiave.trim().to_string()), "".into(), "".into(), "".into(), "".into(), "".into(), "".into()]);
                     prec = chiave;
                 }
                 // i componenti collegati sopra e sotto il morsetto, sulla sua rete
@@ -297,13 +297,14 @@ pub fn tabella(s: &mut Session, tipo: &str, p: &Value) -> Result<(Tabella, &'sta
                     m.numero.clone().into(),
                     m.blocco.attributo("NUMO").into(),
                     sotto.into(),
+                    m.blocco.attributo("PONTE").into(),
                     squadratura::riferimento(m.foglio, m.blocco.pos.0, m.blocco.pos.1).into(),
                 ]);
             }
             Ok((
                 Tabella {
                     titolo: "MORSETTIERE \\ TERMINAL STRIPS".into(),
-                    colonne: col(&[("Da\nFrom", 60.0), ("NumI", 22.0), ("Morsetto\nTerminal", 22.0), ("NumO", 22.0), ("A\nTo", 60.0), ("Posizione\nPosition", 22.0)]),
+                    colonne: col(&[("Da\nFrom", 60.0), ("NumI", 22.0), ("Morsetto\nTerminal", 22.0), ("NumO", 22.0), ("A\nTo", 60.0), ("Ponte\nBridge", 16.0), ("Posizione\nPosition", 22.0)]),
                     righe,
                     altezza_riga: 5.0,
                 },

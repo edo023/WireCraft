@@ -55,7 +55,7 @@ fn crea_blocco(s: &mut Session, nome: &str) -> Result<()> {
         att(s, &mut h, "NUMI", (1.4, 0.6), 1.8, true, "")?;
         colore(s, "4")?;
         att(s, &mut h, "MORSETTIERA", (1.4, -2.4), 1.8, false, "")?;
-        for (tag, def) in [("NUMO", ""), ("QUADRO", ""), ("LIVELLO", "1"), ("SEZIONE", ""), ("COSTRUTTORE", ""), ("TIPO", ""), ("UTENZA", ""), ("NOTEM", "")] {
+        for (tag, def) in [("NUMO", ""), ("QUADRO", ""), ("LIVELLO", "1"), ("SEZIONE", ""), ("COSTRUTTORE", ""), ("TIPO", ""), ("UTENZA", ""), ("NOTEM", ""), ("PONTE", "")] {
             att(s, &mut h, tag, (0.0, -2.0), 1.0, true, def)?;
         }
         if connettore {
@@ -205,7 +205,7 @@ fn posa_fila(s: &mut Session, p: &Value, sesso: Option<&str>) -> Result<Value> {
 }
 
 /// Le righe della morsettiera, in ordine di numero: (morsetto, filo, posizione, quadro).
-pub fn righe(s: &mut Session, morsettiera: &str) -> Result<Vec<[String; 4]>> {
+pub fn righe(s: &mut Session, morsettiera: &str) -> Result<Vec<[String; 5]>> {
     let mut m: Vec<Morsetto> = morsetti(s)?.into_iter().filter(|m| m.morsettiera.eq_ignore_ascii_case(morsettiera)).collect();
     m.sort_by(|a, b| {
         let (na, nb) = (a.numero.parse::<u64>().ok(), b.numero.parse::<u64>().ok());
@@ -214,9 +214,89 @@ pub fn righe(s: &mut Session, morsettiera: &str) -> Result<Vec<[String; 4]>> {
     Ok(m.iter()
         .map(|m| {
             let filo = if m.blocco.attributo("NUMI").is_empty() { m.blocco.attributo("NUMO") } else { m.blocco.attributo("NUMI") };
-            [m.numero.clone(), filo.to_string(), squadratura::riferimento(m.foglio, m.blocco.pos.0, m.blocco.pos.1), m.blocco.attributo("QUADRO").to_string()]
+            [m.numero.clone(), filo.to_string(), squadratura::riferimento(m.foglio, m.blocco.pos.0, m.blocco.pos.1), m.blocco.attributo("QUADRO").to_string(), m.blocco.attributo("PONTE").to_string()]
         })
         .collect())
+}
+
+// ---------- ponticelli ----------
+
+/// I numeri di morsetto di un elenco come `1-4, 7`.
+pub fn numeri_da(t: &str) -> Vec<String> {
+    let mut v = Vec::new();
+    for parte in t.split([',', ';', ' ']).map(str::trim).filter(|x| !x.is_empty()) {
+        match parte.split_once('-').and_then(|(a, b)| Some((a.trim().parse::<u32>().ok()?, b.trim().parse::<u32>().ok()?))) {
+            Some((a, b)) if a <= b && b - a < 1000 => v.extend((a..=b).map(|n| n.to_string())),
+            _ => v.push(parte.to_string()),
+        }
+    }
+    v
+}
+
+/// I morsetti di una morsettiera in ordine di numero.
+fn in_ordine(s: &mut Session, morsettiera: &str) -> Result<Vec<Morsetto>> {
+    let mut m: Vec<Morsetto> = morsetti(s)?.into_iter().filter(|m| m.morsettiera.eq_ignore_ascii_case(morsettiera)).collect();
+    m.sort_by(|a, b| a.numero.parse::<u64>().ok().cmp(&b.numero.parse::<u64>().ok()).then_with(|| a.numero.cmp(&b.numero)));
+    Ok(m)
+}
+
+/// Il primo gruppo di ponte libero di una morsettiera (`P1`, `P2`…).
+fn ponte_libero(m: &[Morsetto]) -> String {
+    let usati: Vec<String> = m.iter().map(|x| x.blocco.attributo("PONTE").to_ascii_uppercase()).collect();
+    (1..).map(|n| format!("P{n}")).find(|p| !usati.contains(p)).unwrap_or_default()
+}
+
+/// Collega con un ponticello i morsetti `numeri` della morsettiera (gruppo nuovo, o `gruppo`),
+/// o li stacca con `togli`. Restituisce il gruppo.
+pub fn ponticello(s: &mut Session, morsettiera: &str, numeri: &[String], togli: bool) -> Result<String> {
+    let tutti = in_ordine(s, morsettiera)?;
+    if tutti.is_empty() {
+        return Err(errore(format!("La morsettiera {morsettiera} non ha morsetti")));
+    }
+    let scelti: Vec<&Morsetto> = tutti.iter().filter(|m| numeri.iter().any(|n| n.eq_ignore_ascii_case(&m.numero))).collect();
+    if let Some(n) = numeri.iter().find(|n| !tutti.iter().any(|m| m.numero.eq_ignore_ascii_case(n))) {
+        return Err(errore(format!("La morsettiera {morsettiera} non ha il morsetto {n}")));
+    }
+    if !togli && scelti.len() < 2 {
+        return Err(errore("Un ponticello collega almeno due morsetti"));
+    }
+    let gruppo = if togli { String::new() } else { ponte_libero(&tutti) };
+    for m in scelti {
+        crate::util::imposta_attributi(s, &m.blocco.handle, &[("PONTE", gruppo.as_str())])?;
+    }
+    Ok(gruppo)
+}
+
+/// Ponticelli automatici: nelle morsettiere (tutte, o `morsettiera`) i morsetti vicini sullo
+/// stesso filo (N, PE, +24V distribuiti) si collegano. Restituisce i ponticelli messi.
+pub fn ponticelli_automatici(s: &mut Session, morsettiera: Option<&str>) -> Result<usize> {
+    let mut nomi: Vec<String> = morsetti(s)?.into_iter().map(|m| m.morsettiera).collect();
+    nomi.sort();
+    nomi.dedup_by(|a, b| a.eq_ignore_ascii_case(b));
+    let mut n = 0;
+    for nome in nomi.iter().filter(|x| morsettiera.is_none_or(|m| m.eq_ignore_ascii_case(x))) {
+        let tutti = in_ordine(s, nome)?;
+        let filo = |m: &Morsetto| {
+            let f = if m.blocco.attributo("NUMI").is_empty() { m.blocco.attributo("NUMO") } else { m.blocco.attributo("NUMI") };
+            f.trim().to_ascii_uppercase()
+        };
+        let mut i = 0;
+        while i < tutti.len() {
+            let f = filo(&tutti[i]);
+            let mut j = i + 1;
+            while j < tutti.len() && !f.is_empty() && filo(&tutti[j]) == f {
+                j += 1;
+            }
+            // una serie di almeno due morsetti senza ponte già messo a mano
+            if j - i >= 2 && tutti[i..j].iter().all(|m| m.blocco.attributo("PONTE").is_empty()) {
+                let numeri: Vec<String> = tutti[i..j].iter().map(|m| m.numero.clone()).collect();
+                ponticello(s, nome, &numeri, false)?;
+                n += 1;
+            }
+            i = j.max(i + 1);
+        }
+    }
+    Ok(n)
 }
 
 /// Scrive righe in CSV (separatore `;`, come lo apre Excel in italiano).
@@ -245,7 +325,7 @@ pub fn tabella(s: &mut Session, at: P, titolo: &str, intestazione: &[&str], righ
 
 fn run_morsettiera(s: &mut Session, p: &Value) -> Result<Value> {
     let nome = testo_param(p, "morsettiera").filter(|m| !m.trim().is_empty()).ok_or_else(|| errore("Indicare la morsettiera (es. -XG)"))?;
-    let intest = ["Morsetto", "Filo", "Posizione", "Quadro"];
+    let intest = ["Morsetto", "Filo", "Posizione", "Quadro", "Ponte"];
     in_gruppo(s, "Morsettiera", |s| {
         let righe: Vec<Vec<String>> = righe(s, &nome)?.into_iter().map(|r| r.to_vec()).collect();
         if righe.is_empty() {
@@ -360,14 +440,62 @@ pub fn comandi() -> Vec<CommandSpec> {
             menu: &["Elettrico", "Morsettiere e Connettori"],
             shortcut: None,
             aliases: &[],
-            params: "{morsettiera: \"-XG\", at?: [x,y] (tabella nel foglio corrente), file?: percorso .csv} → {righe: [[morsetto, filo, posizione, quadro]]}",
+            params: "{morsettiera: \"-XG\", at?: [x,y] (tabella nel foglio corrente), file?: percorso .csv} → {righe: [[morsetto, filo, posizione, quadro, ponte]]}",
             enabled: has_doc,
             run: run_morsettiera,
             undoable: false,
             interactive: None,
             transparent: false,
         },
+        CommandSpec {
+            id: "ponticello",
+            label: "Ponticello",
+            menu: &["Elettrico", "Ponticelli", "Ponticello…"],
+            shortcut: None,
+            aliases: &[],
+            params: "{morsettiera: \"-XG\", morsetti: \"1-4, 7\" | [numeri], togli?: bool} → {ponte}",
+            enabled: has_doc,
+            run: run_ponticello,
+            undoable: false,
+            interactive: None,
+            transparent: false,
+        },
+        CommandSpec {
+            id: "ponticelli.auto",
+            label: "Ponticelli Automatici",
+            menu: &["Elettrico", "Ponticelli", "Automatici"],
+            shortcut: None,
+            aliases: &[],
+            params: "{morsettiera?} — i morsetti vicini sullo stesso filo si collegano → {ponticelli}",
+            enabled: has_doc,
+            run: run_ponticelli_auto,
+            undoable: false,
+            interactive: None,
+            transparent: false,
+        },
     ]
+}
+
+fn run_ponticello(s: &mut Session, p: &Value) -> Result<Value> {
+    let nome = testo_param(p, "morsettiera").filter(|m| !m.trim().is_empty()).ok_or_else(|| errore("Indicare la morsettiera (es. -XG)"))?;
+    let numeri: Vec<String> = match p.get("morsetti") {
+        Some(Value::Array(a)) => a.iter().filter_map(|v| v.as_str().map(str::to_string).or_else(|| v.as_u64().map(|n| n.to_string()))).collect(),
+        Some(Value::String(t)) => numeri_da(t),
+        _ => Vec::new(),
+    };
+    if numeri.is_empty() {
+        return Err(errore("Indicare i morsetti (es. \"1-4\")"));
+    }
+    let togli = p.get("togli").and_then(Value::as_bool).unwrap_or(false);
+    let ponte = in_gruppo(s, "Ponticello", |s| ponticello(s, &nome, &numeri, togli))?;
+    let msg = if togli { format!("{nome}: ponticello tolto da {} morsetti", numeri.len()) } else { format!("{nome}: ponticello {ponte} su {}", numeri.join(", ")) };
+    Ok(json!({"ponte": ponte, "message": msg}))
+}
+
+fn run_ponticelli_auto(s: &mut Session, p: &Value) -> Result<Value> {
+    let m = testo_param(p, "morsettiera").filter(|m| !m.trim().is_empty());
+    let n = in_gruppo(s, "Ponticelli automatici", |s| ponticelli_automatici(s, m.as_deref()))?;
+    Ok(json!({"ponticelli": n, "message": format!("{n} ponticelli tra morsetti vicini sullo stesso filo")}))
 }
 
 #[cfg(test)]

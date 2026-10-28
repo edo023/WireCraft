@@ -48,6 +48,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `COLORAFILI` | i fili del disegno col colore del conduttore (`togli`: di nuovo col colore del layer) |
 | `CONDUTTORE` | specializza il conduttore (sezione, colore, codice) dei fili toccati |
 | `MORSETTI`, `MORSETTIERA` | morsetti su una linea che attraversa i fili; morsettiera in tabella o CSV |
+| `PONTICELLO`, `PONTICELLI.AUTO` | ponticelli tra morsetti della stessa morsettiera: a mano (`morsetti: "1-4, 7"`, `togli`) o automatici tra morsetti vicini sullo stesso filo |
 | `CONNETTORI` | pin di connettore (sesso M/F) su una linea che attraversa i fili; escono nelle stesse liste dei morsetti |
 | `EDITAMORSETTO`, `EDITAFILO`, `EDITARIMANDO` | modifica di morsetti (con il controllo dei numeri doppi), fili (rinomina tutta la rete e la blocca) e rimandi (ricollega i riferimenti) |
 | `AGGIORNALISTE` | cross reference, rimandi e tutte le liste già sui fogli |

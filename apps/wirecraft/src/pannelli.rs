@@ -43,6 +43,8 @@ pub struct Pannelli {
     cross: Option<Vec<navigatore::Problema>>,
     filtro: String,
     morsettiera: String,
+    /// I morsetti da collegare con un ponticello (`1-4`).
+    ponte: String,
     dialogo: Option<Dialogo>,
     edita_xs: Option<EditaXs>,
     /// Giro tra i contatti di una madre con "Vai al Collegato": (madre, contatti, posizione).
@@ -449,6 +451,25 @@ impl Pannelli {
             && let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).set_file_name(format!("morsettiera {}.csv", self.morsettiera.trim())).save_file()
         {
             let _ = cad.run("morsettiera", json!({"morsettiera": self.morsettiera.trim(), "file": p.to_string_lossy()}));
+        }
+        // ponticelli: tra i morsetti scritti, o automatici sullo stesso filo
+        ui.horizontal(|ui| {
+            ui.add(egui::TextEdit::singleline(&mut self.ponte).hint_text("Morsetti (es. 1-4)").desired_width(110.0));
+            let pronti = !self.morsettiera.trim().is_empty() && !self.ponte.trim().is_empty();
+            for (testo, togli) in [("Ponte", false), ("Stacca", true)] {
+                if ui.add_enabled(pronti, egui::Button::new(testo)).clicked() {
+                    match cad.run("ponticello", json!({"morsettiera": self.morsettiera.trim(), "morsetti": self.ponte.trim(), "togli": togli})) {
+                        Ok(r) => cad.set_status(r["message"].as_str().unwrap_or_default().to_string()),
+                        Err(e) => cad.set_status(e),
+                    }
+                }
+            }
+        });
+        if ui.add_sized([ui.available_width(), 22.0], egui::Button::new("Ponticelli automatici")).on_hover_text("I morsetti vicini sullo stesso filo (N, PE, +24V) si collegano").clicked() {
+            match cad.run("ponticelli.auto", json!({"morsettiera": self.morsettiera.trim()})) {
+                Ok(r) => cad.set_status(r["message"].as_str().unwrap_or_default().to_string()),
+                Err(e) => cad.set_status(e),
+            }
         }
         ui.separator();
         ui.label(egui::RichText::new("Verifiche e Output").strong());

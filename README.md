@@ -12,7 +12,7 @@ Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artifici
 <img alt="Rust" src="https://img.shields.io/badge/Rust-1.95%2B-b7410e?logo=rust">
 <img alt="Windows" src="https://img.shields.io/badge/piattaforma-Windows-0078d6">
 <img alt="Stato alpha" src="https://img.shields.io/badge/stato-alpha-orange">
-<img alt="51 test di integrazione" src="https://img.shields.io/badge/test-51%20passati-brightgreen">
+<img alt="52 test di integrazione" src="https://img.shields.io/badge/test-52%20passati-brightgreen">
 </p>
 
 <p align="center"><img src="docs/img/schema.png" alt="WireCraft: lo schema di potenza di un motore, con i fogli del progetto a sinistra e i comandi elettrici a destra" width="100%"></p>
@@ -65,7 +65,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 <td width="50%" valign="top">
 
 **🔌 Morsetti, connettori, cavi, PLC**
-- morsettiere posate con una linea attraverso i fili
+- morsettiere posate con una linea attraverso i fili, con ponticelli a mano o automatici
 - connettori con pin maschio/femmina
 - cavi con le vene posate sui fili e i segnalini
 - schede I/O PLC con indirizzi e commenti in due lingue
@@ -139,10 +139,10 @@ Dall'idea alla prima versione pubblica in cinque giorni. La storia completa, gio
 | 26 ottobre | **Prima versione**: progetti, multifoglio, fili, simboli, siglatura, numerazione, morsetti, cavi, PLC, liste, PDF | ✅ |
 | 26 ottobre | Navigatore, Cross Reference, modifica di fili, morsetti e rimandi | ✅ |
 | 27 ottobre | Traduttore, lay-out del quadro, foratura piastra, connettori. **Pubblicazione open source** | ✅ |
-| 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346, calcolo termico del quadro, loop diagram, tensioni e fili colorati, targhette | ✅ |
+| 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346, calcolo termico del quadro, loop diagram, tensioni e fili colorati, targhette, ponticelli; lettura migliore dei DWG di altri programmi | ✅ |
 | Prossimi passi | Configuratore macchina con le opzioni, gestore topografico e pulsantiere | 🔜 |
 | | Schema unifilare per i quadri di distribuzione | 🔜 |
-| | Esportazione Excel, editor di morsettiera avanzato (ponticelli, multilivello) | 🔜 |
+| | Esportazione Excel, editor di morsettiera avanzato (ordine, multilivello) | 🔜 |
 | | Installer per Windows e release con l'eseguibile pronto | 🔜 |
 
 ## Com'è fatto
@@ -152,7 +152,7 @@ WireCraft è un livello elettrico sopra [CADCraft](https://github.com/storytold/
 | Cartella | Contenuto |
 |---|---|
 | `apps/wirecraft` | il programma desktop (`wirecraft.exe`): barra a schede, pannelli, finestre |
-| `crates/elettrico` | tutti i comandi elettrici, con 51 test di integrazione in `tests/integrazione` |
+| `crates/elettrico` | tutti i comandi elettrici, con 52 test di integrazione in `tests/integrazione` |
 | `crates/elettrico/examples` | `esempio_completo` (un progetto con tutte le funzioni), `multifoglio`, `analizza` (blocchi e attributi di un DWG) |
 | `vendor/cadcraft` | CADCraft, come git submodule |
 | `patches/cadcraft` | i piccoli ganci che servono a CADCraft (comandi e menu di un'applicazione) e la versione su cui si applicano |

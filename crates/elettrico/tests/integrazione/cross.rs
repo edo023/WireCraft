@@ -105,7 +105,7 @@ fn morsetti_su_linea_e_morsettiera() {
     let m = esegui(&mut s, "morsettiera", json!({"morsettiera": "-XG", "at": [250.0, 200.0]}));
     let righe = m["righe"].as_array().unwrap();
     assert_eq!(righe.len(), 4);
-    assert_eq!(righe[0], json!(["1", "01.01", "01/0C", ""]));
+    assert_eq!(righe[0], json!(["1", "01.01", "01/0C", "", ""]), "morsetto, filo, posizione, quadro, ponte");
     assert_eq!(righe[3][1], "01.03", "il morsetto 4 sta sul terzo filo");
     assert!(s.execute("morsettiera", &json!({"morsettiera": "-XZ"})).is_err());
 }

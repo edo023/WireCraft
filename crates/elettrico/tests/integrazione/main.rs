@@ -16,6 +16,7 @@ mod loopdiagram;
 mod multifoglio;
 mod norma81346;
 mod numerazione;
+mod ponticelli;
 mod revisioni;
 mod salto;
 mod simboli;
