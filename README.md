@@ -12,7 +12,7 @@ Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artifici
 <img alt="Rust" src="https://img.shields.io/badge/Rust-1.95%2B-b7410e?logo=rust">
 <img alt="Windows" src="https://img.shields.io/badge/piattaforma-Windows-0078d6">
 <img alt="Stato alpha" src="https://img.shields.io/badge/stato-alpha-orange">
-<img alt="56 test di integrazione" src="https://img.shields.io/badge/test-56%20passati-brightgreen">
+<img alt="57 test di integrazione" src="https://img.shields.io/badge/test-57%20passati-brightgreen">
 </p>
 
 <p align="center"><img src="docs/img/schema.png" alt="WireCraft: lo schema di potenza di un motore, con i fogli del progetto a sinistra e i comandi elettrici a destra" width="100%"></p>
@@ -125,6 +125,7 @@ Non serve installare Rust né compilare nulla. Su Windows a 64 bit:
 2. Scarica il file **`wirecraft-windows-x64.zip`** dell'ultima versione.
 3. Estrai l'archivio ZIP sul tuo computer (tasto destro sul file scaricato → *Estrai tutto*).
 4. Fai doppio clic su **`wirecraft.exe`**. Il programma parte subito, senza installazioni.
+5. Nella finestra *Gestione Progetti* premi **Progetto d'esempio**: si apre un progetto completo da sfogliare e modificare.
 
 ---
 
@@ -175,7 +176,7 @@ WireCraft è un livello elettrico sopra [CADCraft](https://github.com/storytold/
 | Cartella | Contenuto |
 |---|---|
 | `apps/wirecraft` | il programma desktop (`wirecraft.exe`): barra a schede, pannelli, finestre |
-| `crates/elettrico` | tutti i comandi elettrici, con 56 test di integrazione in `tests/integrazione` |
+| `crates/elettrico` | tutti i comandi elettrici, con 57 test di integrazione in `tests/integrazione` |
 | `crates/elettrico/examples` | `esempio_completo` (un progetto con tutte le funzioni), `multifoglio`, `analizza` (blocchi e attributi di un DWG) |
 | `vendor/cadcraft` | CADCraft, come git submodule |
 | `patches/cadcraft` | i piccoli ganci che servono a CADCraft (comandi e menu di un'applicazione) e la versione su cui si applicano |

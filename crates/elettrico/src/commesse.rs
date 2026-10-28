@@ -112,8 +112,11 @@ fn parti(riga: &str) -> Vec<String> {
     out
 }
 
+/// Un testo tra virgolette come lo scrivono i programmi d'origine: le barre dei percorsi così
+/// come sono, senza sequenze di escape; le virgolette, che chiuderebbero il testo, diventano
+/// apici.
 fn virgolette(t: &str) -> String {
-    format!("\"{}\"", t.replace('\\', "\\\\").replace('"', "\\\""))
+    format!("\"{}\"", t.replace('"', "'"))
 }
 
 /// Legge il testo di un `Job-Description._sp`.
@@ -446,6 +449,24 @@ fn run_nuovo_multifoglio(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(json!({"file": file.to_string_lossy(), "message": format!("Multifoglio {} creato: {}", nome.trim(), file.display())}))
 }
 
+/// Crea la commessa "Esempio WireCraft" (o "Esempio WireCraft 2"… se c'è già) con il progetto
+/// d'esempio nel multifoglio SCHEMA, lo salva e lo lascia aperto.
+fn run_esempio(s: &mut Session, p: &Value) -> Result<Value> {
+    let radice = testo_param(p, "radice").map(PathBuf::from).or_else(|| percorsi().into_iter().next()).ok_or_else(|| errore("Indicare la cartella delle commesse (radice)"))?;
+    let nome = (1..100).map(|k| if k == 1 { "Esempio WireCraft".to_string() } else { format!("Esempio WireCraft {k}") }).find(|n| !radice.join(n).join(FILE_COMMESSA).exists()).ok_or_else(|| errore("Troppi progetti d'esempio"))?;
+    let mut c = nuova(&radice, &nome, "Nastro trasportatore", "Officina di prova")?;
+    let file = aggiungi_multifoglio(&mut c, "SCHEMA", "Schema elettrico", "WC", "")?;
+    crate::impostazioni::carica_commessa(&c.cartella);
+    s.execute("new", &json!({"metric": true, "template": "."}))?;
+    let data = data_leggibile(&adesso()).split(' ').next().unwrap_or_default().to_string();
+    let testata = json!({"commessa": c.nome(), "descrizione": c.descrizione, "multifoglio": "SCHEMA", "descrizioneMultifoglio": "Schema elettrico", "cliente": c.cliente, "disegnatore": "WC", "data": data});
+    crate::esempio::disegna(s, &testata)?;
+    crate::fogli::vai(s, 1)?;
+    s.execute("saveas", &json!({"path": file.to_string_lossy()}))?;
+    attiva_disegno(Some(&file));
+    Ok(json!({"commessa": c.cartella.to_string_lossy(), "file": file.to_string_lossy(), "message": format!("Progetto d'esempio creato: {}", file.display())}))
+}
+
 fn run_apri(s: &mut Session, p: &Value) -> Result<Value> {
     let cartella = testo_param(p, "commessa").map(PathBuf::from).ok_or_else(|| errore("Indicare la cartella della commessa"))?;
     let c = leggi(&cartella)?;
@@ -543,6 +564,7 @@ pub fn comandi() -> Vec<CommandSpec> {
             run_nuovo_multifoglio,
         ),
         spec("commessa.apri", "Apri Multifoglio", &[], "{commessa: cartella, nome?: multifoglio (default l'ultimo aperto)}", run_apri),
+        spec("commessa.esempio", "Progetto d'esempio", &[], "{radice?: cartella delle commesse} — crea la commessa \"Esempio WireCraft\" con un progetto completo, la salva e la apre", run_esempio),
         spec(
             "commessa.modifica",
             "Modifica Progetto",
@@ -571,6 +593,8 @@ mod tests {
         assert_eq!(c.multifogli[1].percorso, "C:\\Vecchio\\Percorso");
         assert_eq!((c.multifogli[1].prefisso.as_str(), c.multifogli[1].elaborare), ("LY", false));
         assert_eq!(leggi_testo(&scrivi_testo(&c), Path::new("C:/Commesse/Esempio")), c);
+        // le barre si scrivono singole, come nei file d'origine
+        assert!(scrivi_testo(&c).contains(r#"(1 "ELECTRICAL DIAGRAM" "C:\Commesse\Esempio" "#), "{}", scrivi_testo(&c));
         assert_eq!(c.nome(), "Esempio");
     }
 

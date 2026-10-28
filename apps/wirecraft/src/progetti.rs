@@ -56,6 +56,7 @@ impl GestioneProgetti {
         }
         let mut aperta = true;
         let mut chiudi = false;
+        let mut esempio = false;
         egui::Window::new("Gestione Progetti").id(egui::Id::new("ce_gestione_progetti")).open(&mut aperta).default_width(900.0).default_height(560.0).show(ctx, |ui| {
             ui.horizontal(|ui| {
                 if ui.button("Nuovo Progetto…").clicked() {
@@ -71,6 +72,7 @@ impl GestioneProgetti {
                 if ui.button("Aggiorna").clicked() {
                     self.ricarica();
                 }
+                esempio |= ui.button("Progetto d'esempio").on_hover_text("Crea e apre un progetto completo da guardare e provare: nastro trasportatore, PLC, quadro di distribuzione, liste").clicked();
                 ui.add(egui::TextEdit::singleline(&mut self.cerca).hint_text("Cerca progetto o cliente").desired_width(200.0));
             });
             self.form_progetto(cad, ui);
@@ -102,6 +104,8 @@ impl GestioneProgetti {
                     });
                     if self.commesse.is_empty() {
                         ui.label("Nessun progetto nelle cartelle configurate.");
+                        ui.add_space(6.0);
+                        esempio |= ui.button("Crea il progetto d'esempio").on_hover_text("Un progetto completo da guardare e provare").clicked();
                     }
                 });
                 let c = self.scelta.and_then(|k| self.commesse.get(k)).cloned();
@@ -201,6 +205,13 @@ impl GestioneProgetti {
                 ui.colored_label(colore, m);
             }
         });
+        if esempio {
+            let p = json!({"radice": commesse::percorsi().first().map(|p| p.to_string_lossy().to_string())});
+            if self.esegui(cad, "commessa.esempio", p) {
+                self.ricarica();
+                chiudi = true;
+            }
+        }
         self.aperta = aperta && !chiudi;
     }
 

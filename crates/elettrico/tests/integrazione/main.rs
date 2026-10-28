@@ -8,6 +8,7 @@ mod configuratore;
 mod cavi_plc;
 mod cross;
 mod edita;
+mod esempio;
 mod excel;
 mod fili;
 mod fogli;

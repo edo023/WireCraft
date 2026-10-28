@@ -16,6 +16,7 @@ pub mod configuratore;
 pub mod commesse;
 pub mod distinta;
 pub mod edita;
+pub mod esempio;
 pub mod fili;
 pub mod fogli;
 pub mod impostazioni;

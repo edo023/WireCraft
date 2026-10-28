@@ -78,7 +78,8 @@ fn legge_le_commesse_d_origine() {
     }
     let v = elettrico::commesse::elenco(radice);
     let es = v.iter().find(|c| c.nome() == "SPAC Esempio 2026 - IEC").unwrap();
-    assert_eq!(es.ultimo, "ELECTRICAL DIAGRAM");
+    // l'ultimo aperto cambia con l'uso: basta che sia uno dei multifogli
+    assert!(es.multifogli.iter().any(|m| m.nome == es.ultimo), "{}", es.ultimo);
     let m = es.multifogli.iter().find(|m| m.nome == "ELECTRICAL DIAGRAM").unwrap();
     assert!(es.file(&m.nome).exists(), "il DWG del multifoglio");
     assert_eq!(m.disegnatore, "M.C.");
