@@ -4,6 +4,7 @@
 
 mod commesse;
 mod compatibilita_spac;
+mod configuratore;
 mod cavi_plc;
 mod cross;
 mod edita;

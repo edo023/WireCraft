@@ -12,6 +12,7 @@
 pub mod archivio;
 pub mod cavi;
 pub mod collegamenti;
+pub mod configuratore;
 pub mod commesse;
 pub mod distinta;
 pub mod edita;
@@ -71,6 +72,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(loopdiagram::comandi());
     v.extend(tensioni::comandi());
     v.extend(targhette::comandi());
+    v.extend(configuratore::comandi());
     v
 }
 

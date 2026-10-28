@@ -35,6 +35,8 @@ pub enum Azione {
     Sovratemperature,
     /// Finestra "Tensioni": potenziali e colori dei conduttori.
     Tensioni,
+    /// Finestra "Configuratore": opzioni della macchina.
+    Configuratore,
     /// Targhette del tipo dato (componenti, fili, morsetti, cavi) in CSV.
     Targhette(&'static str),
     Cross,
@@ -274,7 +276,7 @@ fn schede() -> Vec<Scheda> {
                     g(Icona::Plc, "Gestione PLC", Plc),
                     g(Icona::Legenda, "Traduttore", Traduttore),
                     g(Icona::Impianto, "Loop Diagram", Liste(Some("loop"))),
-                    g(Icona::Settaggi, "Configuratore", ND),
+                    g(Icona::Settaggi, "Configuratore", Configuratore),
                 ],
             )],
         },

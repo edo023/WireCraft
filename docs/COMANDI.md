@@ -64,6 +64,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `RETI` | le reti con i capi collegati (per script e agenti) |
 | `EXCEL {tipo, file}` | la lista `tipo` (come per `USCITA`) in un file Excel `.xlsx` |
 | `TARGHETTE {tipo}` | targhette in CSV: `componenti`, `fili` (una per capo), `morsetti` (con la testata), `cavi` (una per estremità); `quadro` per filtrare |
+| `CONFIGURATORE`, `.ABBINA`, `.ELIMINA`, `.GENERA` | opzioni della macchina (codice, descrizione, gruppo di esclusione), parti abbinate (dalla selezione), progetto generato in un nuovo file con le sole opzioni scelte |
 | `LOOPDIAGRAM` | per ogni bit dei PLC: fili, morsetti, cavi, dispositivo in campo e suoi altri capi (sui fogli: `USCITA {tipo: loop}`) |
 | `TRADUCI`, `TRADUTTORE.FRASI`, `.AGGIUNGI`, `.IMPORTA`, `.ESPORTA` | schema bilingue dal dizionario (funzioni, titoli dei fogli, descrizioni di colonna); elenco delle frasi senza traduzione |
 
