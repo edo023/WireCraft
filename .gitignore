@@ -1,4 +1,14 @@
 /target
 
-# Note interne: restano sul PC, non nel repository
+# Note interne e materiale di analisi: restano sul PC, non nel repository
 /privato/
+/scratchpad/
+/scratch/
+*.pl
+*.bak
+*.log
+
+# File di test DWG/DXF temporanei locali generati durante le prove
+/esempio*.dxf
+/esempio*.pdf
+/cadeo-*

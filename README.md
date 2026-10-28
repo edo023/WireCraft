@@ -115,9 +115,22 @@ Schema con i fili colorati come i conduttori, calcolo termico del quadro, loop d
 
 <p align="center"><img src="docs/img/output-pdf.png" alt="Quattro pagine del PDF: schema di un motore a fili colorati, calcolo termico, loop diagram, tabella di cablaggio" width="100%"></p>
 
-## Provalo
+## Come provarlo
 
-Servono [Rust](https://rustup.rs) 1.95 o più recente e, su Windows, i Build Tools di Visual Studio (C++).
+### 📦 Per chi vuole provarlo subito (nessuna installazione necessaria)
+
+Non serve installare Rust né compilare nulla. Su Windows a 64 bit:
+
+1. Vai nella sezione **[Releases](https://github.com/edo023/WireCraft/releases)** del progetto.
+2. Scarica il file **`wirecraft-windows-x64.zip`** dell'ultima versione.
+3. Estrai l'archivio ZIP sul tuo computer (tasto destro sul file scaricato → *Estrai tutto*).
+4. Fai doppio clic su **`wirecraft.exe`**. Il programma parte subito, senza installazioni.
+
+---
+
+### 🛠️ Per sviluppatori (compilazione dai sorgenti)
+
+Se vuoi modificare il codice o contribuire al progetto, servono [Rust](https://rustup.rs) 1.95+ e i Build Tools di Visual Studio (C++):
 
 ```sh
 git clone --recurse-submodules https://github.com/edo023/WireCraft.git
@@ -175,8 +188,14 @@ WireCraft è nato per essere costruito da chi lo usa: progettisti elettrici, qua
 - **Simboli e librerie**: nuovi simboli IEC, cartigli, fogli memorizzati.
 - **Codice**: ogni funzione nuova arriva con il suo test in `crates/elettrico/tests/integrazione`.
 
-## Licenza
+## Licenza e note legali
 
 WireCraft è distribuito, a tua scelta, con licenza [MIT](LICENSE-MIT) o [Apache-2.0](LICENSE-APACHE), come CADCraft.
 
-WireCraft è un progetto indipendente. Codice, simboli, grafica e testi sono originali; i formati di file di altri programmi si leggono e si scrivono solo per l'interoperabilità.
+### Note legali, marchi e interoperabilità
+
+- **Progetto indipendente**: WireCraft è un software open source originale. Non è sponsorizzato, approvato né collegato in alcun modo a produttori di software CAD commerciali.
+- **Marchi**: i marchi e i nomi di prodotto di terzi appartengono ai rispettivi titolari. WireCraft non li usa nel proprio nome, nella grafica né nella promozione.
+- **Interoperabilità**: WireCraft legge e scrive file DWG/DXF, attributi dei blocchi e file di configurazione di uso comune nei CAD elettrici, solo perché chi lo usa possa aprire e portare con sé i propri progetti. Nessun programma di terzi è stato decompilato: il formato dei file di dati non è tutelato dal diritto d'autore (Corte di giustizia UE, causa C-406/10).
+- **Originalità**: codice, interfaccia, testi e libreria dei simboli sono originali; i simboli seguono la IEC 60617 e le designazioni la CEI EN 81346. Il repository non contiene file, blocchi, librerie o documentazione di terzi.
+

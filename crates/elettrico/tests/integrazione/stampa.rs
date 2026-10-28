@@ -1,4 +1,4 @@
-//! Stampa e PDF dei fogli: una pagina per foglio, riferimenti cliccabili, progetto di SPAC.
+//! Stampa e PDF dei fogli: una pagina per foglio, riferimenti cliccabili, test di interoperabilità.
 
 use std::collections::HashMap;
 
@@ -93,11 +93,13 @@ fn un_pdf_con_una_pagina_per_foglio_e_i_riferimenti_cliccabili() {
     let _ = std::fs::remove_dir_all(&dir);
 }
 
-/// Il progetto d'esempio di SPAC, se installato: tutti i fogli in un PDF, in pochi secondi.
+/// Test di interoperabilità: stampa PDF di una commessa multifoglio DWG complessa, se presente.
 #[test]
-fn stampa_il_progetto_di_spac() {
+fn stampa_progetto_dwg_multifoglio() {
     let _uno_alla_volta = crate::uno_alla_volta();
-    let percorso = std::env::var("SPAC_ESEMPIO_DWG").unwrap_or_else(|_| r"C:\SPAC Automazione CAD 2026\Commesse\SPAC Esempio 2026 - IEC\ELECTRICAL DIAGRAM.dwg".into());
+    let percorso = std::env::var("COMMESSA_DWG_INTEROP")
+        .or_else(|_| std::env::var("SPAC_ESEMPIO_DWG"))
+        .unwrap_or_else(|_| r"C:\SPAC Automazione CAD 2026\Commesse\SPAC Esempio 2026 - IEC\ELECTRICAL DIAGRAM.dwg".into());
     let Ok(byte) = std::fs::read(&percorso) else {
         eprintln!("{percorso} non trovato: test saltato");
         return;
@@ -112,11 +114,11 @@ fn stampa_il_progetto_di_spac() {
     eprintln!("pagina: {:?} – {:?} ({} x {} mm)", pagina.min, pagina.max, pagina.width(), pagina.height());
 
     let t = std::time::Instant::now();
-    let o = elettrico::stampa::Opzioni { titolo: "SPAC Esempio".into(), ..Default::default() };
+    let o = elettrico::stampa::Opzioni { titolo: "Esempio Multifoglio DWG".into(), ..Default::default() };
     let st = elettrico::stampa::pdf_fogli(s.doc().unwrap(), &numeri, &titoli, &o).unwrap();
     let tempo = t.elapsed();
     // sempre la stessa cartella: il PDF e l'immagine restano da guardare dopo il test
-    let dir = std::env::temp_dir().join("cadeo-stampa-spac");
+    let dir = std::env::temp_dir().join("cadeo-stampa-interop");
     std::fs::create_dir_all(&dir).unwrap();
     std::fs::write(dir.join("esempio.pdf"), &st.pdf).unwrap();
     eprintln!("{} fogli, {} riferimenti cliccabili, {} kB in {tempo:?}: {}", st.pagine, st.collegamenti, st.pdf.len() / 1024, dir.join("esempio.pdf").display());
