@@ -96,6 +96,7 @@ pub enum Icona {
     Pdf,
     Dxf,
     Csv,
+    Unifilare,
 }
 
 fn colore(c: C, tratto: Color32) -> Color32 {
@@ -195,6 +196,14 @@ fn grafica(i: Icona) -> Vec<G> {
         Icona::Ripeti => vec![F(8.0, 20.0, 26.0, 12.0, Tratto)],
         Icona::Pdf => vec![Foglio(5.0, 3.0, 27.0, 29.0), R(7.0, 14.0, 25.0, 22.0, Rosso, Some(Rosso)), T(16.0, 18.0, "PDF", 7.0, Carta)],
         Icona::Dxf => vec![Foglio(5.0, 3.0, 27.0, 29.0), R(7.0, 14.0, 25.0, 22.0, Blu, Some(Blu)), T(16.0, 18.0, "DXF", 7.0, Carta)],
+        Icona::Unifilare => {
+            // le sbarre con tre partenze, ognuna con la sua protezione
+            let mut v = vec![R(3.0, 5.0, 29.0, 7.5, Tratto, Some(Tratto))];
+            for x in [8.0, 16.0, 24.0] {
+                v.extend([L(x, 7.5, x, 12.0, Tratto), L(x - 2.5, 12.0, x, 18.0, Tratto), L(x, 18.0, x, 29.0, Blu), L(x - 1.5, 23.0, x + 1.5, 21.0, Rosso)]);
+            }
+            v
+        }
         Icona::Csv => vec![Foglio(5.0, 3.0, 27.0, 29.0), R(7.0, 14.0, 25.0, 22.0, Verde, Some(Verde)), T(16.0, 18.0, "CSV", 7.0, Carta)],
     }
 }

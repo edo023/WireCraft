@@ -23,6 +23,7 @@ mod stampa;
 mod tensioni;
 mod termico;
 mod traduttore;
+mod unifilare;
 
 use cadcraft_engine::Session;
 use cadcraft_ui_egui::{CadApp, Services, i18n};

@@ -12,7 +12,7 @@ Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artifici
 <img alt="Rust" src="https://img.shields.io/badge/Rust-1.95%2B-b7410e?logo=rust">
 <img alt="Windows" src="https://img.shields.io/badge/piattaforma-Windows-0078d6">
 <img alt="Stato alpha" src="https://img.shields.io/badge/stato-alpha-orange">
-<img alt="55 test di integrazione" src="https://img.shields.io/badge/test-55%20passati-brightgreen">
+<img alt="56 test di integrazione" src="https://img.shields.io/badge/test-56%20passati-brightgreen">
 </p>
 
 <p align="center"><img src="docs/img/schema.png" alt="WireCraft: lo schema di potenza di un motore, con i fogli del progetto a sinistra e i comandi elettrici a destra" width="100%"></p>
@@ -87,6 +87,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 - foratura della piastra con le quote, in CSV
 - pulsantiera sulla porta: pulsanti, emergenze, selettori e lampade dello schema in file, con la foratura
 - calcolo termico: temperatura interna, ventilatore o condizionatore che servono, anticondensa
+- schema unifilare dei quadri di distribuzione: un circuito per colonna con la sua tabella, protezioni e cavi dimensionati e verificati
 
 **🖨️ Stampa**
 - PDF dinamico: segnalibri dei fogli e riferimenti cliccabili
@@ -101,6 +102,12 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 I componenti del quadro e le morsettiere finiscono sulle guide DIN in scala, tra le canaline. La piastra si sceglie da sola tra le misure commerciali, e la foratura esce con le quote.
 
 <p align="center"><img src="docs/img/layout-quadro.png" alt="Il lay-out dell'interno del quadro generato dallo schema, con la tabella degli ingombri" width="100%"></p>
+
+### Il quadro di distribuzione si dimensiona da solo
+
+Scegli l'utenza, la potenza e la lunghezza della linea: WireCraft calcola la corrente d'impiego e propone la taratura della protezione e la sezione del cavo. Poi verifica il coordinamento Ib ≤ In ≤ Iz, la caduta di tensione dall'origine e il potere di interruzione. L'arrivo linea somma le partenze con il coefficiente di contemporaneità. Cambi un dato e tutta la colonna si aggiorna.
+
+<p align="center"><img src="docs/img/unifilare.png" alt="Schema unifilare di un quadro di distribuzione: arrivo linea, sbarre, sei partenze con protezioni, cavi e utenze, e sotto la tabella dei dati di ogni circuito con la verifica" width="85%"></p>
 
 ### Le uscite sono già pronte da consegnare
 
@@ -119,7 +126,7 @@ scripts/aggiorna-cadcraft.sh          # prepara il motore CAD con i ganci di Wir
 cargo run --release -p wirecraft      # avvia il programma
 ```
 
-Vuoi vedere subito un progetto completo? Questo comando genera un impianto di esempio da 17 fogli (alimentazione, motore, ausiliari, PLC, lay-out del quadro, calcolo termico, pulsantiera, loop diagram, liste e legende) e lo stampa in PDF:
+Vuoi vedere subito un progetto completo? Questo comando genera un impianto di esempio da 19 fogli (alimentazione, motore, ausiliari, PLC, quadro di distribuzione in unifilare, lay-out del quadro, calcolo termico, pulsantiera, loop diagram, liste e legende) e lo stampa in PDF:
 
 ```sh
 cargo run --release -p elettrico --example esempio_completo -- esempio.dxf esempio.pdf
@@ -142,8 +149,8 @@ Dall'idea alla prima versione pubblica in cinque giorni. La storia completa, gio
 | 26 ottobre | Navigatore, Cross Reference, modifica di fili, morsetti e rimandi | ✅ |
 | 27 ottobre | Traduttore, lay-out del quadro, foratura piastra, connettori. **Pubblicazione open source** | ✅ |
 | 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346, calcolo termico del quadro, loop diagram, tensioni e fili colorati, targhette, ponticelli, liste in Excel, configuratore macchina, pulsantiera; lettura migliore dei DWG di altri programmi | ✅ |
+| 28 ottobre | Schema unifilare dei quadri di distribuzione, con dimensionamento e verifica di protezioni e cavi | ✅ |
 | Prossimi passi | Gestore topografico dell'impianto | 🔜 |
-| | Schema unifilare per i quadri di distribuzione | 🔜 |
 | | Editor di morsettiera avanzato (ordine, multilivello) | 🔜 |
 | | Installer per Windows e release con l'eseguibile pronto | 🔜 |
 
@@ -154,7 +161,7 @@ WireCraft è un livello elettrico sopra [CADCraft](https://github.com/storytold/
 | Cartella | Contenuto |
 |---|---|
 | `apps/wirecraft` | il programma desktop (`wirecraft.exe`): barra a schede, pannelli, finestre |
-| `crates/elettrico` | tutti i comandi elettrici, con 55 test di integrazione in `tests/integrazione` |
+| `crates/elettrico` | tutti i comandi elettrici, con 56 test di integrazione in `tests/integrazione` |
 | `crates/elettrico/examples` | `esempio_completo` (un progetto con tutte le funzioni), `multifoglio`, `analizza` (blocchi e attributi di un DWG) |
 | `vendor/cadcraft` | CADCraft, come git submodule |
 | `patches/cadcraft` | i piccoli ganci che servono a CADCraft (comandi e menu di un'applicazione) e la versione su cui si applicano |

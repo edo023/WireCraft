@@ -5,9 +5,20 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 ## Prossimi passi
 
 - **Gestore topografico**: posizione dei componenti nell'impianto.
-- **Schema unifilare** per i quadri di distribuzione, con la tabella dati di ogni circuito.
 - **Editor di morsettiera** avanzato (ordine, multilivello).
 - **Installer per Windows** e release con l'eseguibile pronto.
+
+## 28 ottobre 2026: schema unifilare
+
+- **Schema unifilare dei quadri di distribuzione** (`UNIFILARE.ARRIVO`, `UNIFILARE.CIRCUITO`, `UNIFILARE.MODIFICA`, `UNIFILARE.AGGIORNA`): un circuito per colonna appeso alle sbarre, con protezione (magnetotermico, magnetotermico differenziale, differenziale, sezionatore, fusibili), cavo con i tratti dei conduttori, utenza (prese, illuminazione, motore, sottoquadro, riscaldamento, generica, riserva) e sotto la tabella dei dati: circuito, denominazione in due lingue, sistema, tensione, potenza, cos φ, Ib, curva, In, Icn, Idn e tipo, cavo, formazione, lunghezza, Iz, caduta di tensione, verifica. L'arrivo linea sta sopra le sbarre nella prima colonna; un quadro continua sui fogli successivi.
+- **Dimensionamento**: corrente d'impiego dalla potenza; taratura normalizzata subito sopra; sezione minima con la portata giusta (IEC 60364-5-52, cavi multipolari in rame EPR/XLPE, posa B2, C o E, fattore di correzione) e la caduta di tensione dall'origine entro il limite; in automatico l'arrivo si tiene un quarto della caduta ammessa. Taratura e sezione restano automatiche finché non si scrivono a mano, e si rifanno a ogni ricalcolo.
+- **Verifica**: Ib ≤ In ≤ Iz (con i fusibili In ≤ 0,9 Iz), caduta di tensione totale, potere di interruzione rispetto al cortocircuito presunto dell'arrivo. L'arrivo prende la potenza delle partenze per il coefficiente di contemporaneità.
+- La protezione è un componente come gli altri: sigla automatica, codice e costruttore in distinta materiali, descrizione dai dati (`Magnetotermico differenziale 2P C16 Idn 30 mA A`) se non se ne sceglie una dall'archivio.
+- **Tabella dei circuiti** (`USCITA {tipo: circuiti}`, anche in Excel); Aggiorna Liste e Tabelle ricalcola anche l'unifilare.
+- Finestra **Schema Unifilare** (scheda Quadro, gruppo Distribuzione): elenco dei circuiti con la verifica in verde o rosso, modulo per disegnare un circuito o l'arrivo, scelta di un circuito dall'elenco per modificarlo.
+- Il progetto d'esempio ha un foglio in più: il quadro di distribuzione del reparto che alimenta la macchina.
+
+Verificato: 10 kW trifase su 50 m passano da 1,5 a 2,5 mm² per la caduta di tensione; le prese non scendono sotto 2,5 mm²; cambiata la protezione, il blocco cambia e i dati restano; cancellato un circuito, Aggiorna Liste toglie utenza, conduttori, sbarre e intestazioni del foglio rimasto vuoto.
 
 ## 27 ottobre 2026 (sera): dopo la pubblicazione
 

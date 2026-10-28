@@ -37,6 +37,8 @@ pub enum Azione {
     Tensioni,
     /// Finestra "Configuratore": opzioni della macchina.
     Configuratore,
+    /// Finestra "Schema Unifilare": circuiti del quadro di distribuzione.
+    Unifilare,
     /// Targhette del tipo dato (componenti, fili, morsetti, cavi) in CSV.
     Targhette(&'static str),
     Cross,
@@ -287,6 +289,14 @@ fn schede() -> Vec<Scheda> {
                     "Layout",
                     false,
                     vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Cerchio, "Pulsantiera", Liste(Some("pulsantiera"))), g(Icona::Pianta, "Topografia Impianto", ND), g(Icona::Tensioni, "Sovratemperature", Sovratemperature)],
+                ),
+                gruppo(
+                    "Distribuzione",
+                    false,
+                    vec![
+                        g(Icona::Unifilare, "Schema Unifilare", Unifilare),
+                        Elemento::Piccoli(vec![t(Icona::Aggiorna, "Ricalcola Circuiti", Esegui("unifilare.aggiorna", "{}")), t(Icona::Legenda, "Tabella Circuiti", Liste(Some("circuiti")))]),
+                    ],
                 ),
                 gruppo(
                     "CEI EN 81346",

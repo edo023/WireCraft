@@ -95,7 +95,7 @@ impl Simbolo {
 // ---------- grafica ----------
 
 /// Contatto NO sul polo `x` (morsetti a 0 e -10): la lama parte dal morsetto B e sta aperta a sinistra.
-fn no(x: f64) -> [Grafica; 3] {
+pub(crate) fn no(x: f64) -> [Grafica; 3] {
     [Linea((x, 0.0), (x, -3.0)), Linea((x, -7.0), (x, -10.0)), Linea((x, -7.0), (x - 2.5, -2.5))]
 }
 /// Contatto NC sul polo `x`: la lama appoggia sul fermo a destra.
@@ -107,7 +107,7 @@ fn croce(x: f64) -> [Grafica; 2] {
     [Linea((x - 0.8, -2.2), (x + 0.8, -3.8)), Linea((x - 0.8, -3.8), (x + 0.8, -2.2))]
 }
 /// Barretta del sezionatore sul contatto fisso del polo `x`.
-fn sezione(x: f64) -> Grafica {
+pub(crate) fn sezione(x: f64) -> Grafica {
     Linea((x - 0.9, -3.0), (x + 0.9, -3.0))
 }
 /// Tratteggio del comando dalla lama NO del polo `x` fino a `xa`.
@@ -146,7 +146,7 @@ fn ritardo(sinistra: bool) -> [Grafica; 3] {
 fn bobina() -> [Grafica; 3] {
     [Linea((0.0, 0.0), (0.0, -3.0)), Rettangolo((-3.5, -3.0), (3.5, -7.0)), Linea((0.0, -7.0), (0.0, -10.0))]
 }
-fn fusibile(x: f64) -> [Grafica; 2] {
+pub(crate) fn fusibile(x: f64) -> [Grafica; 2] {
     [Linea((x, 0.0), (x, -10.0)), Rettangolo((x - 1.25, -2.0), (x + 1.25, -8.0))]
 }
 
@@ -306,7 +306,7 @@ fn g_fusibili3() -> Vec<Grafica> {
     v
 }
 /// Interruttore automatico a `n` poli (magnetotermico).
-fn interruttore(n: usize) -> Vec<Grafica> {
+pub(crate) fn interruttore(n: usize) -> Vec<Grafica> {
     let mut v = Vec::new();
     for k in 0..n {
         let x = 10.0 * k as f64;
@@ -334,7 +334,7 @@ fn g_salvamotore() -> Vec<Grafica> {
     v.extend(bimetallo(-6.0));
     v
 }
-fn differenziale(n: usize) -> Vec<Grafica> {
+pub(crate) fn differenziale(n: usize) -> Vec<Grafica> {
     let mut v = interruttore(n);
     let largo = 10.0 * (n as f64 - 1.0);
     v.extend([Ellisse((largo / 2.0, -8.6), largo / 2.0 + 2.5, 0.9), Tratteggio((-2.5, -8.6), (-5.0, -8.6)), Linea((-5.0, -8.6), (-5.0, -6.0))]);
@@ -1213,6 +1213,44 @@ fn sinistra(sim: &Simbolo) -> f64 {
     estensione(&(sim.grafica)()).0
 }
 
+/// Disegna la grafica di un simbolo spostata di `d`, nel colore corrente.
+pub(crate) fn disegna_grafica(s: &mut Session, h: &mut Vec<String>, grafica: &[Grafica], d: P) -> Result<()> {
+    let m = |p: P| (p.0 + d.0, p.1 + d.1);
+    for &g in grafica {
+        match g {
+            Linea(a, b) => linea(s, h, &[m(a), m(b)], false)?,
+            Tratteggio(a, b) => {
+                for (p, q) in tratti(m(a), m(b)) {
+                    linea(s, h, &[p, q], false)?;
+                }
+            }
+            Rettangolo(a, b) => linea(s, h, &[m(a), m((b.0, a.1)), m(b), m((a.0, b.1))], true)?,
+            Pieno(a, b) => {
+                let (a, b) = (m(a), m(b));
+                let y = (a.1 + b.1) / 2.0;
+                let w = (a.1 - b.1).abs();
+                let r = esegui(s, "pline", json!({"vertices": [[a.0.min(b.0), y], [a.0.max(b.0), y]], "width": w}))?;
+                h.extend(handles(&r));
+            }
+            Cerchio(c, r) => {
+                let c = m(c);
+                h.extend(handles(&esegui(s, "circle", json!({"center": [c.0, c.1], "radius": r}))?));
+            }
+            Arco(c, r, a0, a1) => {
+                let c = m(c);
+                h.extend(handles(&esegui(s, "arc", json!({"center": [c.0, c.1], "radius": r, "start": a0, "end": a1}))?));
+            }
+            Ellisse(c, rx, ry) => {
+                let c = m(c);
+                let (major, ratio) = if rx >= ry { ([rx, 0.0], ry / rx) } else { ([0.0, ry], rx / ry) };
+                h.extend(handles(&esegui(s, "ellipse", json!({"center": [c.0, c.1], "major": major, "ratio": ratio}))?));
+            }
+            Grafica::Testo(p, t, alt) => testo(s, h, m(p), t, alt, "MC")?,
+        }
+    }
+    Ok(())
+}
+
 /// Il blocco del simbolo, creato se manca.
 fn crea_blocco(s: &mut Session, sim: &Simbolo) -> Result<()> {
     if blocchi_definiti(s)?.iter().any(|b| b.eq_ignore_ascii_case(sim.blocco)) {
@@ -1221,30 +1259,7 @@ fn crea_blocco(s: &mut Session, sim: &Simbolo) -> Result<()> {
     su_layer_zero(s, |s| {
         let mut h = Vec::new();
         colore(s, "7")?;
-        for g in (sim.grafica)() {
-            match g {
-                Linea(a, b) => linea(s, &mut h, &[a, b], false)?,
-                Tratteggio(a, b) => {
-                    for (p, q) in tratti(a, b) {
-                        linea(s, &mut h, &[p, q], false)?;
-                    }
-                }
-                Rettangolo(a, b) => linea(s, &mut h, &[a, (b.0, a.1), b, (a.0, b.1)], true)?,
-                Pieno(a, b) => {
-                    let y = (a.1 + b.1) / 2.0;
-                    let w = (a.1 - b.1).abs();
-                    let r = esegui(s, "pline", json!({"vertices": [[a.0.min(b.0), y], [a.0.max(b.0), y]], "width": w}))?;
-                    h.extend(handles(&r));
-                }
-                Cerchio(c, r) => h.extend(handles(&esegui(s, "circle", json!({"center": [c.0, c.1], "radius": r}))?)),
-                Arco(c, r, a0, a1) => h.extend(handles(&esegui(s, "arc", json!({"center": [c.0, c.1], "radius": r, "start": a0, "end": a1}))?)),
-                Ellisse(c, rx, ry) => {
-                    let (major, ratio) = if rx >= ry { ([rx, 0.0], ry / rx) } else { ([0.0, ry], rx / ry) };
-                    h.extend(handles(&esegui(s, "ellipse", json!({"center": [c.0, c.1], "major": major, "ratio": ratio}))?));
-                }
-                Grafica::Testo(p, t, alt) => testo(s, &mut h, p, t, alt, "MC")?,
-            }
-        }
+        disegna_grafica(s, &mut h, &(sim.grafica)(), (0.0, 0.0))?;
         if sim.grafico() {
             return blocco(s, sim.blocco, h, sim.etichetta);
         }

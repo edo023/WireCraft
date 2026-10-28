@@ -78,6 +78,11 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `DESIGNAZIONI` | etichette sopra la sigla con i livelli scelti (`=TR1++ZC+QG`), anche sui contatti con i dati della madre; regola `discordanti`: solo quello che il box non dice già; `togli` le cancella |
 | `CALCOLOTERMICO` (Sovratemperature) | bilancio termico del quadro: superficie efficace secondo l'installazione (1–7), materiale, temperature; temperatura interna, ventilatore (m³/h) o condizionatore (W), anticondensa. Misure dell'armadio dalla piastra del lay-out; potenze dal campo `DISSIPAZIONE` dei componenti o stimate. Sul foglio con `USCITA {tipo: termico}` |
 | `PULSANTIERA` | i dispositivi di comando e segnalazione del quadro disposti sulla porta, con la foratura (CSV con `file`); sul foglio con `USCITA {tipo: pulsantiera}` |
+| `UNIFILARE.ARRIVO` | l'arrivo linea del quadro (`quadro`) nella prima colonna del foglio corrente: protezione generale sopra le sbarre; `icc` (kA presunti), `kc` (contemporaneità), `cdtMax` (%, default 4) |
+| `UNIFILARE.CIRCUITO` | una partenza nella prossima colonna libera (14 per foglio): `utenza` (`prese`, `luce`, `motore`, `quadro`, `riscaldamento`, `generica`, `riserva`), `protezione` (`mt`, `mtd`, `id`, `sez`, `fus`), `sistema` (`3F+N+PE`, `F+N+PE`…), `potenza` (kW), `cosfi`, `lunghezza` (m), `cavo`, `posa` (`B2`, `C`, `E`), `k`, `denominazione`, `denominazione2`, `curva`, `icn`, `idn`, `classe`, `codice`, `costruttore`; `in` e `sezione` se non date si dimensionano e restano automatiche |
+| `UNIFILARE.MODIFICA` | cambia i dati di un circuito (`handle`); `dimensiona: true` rende di nuovo automatiche taratura e sezione non date; un'altra `protezione` cambia il blocco |
+| `UNIFILARE.AGGIORNA` | ricalcola tutti i circuiti (l'arrivo dalle sue partenze) e ridisegna sbarre, conduttori e utenze; lo fa anche `AGGIORNALISTE` |
+| `UNIFILARE` | elenco dei circuiti (`quadro` per filtrare) con Ib, In, Iz, caduta di tensione e verifica; sui fogli e in Excel con `USCITA {tipo: circuiti}` |
 | `FORATURAPIASTRA` | fori di fissaggio a passo costante su guide e canaline, disegnati sul foglio e in CSV con le quote dall'angolo della piastra |
 
 ## Simboli (menu Simboli e Protezioni)

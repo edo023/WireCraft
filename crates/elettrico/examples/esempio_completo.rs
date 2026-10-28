@@ -23,9 +23,9 @@ fn main() -> Result<(), String> {
     let mut e = |id: &str, p: Value| s.execute(id, &p).map_err(|e| format!("{id}: {e}"));
     e(
         "nuovomultifoglio",
-        json!({"fogli": 4, "commessa": "ESEMPIO", "multifoglio": "SCHEMA", "cliente": "Officina di prova", "descrizione": "Nastro trasportatore", "descrizioneMultifoglio": "Schema elettrico", "disegnatore": "AP", "data": "26/10/2026"}),
+        json!({"fogli": 5, "commessa": "ESEMPIO", "multifoglio": "SCHEMA", "cliente": "Officina di prova", "descrizione": "Nastro trasportatore", "descrizioneMultifoglio": "Schema elettrico", "disegnatore": "AP", "data": "26/10/2026"}),
     )?;
-    for (n, t, t1) in [(1, "Alimentazione generale", "Main power supply"), (2, "Motore nastro", "Belt motor"), (3, "Ausiliari", "Auxiliary circuits"), (4, "Ingressi PLC", "PLC inputs")] {
+    for (n, t, t1) in [(1, "Alimentazione generale", "Main power supply"), (2, "Motore nastro", "Belt motor"), (3, "Ausiliari", "Auxiliary circuits"), (4, "Ingressi PLC", "PLC inputs"), (5, "Quadro di distribuzione reparto", "Distribution board")] {
         e("titolofoglio", json!({"foglio": n, "titolo": t, "titolo1": t1}))?;
     }
     e("impostazioni", json!({"quadro": "+QG"}))?;
@@ -97,6 +97,20 @@ fn main() -> Result<(), String> {
         json!({"at": [60.0, 140.0], "bit": 8, "indirizzo": "E0.0", "costruttore": "Siemens", "codice": "6ES7521-1BH10-0AA0", "descrizione": "DI 16x24VDC", "commenti": [["Finecorsa avanti", "Forward limit"], ["Finecorsa indietro", "Back limit"], ["Contattore nastro", "Belt contactor"]]}),
     )?;
 
+    // foglio 5: il quadro di distribuzione del reparto, che alimenta anche la macchina, in unifilare
+    e("cambiofoglio", json!({"foglio": 5}))?;
+    e("unifilare.arrivo", json!({"quadro": "+QD", "denominazione": "Generale reparto", "icc": 6, "kc": 0.8, "lunghezza": 20, "costruttore": "ABB", "codice": "S204-C"}))?;
+    for (utenza, sistema, kw, nome, l, prot) in [
+        ("quadro", "3F+PE", 5.5, "Quadro macchina nastro", 30.0, "mtd"),
+        ("prese", "F+N+PE", 3.0, "Prese reparto", 35.0, "mtd"),
+        ("luce", "F+N+PE", 1.2, "Illuminazione reparto", 40.0, "mtd"),
+        ("riscaldamento", "F+N+PE", 2.0, "Stufa ufficio", 15.0, "mt"),
+        ("motore", "3F+PE", 2.2, "Aspiratore", 25.0, "mt"),
+        ("riserva", "3F+N+PE", 0.0, "Riserva", 0.0, "mt"),
+    ] {
+        e("unifilare.circuito", json!({"quadro": "+QD", "utenza": utenza, "sistema": sistema, "potenza": kw, "denominazione": nome, "lunghezza": l, "protezione": prot, "costruttore": "ABB"}))?;
+    }
+
     e("numerafili", json!({"tutti": true}))?;
     e("siglecomponenti", json!({}))?;
     // designazione CEI EN 81346 sopra le sigle del foglio del motore, dove il box non la dice già
@@ -110,7 +124,7 @@ fn main() -> Result<(), String> {
     e("uscita", json!({"tipo": "termico", "quadro": "+QG"}))?;
     // la pulsantiera sulla porta, con la foratura
     e("uscita", json!({"tipo": "pulsantiera", "quadro": "+QG"}))?;
-    for tipo in ["indice", "distinta", "morsettiere", "cablaggio", "cavi", "io", "loop", "funzioni", "simboli"] {
+    for tipo in ["indice", "distinta", "morsettiere", "cablaggio", "cavi", "io", "loop", "circuiti", "funzioni", "simboli"] {
         e("uscita", json!({"tipo": tipo}))?;
     }
     e("crossreference", json!({}))?;

@@ -216,7 +216,7 @@ pub fn disegna_con(
 // ---------- le uscite ----------
 
 /// Tipi di uscita.
-pub const TIPI: [(&str, &str); 13] = [
+pub const TIPI: [(&str, &str); 14] = [
     ("indice", "Lista fogli"),
     ("distinta", "Distinta materiali"),
     ("morsettiere", "Morsettiere"),
@@ -230,6 +230,7 @@ pub const TIPI: [(&str, &str); 13] = [
     ("termico", "Calcolo termico del quadro"),
     ("loop", "Loop diagram"),
     ("pulsantiera", "Pulsantiera"),
+    ("circuiti", "Tabella dei circuiti"),
 ];
 
 /// La tabella di un'uscita con i dati del disegno, e i titoli del foglio (due lingue).
@@ -476,6 +477,7 @@ pub fn tabella(s: &mut Session, tipo: &str, p: &Value) -> Result<(Tabella, &'sta
         }
         "loop" => Ok((crate::loopdiagram::tabella(s)?, "Loop diagram", "Loop Diagram")),
         "pulsantiera" => Ok((crate::pulsantiera::tabella(s, p)?, "Pulsantiera", "Control Panel")),
+        "circuiti" => Ok((crate::unifilare::tabella(s, p)?, "Tabella dei circuiti", "Circuit Schedule")),
         "termico" => {
             let quadro = if quadro.trim().is_empty() { crate::impostazioni::quadro_corrente().unwrap_or_default() } else { quadro.clone() };
             let (d, e, voci) = crate::termico::calcolo(s, &quadro, p)?;
@@ -551,6 +553,7 @@ fn run_uscita(s: &mut Session, p: &Value) -> Result<Value> {
 fn run_aggiorna(s: &mut Session, _p: &Value) -> Result<Value> {
     in_gruppo(s, "Aggiorna liste e tabelle", |s| {
         crate::norma81346::applica(s)?;
+        crate::unifilare::aggiorna(s)?;
         crate::siglatura::aggiorna_tutto(s)?;
         crate::fili::aggiorna_rimandi(s)?;
         let v = aggiorna_liste(s)?;

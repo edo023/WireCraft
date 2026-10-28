@@ -22,6 +22,7 @@ use crate::tensioni::FinestraTensioni;
 use crate::termico::FinestraTermico;
 use crate::configuratore::FinestraConfiguratore;
 use crate::traduttore::FinestraTraduttore;
+use crate::unifilare::FinestraUnifilare;
 use serde_json::json;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -62,6 +63,7 @@ pub struct Pannelli {
     termico: FinestraTermico,
     tensioni: FinestraTensioni,
     configuratore: FinestraConfiguratore,
+    unifilare: FinestraUnifilare,
     /// Il disegno attivo (identità e percorso): quando cambia si cerca la sua commessa.
     disegno: Option<(u64, Option<String>)>,
     commessa: Option<String>,
@@ -131,6 +133,7 @@ impl Pannelli {
         self.termico.mostra(cad, ui.ctx());
         self.tensioni.mostra(cad, ui.ctx());
         self.configuratore.mostra(cad, ui.ctx());
+        self.unifilare.mostra(cad, ui.ctx());
     }
 
     /// Esegue l'azione di un pulsante della barra a schede.
@@ -149,6 +152,7 @@ impl Pannelli {
             Azione::Sovratemperature => self.termico.apri(cad),
             Azione::Tensioni => self.tensioni.apri(),
             Azione::Configuratore => self.configuratore.apri(cad),
+            Azione::Unifilare => self.unifilare.apri(cad),
             Azione::Targhette(tipo) => {
                 if let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).set_file_name(format!("targhette {tipo}.csv")).save_file() {
                     match cad.run("targhette", json!({"tipo": tipo, "file": p.to_string_lossy()})) {

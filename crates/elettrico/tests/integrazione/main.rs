@@ -28,6 +28,7 @@ mod targhette;
 mod tensioni;
 mod termico;
 mod traduttore;
+mod unifilare;
 mod uscite;
 
 /// Registra i comandi elettrici e i formati di file (con la stampa) una volta sola.
