@@ -554,6 +554,7 @@ fn run_aggiorna(s: &mut Session, _p: &Value) -> Result<Value> {
     in_gruppo(s, "Aggiorna liste e tabelle", |s| {
         crate::norma81346::applica(s)?;
         crate::unifilare::aggiorna(s)?;
+        crate::topografico::aggiorna(s, false)?;
         crate::siglatura::aggiorna_tutto(s)?;
         crate::fili::aggiorna_rimandi(s)?;
         let v = aggiorna_liste(s)?;

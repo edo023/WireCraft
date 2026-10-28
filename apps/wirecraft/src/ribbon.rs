@@ -39,6 +39,8 @@ pub enum Azione {
     Configuratore,
     /// Finestra "Schema Unifilare": circuiti del quadro di distribuzione.
     Unifilare,
+    /// Finestra "Gestore Topografico": componenti del quadro nel lay-out.
+    Topografico,
     /// Targhette del tipo dato (componenti, fili, morsetti, cavi) in CSV.
     Targhette(&'static str),
     Cross,
@@ -289,7 +291,7 @@ fn schede() -> Vec<Scheda> {
                 gruppo(
                     "Layout",
                     false,
-                    vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Cerchio, "Pulsantiera", Liste(Some("pulsantiera"))), g(Icona::Pianta, "Topografia Impianto", ND), g(Icona::Tensioni, "Sovratemperature", Sovratemperature)],
+                    vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Cerchio, "Pulsantiera", Liste(Some("pulsantiera"))), g(Icona::Pianta, "Gestore Topografico", Topografico), g(Icona::Tensioni, "Sovratemperature", Sovratemperature)],
                 ),
                 gruppo(
                     "Distribuzione",

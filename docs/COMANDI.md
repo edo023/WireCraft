@@ -87,6 +87,9 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `UNIFILARE.MODIFICA` | cambia i dati di un circuito (`handle`); `dimensiona: true` rende di nuovo automatiche taratura e sezione non date; un'altra `protezione` cambia il blocco |
 | `UNIFILARE.AGGIORNA` | ricalcola tutti i circuiti (l'arrivo dalle sue partenze) e ridisegna sbarre, conduttori e utenze; lo fa anche `AGGIORNALISTE` |
 | `UNIFILARE` | elenco dei circuiti (`quadro` per filtrare) con Ib, In, Iz, caduta di tensione e verifica; sui fogli e in Excel con `USCITA {tipo: circuiti}` |
+| `TOPOGRAFICO` (Gestore Topografico) | i componenti del quadro da montare nel lay-out: posati, da posare, o rimasti nel lay-out senza componente nello schema; misure stimate segnalate |
+| `TOPOGRAFICO.POSA` | l'ingombro di un componente (`sigla`) nel punto `at` del lay-out, agganciato alla guida DIN più vicina; interattivo: Invio prende il prossimo da posare, poi un punto per ognuno |
+| `TOPOGRAFICO.AGGIORNA` | ogni ingombro ricorda il suo componente: sigla e codice cambiati nello schema passano nel lay-out; `togliOrfani` toglie gli ingombri senza componente. Lo fa anche `AGGIORNALISTE` |
 | `FORATURAPIASTRA` | fori di fissaggio a passo costante su guide e canaline, disegnati sul foglio e in CSV con le quote dall'angolo della piastra |
 
 ## Simboli (menu Simboli e Protezioni)

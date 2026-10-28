@@ -21,9 +21,9 @@ use crate::{fogli, impostazioni, morsetti, siglatura, simboli, squadratura};
 type P = (f64, f64);
 
 pub const BLOCCO_PIASTRA: &str = "CE_LAY_PIASTRA";
-const BLOCCO_GUIDA: &str = "CE_LAY_GUIDA";
+pub(crate) const BLOCCO_GUIDA: &str = "CE_LAY_GUIDA";
 const BLOCCO_CANALINA: &str = "CE_LAY_CANALINA";
-const PREFISSO_INGOMBRO: &str = "CE_LAY_ING_";
+pub(crate) const PREFISSO_INGOMBRO: &str = "CE_LAY_ING_";
 const PREFISSO_FORI: &str = "CE_LAY_FORI_";
 
 /// Misure commerciali delle piastre (mm).
@@ -58,6 +58,11 @@ pub struct Ingombro {
     pub codice: String,
     pub larghezza: f64,
     pub altezza: f64,
+    /// L'handle del componente nello schema (vuoto per le morsettiere): l'ingombro lo ricorda
+    /// nell'attributo `RIF` e segue il componente anche se cambia sigla.
+    pub rif: String,
+    /// La larghezza è stimata dal tipo di componente, non scritta sul componente.
+    pub stimata: bool,
     /// Ordine di montaggio: protezioni, alimentazione, comando, ... morsettiere per ultime.
     gruppo: u8,
 }
@@ -136,13 +141,15 @@ pub fn ingombri(s: &mut Session, quadro: &str) -> Result<Vec<Ingombro>> {
         let prefisso = siglatura::prefisso_di(&c.nome).unwrap_or_default();
         let Some((mut w, h, gruppo)) = misura(sim.map(|x| x.id), &prefisso, sim.map_or(3, |x| x.poli.len())) else { continue };
         // una larghezza scritta sul componente vale più di quella proposta
+        let mut stimata = true;
         if let Ok(x) = b.attributo("LARGHEZZA").trim().replace(',', ".").parse::<f64>()
             && x > 0.0
         {
             w = x;
+            stimata = false;
         }
         let descrizione = [b.attributo("FUNZIONE1"), b.attributo("DESCRIZIONE")].into_iter().find(|t| !t.trim().is_empty()).or(sim.map(|x| x.etichetta)).unwrap_or("").to_string();
-        v.push(Ingombro { sigla: c.nome.clone(), descrizione, codice: b.attributo("TIPO").to_string(), larghezza: w, altezza: h, gruppo });
+        v.push(Ingombro { sigla: c.nome.clone(), descrizione, codice: b.attributo("TIPO").to_string(), larghezza: w, altezza: h, rif: b.handle.clone(), stimata, gruppo });
     }
     v.sort_by(|a, b| a.gruppo.cmp(&b.gruppo).then_with(|| siglatura::prefisso_di(&a.sigla).cmp(&siglatura::prefisso_di(&b.sigla))).then_with(|| a.sigla.cmp(&b.sigla)));
     let mut file: Vec<(String, usize)> = Vec::new();
@@ -157,7 +164,7 @@ pub fn ingombri(s: &mut Session, quadro: &str) -> Result<Vec<Ingombro>> {
     }
     file.sort();
     for (nome, n) in file {
-        v.push(Ingombro { sigla: nome, descrizione: format!("Morsettiera, {n} morsetti"), codice: String::new(), larghezza: n as f64 * MORSETTO + TESTATE, altezza: 50.0, gruppo: 9 });
+        v.push(Ingombro { sigla: nome, descrizione: format!("Morsettiera, {n} morsetti"), codice: String::new(), larghezza: n as f64 * MORSETTO + TESTATE, altezza: 50.0, rif: String::new(), stimata: false, gruppo: 9 });
     }
     Ok(v)
 }
@@ -262,13 +269,13 @@ fn crea_blocchi_fissi(s: &mut Session) -> Result<()> {
     })
 }
 
-fn misura_testo(x: f64) -> String {
+pub(crate) fn misura_testo(x: f64) -> String {
     let t = format!("{x:.1}");
     t.trim_end_matches('0').trim_end_matches('.').to_string()
 }
 
 /// Il blocco dell'ingombro `l`×`a` mm alla scala 1:k (rettangolo con la sigla).
-fn blocco_ingombro(s: &mut Session, l: f64, a: f64, k: f64) -> Result<String> {
+pub(crate) fn blocco_ingombro(s: &mut Session, l: f64, a: f64, k: f64) -> Result<String> {
     let nome = format!("{PREFISSO_INGOMBRO}{}x{}_{}", misura_testo(l), misura_testo(a), misura_testo(k)).replace('.', "_");
     if blocchi_definiti(s)?.iter().any(|b| b.eq_ignore_ascii_case(&nome)) {
         return Ok(nome);
@@ -292,7 +299,7 @@ fn blocco_ingombro(s: &mut Session, l: f64, a: f64, k: f64) -> Result<String> {
         }
         v.extend(hn);
         colore(s, "BYLAYER")?;
-        for t in ["QUADRO", "CODICE", "LARGHEZZA", "ALTEZZA"] {
+        for t in ["QUADRO", "CODICE", "LARGHEZZA", "ALTEZZA", "RIF"] {
             v.extend(handles(&esegui(s, "attdef", json!({"tag": t, "prompt": t, "default": "", "at": [0.0, 0.0], "height": 1.0, "invisible": true}))?));
         }
         blocco(s, &nome, v, "Ingombro componente")
@@ -387,7 +394,10 @@ pub fn disegna(s: &mut Session, quadro: &str, n: Option<u32>, piastra: Option<(f
         match posto.and_then(|(f, x)| righe.get(f).map(|y| (x, *y))) {
             Some((x, y)) => {
                 let nome = blocco_ingombro(s, i.larghezza, i.altezza, k)?;
-                inserisci_su_layer(s, &nome, q(x0 + x, y), &json!({"SIGLA": i.sigla, "QUADRO": quadro, "CODICE": i.codice, "LARGHEZZA": m(i.larghezza), "ALTEZZA": m(i.altezza)}), &layer)?;
+                let h = inserisci_su_layer(s, &nome, q(x0 + x, y), &json!({"SIGLA": i.sigla, "QUADRO": quadro, "CODICE": i.codice, "LARGHEZZA": m(i.larghezza), "ALTEZZA": m(i.altezza)}), &layer)?;
+                if !i.rif.is_empty() {
+                    crate::util::imposta_attributi(s, &h, &[("RIF", i.rif.as_str())])?;
+                }
                 posati += 1;
             }
             None => fuori.push(i.sigla.clone()),
@@ -626,7 +636,7 @@ mod tests {
     use super::*;
 
     fn ing(sigla: &str, l: f64, gruppo: u8) -> Ingombro {
-        Ingombro { sigla: sigla.into(), descrizione: String::new(), codice: String::new(), larghezza: l, altezza: 90.0, gruppo }
+        Ingombro { sigla: sigla.into(), descrizione: String::new(), codice: String::new(), larghezza: l, altezza: 90.0, rif: String::new(), stimata: true, gruppo }
     }
 
     #[test]

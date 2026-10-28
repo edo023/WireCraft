@@ -39,6 +39,7 @@ pub mod stampa;
 pub mod targhette;
 pub mod tensioni;
 pub mod termico;
+pub mod topografico;
 pub mod traduttore;
 pub mod unifilare;
 pub mod uscite;
@@ -80,6 +81,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(configuratore::comandi());
     v.extend(pulsantiera::comandi());
     v.extend(unifilare::comandi());
+    v.extend(topografico::comandi());
     v
 }
 

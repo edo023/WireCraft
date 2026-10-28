@@ -4,7 +4,7 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 
 ## Prossimi passi
 
-- **Gestore topografico**: posizione dei componenti nell'impianto.
+- **Disegno della morsettiera** con i collegamenti a monte e a valle di ogni morsetto.
 - **Installer per Windows**.
 
 ## 28 ottobre 2026: schema unifilare e prima release
@@ -21,6 +21,7 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 - **Progetto d'esempio dall'app** (`COMMESSA.ESEMPIO`): il pulsante "Progetto d'esempio" in Gestione Progetti crea e apre la commessa "Esempio WireCraft" con lo stesso progetto completo, così chi scarica il programma ha subito qualcosa da guardare. Un test lo crea, lo salva, lo riapre e controlla che fogli, componenti, rimandi, materiali, circuiti e liste siano gli stessi, anche dopo Aggiorna Liste e Tabelle.
 - **Editor Morsettiere** (pulsante Morsettiere): elenco delle morsettiere e dei connettori, morsetti in ordine con livello, filo, ponte e posizione, "Vai" al morsetto nello schema; ordine a mano (su, giù) e rinumerazione secondo lo schema, i fili o compattata, dal numero e con il passo voluti (`MORSETTIERA.ORDINE`); ponticelli; rinomina e unione (`MORSETTIERA.RINOMINA`); CSV. I livelli di un morsetto multiplo restano insieme, `PE` e `N` restano dove sono.
 - Corretto: Modifica Morsetto non permetteva di mettere al livello 2 un morsetto con lo stesso numero di un altro (il controllo dei doppioni guardava il livello vecchio).
+- **Gestore Topografico** (`TOPOGRAFICO`, `.POSA`, `.AGGIORNA`; pulsante nella scheda Quadro): i componenti del quadro da montare nel lay-out con lo stato (posato, da posare, non più nello schema), la posa del singolo ingombro o di tutti i mancanti uno dopo l'altro, agganciati alla guida DIN più vicina. Ogni ingombro ricorda il suo componente: se nello schema cambia sigla o codice, il lay-out segue (anche dopo aver salvato e riaperto); se il componente sparisce, l'ingombro viene segnalato e si può togliere. Le misure stimate sono indicate.
 - **Test di robustezza**: ogni comando con parametri vuoti o sbagliati dà un errore, mai un arresto del programma.
 - I file delle commesse si scrivono con le barre dei percorsi singole, come nei file d'origine (prima venivano raddoppiate).
 
