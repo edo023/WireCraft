@@ -216,7 +216,7 @@ pub fn disegna_con(
 // ---------- le uscite ----------
 
 /// Tipi di uscita.
-pub const TIPI: [(&str, &str); 12] = [
+pub const TIPI: [(&str, &str); 13] = [
     ("indice", "Lista fogli"),
     ("distinta", "Distinta materiali"),
     ("morsettiere", "Morsettiere"),
@@ -229,6 +229,7 @@ pub const TIPI: [(&str, &str); 12] = [
     ("simboli", "Legenda simboli"),
     ("termico", "Calcolo termico del quadro"),
     ("loop", "Loop diagram"),
+    ("pulsantiera", "Pulsantiera"),
 ];
 
 /// La tabella di un'uscita con i dati del disegno, e i titoli del foglio (due lingue).
@@ -474,6 +475,7 @@ pub fn tabella(s: &mut Session, tipo: &str, p: &Value) -> Result<(Tabella, &'sta
             ))
         }
         "loop" => Ok((crate::loopdiagram::tabella(s)?, "Loop diagram", "Loop Diagram")),
+        "pulsantiera" => Ok((crate::pulsantiera::tabella(s, p)?, "Pulsantiera", "Control Panel")),
         "termico" => {
             let quadro = if quadro.trim().is_empty() { crate::impostazioni::quadro_corrente().unwrap_or_default() } else { quadro.clone() };
             let (d, e, voci) = crate::termico::calcolo(s, &quadro, p)?;
@@ -490,6 +492,9 @@ pub fn uscita(s: &mut Session, tipo: &str, p: &Value, primo: Option<u32>) -> Res
     // il loop diagram è un disegno, non una tabella
     if tipo == "loop" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
         return crate::loopdiagram::uscita(s, primo);
+    }
+    if tipo == "pulsantiera" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
+        return crate::pulsantiera::uscita(s, p, primo);
     }
     let (t, t0, t1) = tabella(s, tipo, p)?;
     let mut parametri = serde_json::Map::new();

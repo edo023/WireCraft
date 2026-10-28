@@ -217,7 +217,7 @@ fn scegli_piastra(v: &[Ingombro]) -> (f64, f64) {
 }
 
 /// La scala più grande (1:k) con cui la piastra entra nel foglio accanto alla tabella.
-fn scegli_scala(larghezza: f64, altezza: f64) -> f64 {
+pub(crate) fn scegli_scala(larghezza: f64, altezza: f64) -> f64 {
     let (w, h) = (AREA_MAX.0 - AREA_MIN.0 - LARGHEZZA_TABELLA - 15.0, AREA_MAX.1 - AREA_MIN.1);
     SCALE.iter().copied().find(|k| larghezza / k <= w && altezza / k <= h).unwrap_or(SCALE[SCALE.len() - 1])
 }

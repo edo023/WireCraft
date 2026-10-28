@@ -26,6 +26,7 @@ pub mod multifoglio;
 pub mod norma81346;
 pub mod numerazione;
 pub mod plc;
+pub mod pulsantiera;
 pub mod revisioni;
 pub mod salto;
 pub mod siglatura;
@@ -73,6 +74,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(tensioni::comandi());
     v.extend(targhette::comandi());
     v.extend(configuratore::comandi());
+    v.extend(pulsantiera::comandi());
     v
 }
 

@@ -286,7 +286,7 @@ fn schede() -> Vec<Scheda> {
                 gruppo(
                     "Layout",
                     false,
-                    vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Pianta, "Topografia Impianto", ND), g(Icona::Tensioni, "Sovratemperature", Sovratemperature)],
+                    vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Cerchio, "Pulsantiera", Liste(Some("pulsantiera"))), g(Icona::Pianta, "Topografia Impianto", ND), g(Icona::Tensioni, "Sovratemperature", Sovratemperature)],
                 ),
                 gruppo(
                     "CEI EN 81346",

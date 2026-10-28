@@ -12,7 +12,7 @@ Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artifici
 <img alt="Rust" src="https://img.shields.io/badge/Rust-1.95%2B-b7410e?logo=rust">
 <img alt="Windows" src="https://img.shields.io/badge/piattaforma-Windows-0078d6">
 <img alt="Stato alpha" src="https://img.shields.io/badge/stato-alpha-orange">
-<img alt="54 test di integrazione" src="https://img.shields.io/badge/test-54%20passati-brightgreen">
+<img alt="55 test di integrazione" src="https://img.shields.io/badge/test-55%20passati-brightgreen">
 </p>
 
 <p align="center"><img src="docs/img/schema.png" alt="WireCraft: lo schema di potenza di un motore, con i fogli del progetto a sinistra e i comandi elettrici a destra" width="100%"></p>
@@ -85,6 +85,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 **🗄️ Quadro**
 - layout del quadro: piastra in scala con canaline, guide DIN e ingombri dei componenti presi dallo schema
 - foratura della piastra con le quote, in CSV
+- pulsantiera sulla porta: pulsanti, emergenze, selettori e lampade dello schema in file, con la foratura
 - calcolo termico: temperatura interna, ventilatore o condizionatore che servono, anticondensa
 
 **🖨️ Stampa**
@@ -118,7 +119,7 @@ scripts/aggiorna-cadcraft.sh          # prepara il motore CAD con i ganci di Wir
 cargo run --release -p wirecraft      # avvia il programma
 ```
 
-Vuoi vedere subito un progetto completo? Questo comando genera un impianto di esempio da 16 fogli (alimentazione, motore, ausiliari, PLC, lay-out del quadro, calcolo termico, loop diagram, liste e legende) e lo stampa in PDF:
+Vuoi vedere subito un progetto completo? Questo comando genera un impianto di esempio da 17 fogli (alimentazione, motore, ausiliari, PLC, lay-out del quadro, calcolo termico, pulsantiera, loop diagram, liste e legende) e lo stampa in PDF:
 
 ```sh
 cargo run --release -p elettrico --example esempio_completo -- esempio.dxf esempio.pdf
@@ -140,8 +141,8 @@ Dall'idea alla prima versione pubblica in cinque giorni. La storia completa, gio
 | 26 ottobre | **Prima versione**: progetti, multifoglio, fili, simboli, siglatura, numerazione, morsetti, cavi, PLC, liste, PDF | ✅ |
 | 26 ottobre | Navigatore, Cross Reference, modifica di fili, morsetti e rimandi | ✅ |
 | 27 ottobre | Traduttore, lay-out del quadro, foratura piastra, connettori. **Pubblicazione open source** | ✅ |
-| 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346, calcolo termico del quadro, loop diagram, tensioni e fili colorati, targhette, ponticelli, liste in Excel, configuratore macchina; lettura migliore dei DWG di altri programmi | ✅ |
-| Prossimi passi | Gestore topografico e pulsantiere | 🔜 |
+| 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346, calcolo termico del quadro, loop diagram, tensioni e fili colorati, targhette, ponticelli, liste in Excel, configuratore macchina, pulsantiera; lettura migliore dei DWG di altri programmi | ✅ |
+| Prossimi passi | Gestore topografico dell'impianto | 🔜 |
 | | Schema unifilare per i quadri di distribuzione | 🔜 |
 | | Editor di morsettiera avanzato (ordine, multilivello) | 🔜 |
 | | Installer per Windows e release con l'eseguibile pronto | 🔜 |
@@ -153,7 +154,7 @@ WireCraft è un livello elettrico sopra [CADCraft](https://github.com/storytold/
 | Cartella | Contenuto |
 |---|---|
 | `apps/wirecraft` | il programma desktop (`wirecraft.exe`): barra a schede, pannelli, finestre |
-| `crates/elettrico` | tutti i comandi elettrici, con 54 test di integrazione in `tests/integrazione` |
+| `crates/elettrico` | tutti i comandi elettrici, con 55 test di integrazione in `tests/integrazione` |
 | `crates/elettrico/examples` | `esempio_completo` (un progetto con tutte le funzioni), `multifoglio`, `analizza` (blocchi e attributi di un DWG) |
 | `vendor/cadcraft` | CADCraft, come git submodule |
 | `patches/cadcraft` | i piccoli ganci che servono a CADCraft (comandi e menu di un'applicazione) e la versione su cui si applicano |

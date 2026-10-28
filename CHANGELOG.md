@@ -4,7 +4,7 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 
 ## Prossimi passi
 
-- **Gestore topografico e pulsantiere**: posizione dei componenti nell'impianto, fronte e retro delle pulsantiere.
+- **Gestore topografico**: posizione dei componenti nell'impianto.
 - **Schema unifilare** per i quadri di distribuzione, con la tabella dati di ogni circuito.
 - **Editor di morsettiera** avanzato (ordine, multilivello).
 - **Installer per Windows** e release con l'eseguibile pronto.
@@ -22,6 +22,7 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 - **Ponticelli** tra i morsetti (`PONTICELLO`, `PONTICELLI.AUTO`): a mano su un elenco di morsetti (`1-4, 7`) o automatici tra morsetti vicini sullo stesso filo (N, PE, +24V distribuiti); gruppo nell'attributo `PONTE`, colonna nella lista delle morsettiere e nel CSV. Nella tavolozza, sezione Morsetti.
 - **Liste in Excel** (`EXCEL {tipo, file}`): ogni lista (distinta, morsettiere, cablaggio, cavi, I/O, loop, calcolo termico, legende) in un file `.xlsx` con titolo, intestazioni e larghezze di colonna; i numeri dei fili restano testo. Pulsante "Excel…" nella finestra Liste e Tabelle.
 - **Configuratore macchina** (`CONFIGURATORE`, `.ABBINA`, `.ELIMINA`, `.GENERA`): opzioni con codice, descrizione e gruppo di esclusione; le parti dello schema si abbinano dalla selezione; il progetto si genera in un nuovo file con le sole opzioni scelte (le parti comuni restano sempre). Le opzioni sono gruppi con nome del disegno e si salvano nel file. Finestra Configuratore nella scheda Strumenti.
+- **Pulsantiera** (`PULSANTIERA`, `USCITA {tipo: pulsantiera}`): pulsanti, emergenze, selettori, lampade e sirene del quadro disposti in file sulla porta (emergenze per prime, file centrate), disegnati in scala con sigla e tipo (lampade col colore della funzione) ed elencati con funzioni e quote; foratura Ø22,5 in CSV ed Excel. Pulsante nella scheda Quadro.
 - Etichette di menu, barra a schede e finestre riscritte con parole nostre; comandi e scorciatoie invariati.
 
 Verificato: il salto dal contatto porta alla bobina sul suo foglio e ritorno; i contatti di una madre escono in ordine di foglio; un rimando porta al suo corrispondente, uno senza coppia non porta da nessuna parte. Una configurazione usata in un progetto non ne cambia il quadro corrente; un nome sbagliato non lascia un progetto creato a metà. Fra box dello stesso tipo uno dentro l'altro vale il più piccolo; un componente spostato in un altro box prende il nuovo quadro con Aggiorna Liste e Tabelle.
