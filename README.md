@@ -163,9 +163,10 @@ Dall'idea alla prima versione pubblica in cinque giorni. La storia completa, gio
 | 27 ottobre | Traduttore, lay-out del quadro, foratura piastra, connettori. **Pubblicazione open source** | ✅ |
 | 27 ottobre (sera) | Vai al Collegato, configurazioni con nome per cliente, box e designazioni CEI EN 81346, calcolo termico del quadro, loop diagram, tensioni e fili colorati, targhette, ponticelli, liste in Excel, configuratore macchina, pulsantiera; lettura migliore dei DWG di altri programmi | ✅ |
 | 28 ottobre | Schema unifilare dei quadri di distribuzione, con dimensionamento e verifica di protezioni e cavi | ✅ |
+| 28 ottobre | **Prima release**: [WireCraft 0.2.0](https://github.com/edo023/WireCraft/releases/tag/v0.2.0), l'eseguibile per Windows pronto da scaricare | ✅ |
 | Prossimi passi | Gestore topografico dell'impianto | 🔜 |
 | | Editor di morsettiera avanzato (ordine, multilivello) | 🔜 |
-| | Installer per Windows e release con l'eseguibile pronto | 🔜 |
+| | Installer per Windows | 🔜 |
 
 ## Com'è fatto
 

@@ -6,9 +6,11 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 
 - **Gestore topografico**: posizione dei componenti nell'impianto.
 - **Editor di morsettiera** avanzato (ordine, multilivello).
-- **Installer per Windows** e release con l'eseguibile pronto.
+- **Installer per Windows**.
 
-## 28 ottobre 2026: schema unifilare
+## 28 ottobre 2026: schema unifilare e prima release
+
+- **WireCraft 0.2.0**, la prima release: `wirecraft-windows-x64.zip` con l'eseguibile pronto, compilato e provato da GitHub Actions a ogni tag `v*`, con le note della versione.
 
 - **Schema unifilare dei quadri di distribuzione** (`UNIFILARE.ARRIVO`, `UNIFILARE.CIRCUITO`, `UNIFILARE.MODIFICA`, `UNIFILARE.AGGIORNA`): un circuito per colonna appeso alle sbarre, con protezione (magnetotermico, magnetotermico differenziale, differenziale, sezionatore, fusibili), cavo con i tratti dei conduttori, utenza (prese, illuminazione, motore, sottoquadro, riscaldamento, generica, riserva) e sotto la tabella dei dati: circuito, denominazione in due lingue, sistema, tensione, potenza, cos φ, Ib, curva, In, Icn, Idn e tipo, cavo, formazione, lunghezza, Iz, caduta di tensione, verifica. L'arrivo linea sta sopra le sbarre nella prima colonna; un quadro continua sui fogli successivi.
 - **Dimensionamento**: corrente d'impiego dalla potenza; taratura normalizzata subito sopra; sezione minima con la portata giusta (IEC 60364-5-52, cavi multipolari in rame EPR/XLPE, posa B2, C o E, fattore di correzione) e la caduta di tensione dall'origine entro il limite; in automatico l'arrivo si tiene un quarto della caduta ammessa. Taratura e sezione restano automatiche finché non si scrivono a mano, e si rifanno a ogni ricalcolo.
