@@ -1,4 +1,4 @@
-# Compila wirecraft.exe per Windows e lo pubblica in una release.
+# Compila wirecraft.exe per Windows e lo pubblica in una release, in uno zip e con l'installatore.
 # Parte con un tag v* (git tag v0.2.0 && git push origin v0.2.0) o a mano da Actions → Release →
 # Run workflow (in quel caso lo zip resta tra gli artefatti della corsa, senza release).
 name: Release
@@ -43,10 +43,23 @@ jobs:
           Copy-Item README.md, CHANGELOG.md, LICENSE-MIT, LICENSE-APACHE dist/WireCraft/
           Compress-Archive -Path dist/WireCraft -DestinationPath wirecraft-windows-x64.zip
 
+      # l'installatore (Inno Setup): se non riesce, la release esce comunque con lo zip
+      - name: Installatore
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress }
+          $v = (Select-String -Path Cargo.toml -Pattern '^version = "(.+)"').Matches[0].Groups[1].Value
+          & $iscc "/DVersione=$v" installer\wirecraft.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - uses: actions/upload-artifact@v4
         with:
           name: wirecraft-windows-x64
-          path: wirecraft-windows-x64.zip
+          path: |
+            wirecraft-windows-x64.zip
+            dist/wirecraft-setup-*.exe
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/')
@@ -61,4 +74,8 @@ jobs:
           else
             ARG=(--notes "WireCraft per Windows a 64 bit: scompatta lo zip e avvia wirecraft.exe. Le novità sono nel CHANGELOG.")
           fi
-          gh release create "$GITHUB_REF_NAME" wirecraft-windows-x64.zip --title "WireCraft $GITHUB_REF_NAME" "${ARG[@]}"
+          FILE=(wirecraft-windows-x64.zip)
+          for f in dist/wirecraft-setup-*.exe; do
+            [ -f "$f" ] && FILE+=("$f")
+          done
+          gh release create "$GITHUB_REF_NAME" "${FILE[@]}" --title "WireCraft $GITHUB_REF_NAME" "${ARG[@]}"
