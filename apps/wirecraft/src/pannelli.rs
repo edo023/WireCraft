@@ -12,6 +12,7 @@ use crate::cavi_plc::{FinestraCavi, FinestraPlc};
 use crate::dialogo::{Dialogo, Esito, SchedaMateriali};
 use crate::edita_xs::EditaXs;
 use crate::gestione::GestioneMultifoglio;
+use crate::planimetria::FinestraPlanimetria;
 use crate::progetti::GestioneProgetti;
 use crate::liste::FinestraListe;
 use crate::morsettiere::FinestraMorsettiere;
@@ -68,6 +69,7 @@ pub struct Pannelli {
     unifilare: FinestraUnifilare,
     morsettiere: FinestraMorsettiere,
     topografico: FinestraTopografico,
+    planimetria: FinestraPlanimetria,
     /// Il disegno attivo (identità e percorso): quando cambia si cerca la sua commessa.
     disegno: Option<(u64, Option<String>)>,
     commessa: Option<String>,
@@ -140,6 +142,7 @@ impl Pannelli {
         self.unifilare.mostra(cad, ui.ctx());
         self.morsettiere.mostra(cad, ui.ctx());
         self.topografico.mostra(cad, ui.ctx());
+        self.planimetria.mostra(cad, ui.ctx());
     }
 
     /// Esegue l'azione di un pulsante della barra a schede.
@@ -160,6 +163,7 @@ impl Pannelli {
             Azione::Configuratore => self.configuratore.apri(cad),
             Azione::Unifilare => self.unifilare.apri(cad),
             Azione::Topografico => self.topografico.apri(cad),
+            Azione::Planimetria => self.planimetria.apri(cad),
             Azione::Targhette(tipo) => {
                 if let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv"]).set_file_name(format!("targhette {tipo}.csv")).save_file() {
                     match cad.run("targhette", json!({"tipo": tipo, "file": p.to_string_lossy()})) {

@@ -28,6 +28,7 @@ pub mod morsettiere;
 pub mod multifoglio;
 pub mod norma81346;
 pub mod numerazione;
+pub mod planimetria;
 pub mod plc;
 pub mod pulsantiera;
 pub mod revisioni;
@@ -83,6 +84,7 @@ pub fn comandi() -> Vec<CommandSpec> {
     v.extend(pulsantiera::comandi());
     v.extend(unifilare::comandi());
     v.extend(topografico::comandi());
+    v.extend(planimetria::comandi());
     v
 }
 

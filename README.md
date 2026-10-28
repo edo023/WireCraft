@@ -12,7 +12,7 @@ Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artifici
 <img alt="Rust" src="https://img.shields.io/badge/Rust-1.95%2B-b7410e?logo=rust">
 <img alt="Windows" src="https://img.shields.io/badge/piattaforma-Windows-0078d6">
 <img alt="Stato alpha" src="https://img.shields.io/badge/stato-alpha-orange">
-<img alt="62 test di integrazione" src="https://img.shields.io/badge/test-62%20passati-brightgreen">
+<img alt="63 test di integrazione" src="https://img.shields.io/badge/test-63%20passati-brightgreen">
 </p>
 
 <p align="center"><img src="docs/img/schema.png" alt="WireCraft: lo schema di potenza di un motore, con i fogli del progetto a sinistra e i comandi elettrici a destra" width="100%"></p>
@@ -80,6 +80,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 - archivio materiali con importazione del listino
 - targhette di componenti, fili, morsetti e cavi in CSV per la stampante
 - schema d'impianto: i quadri collegati dai loro cavi, con formazione e lunghezza
+- planimetria: i quadri sulla pianta in scala e la lunghezza dei cavi calcolata dai percorsi
 
 **🌍 Traduttore**
 - dizionario in cinque lingue (IT, EN, DE, FR, ES)
@@ -170,9 +171,8 @@ Dall'idea alla prima versione pubblica in cinque giorni. La storia completa, gio
 | 28 ottobre | Schema unifilare dei quadri di distribuzione, con dimensionamento e verifica di protezioni e cavi | ✅ |
 | 28 ottobre | **Prima release**: [WireCraft 0.2.0](https://github.com/edo023/WireCraft/releases/tag/v0.2.0), l'eseguibile per Windows pronto da scaricare | ✅ |
 | 28 ottobre | Editor e disegno delle morsettiere, gestore topografico del quadro; progetto d'esempio dall'app; test di salvataggio e riapertura e di robustezza di tutti i comandi | ✅ |
-| 29 ottobre | Schema d'impianto generato dai quadri e dai cavi | ✅ |
-| Prossimi passi | Planimetria dell'impianto | 🔜 |
-| | Installer per Windows | 🔜 |
+| 29 ottobre | Schema d'impianto generato dai quadri e dai cavi; planimetria con la lunghezza dei cavi dai percorsi | ✅ |
+| Prossimi passi | Installer per Windows | 🔜 |
 
 ## Com'è fatto
 
@@ -181,7 +181,7 @@ WireCraft è un livello elettrico sopra [CADCraft](https://github.com/storytold/
 | Cartella | Contenuto |
 |---|---|
 | `apps/wirecraft` | il programma desktop (`wirecraft.exe`): barra a schede, pannelli, finestre |
-| `crates/elettrico` | tutti i comandi elettrici, con 62 test di integrazione in `tests/integrazione` |
+| `crates/elettrico` | tutti i comandi elettrici, con 63 test di integrazione in `tests/integrazione` |
 | `crates/elettrico/examples` | `esempio_completo` (un progetto con tutte le funzioni), `multifoglio`, `analizza` (blocchi e attributi di un DWG) |
 | `vendor/cadcraft` | CADCraft, come git submodule |
 | `patches/cadcraft` | i piccoli ganci che servono a CADCraft (comandi e menu di un'applicazione) e la versione su cui si applicano |

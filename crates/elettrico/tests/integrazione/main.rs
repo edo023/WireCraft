@@ -22,6 +22,7 @@ mod multifoglio;
 mod norma81346;
 mod numerazione;
 mod ponticelli;
+mod planimetria;
 mod pulsantiera;
 mod robustezza;
 mod revisioni;

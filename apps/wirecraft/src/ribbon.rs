@@ -41,6 +41,8 @@ pub enum Azione {
     Unifilare,
     /// Finestra "Gestore Topografico": componenti del quadro nel lay-out.
     Topografico,
+    /// Finestra "Planimetria": quadri sulla pianta e lunghezze dei cavi.
+    Planimetria,
     /// Targhette del tipo dato (componenti, fili, morsetti, cavi) in CSV.
     Targhette(&'static str),
     Cross,
@@ -130,7 +132,6 @@ fn simboli_piccoli(ids: &[&str]) -> Elemento {
 }
 
 use Azione::*;
-const ND: Azione = NonDisponibile;
 
 fn schede() -> Vec<Scheda> {
     vec![
@@ -145,7 +146,7 @@ fn schede() -> Vec<Scheda> {
                         Elemento::Piccoli(vec![t(Icona::Simbologia, "Simbologia", LibreriaSimboli), t(Icona::Settaggi, "Impostazioni", Settaggi), t(Icona::Scansione, "Verifica", Cross)]),
                         Elemento::Piccoli(vec![t(Icona::Impianto, "Schema d'impianto", Liste(Some("impianto"))), t(Icona::Quadro, "Quadro corrente", Settaggi), t(Icona::Tensioni, "Tensioni", Tensioni)]),
                         Elemento::Piccoli(vec![
-                            Voce::Icone(vec![p(Icona::Pianta, "Planimetria", ND)]),
+                            Voce::Icone(vec![p(Icona::Pianta, "Planimetria", Planimetria)]),
                             Voce::Icone(vec![p(Icona::Aggiorna, "Aggiorna liste e tabelle", Esegui("aggiornaliste", "{}"))]),
                         ]),
                     ],

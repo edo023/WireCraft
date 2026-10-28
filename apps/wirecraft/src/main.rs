@@ -17,6 +17,7 @@ mod liste;
 mod morsettiere;
 mod navigatore;
 mod pannelli;
+mod planimetria;
 mod progetti;
 mod settaggi;
 mod ribbon;
