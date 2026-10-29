@@ -13,6 +13,7 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 
 - **Schema d'impianto** (`USCITA {tipo: impianto}`, pulsante "Schema d'impianto" nella scheda WireCraft): i quadri del progetto come blocchi, con la descrizione del box del quadro e il numero di componenti, collegati dai cavi con sigla, formazione, lunghezza e funzione. Il percorso di un cavo viene dalla sua definizione o, se manca, dai componenti a cui arrivano le sue vene. Le tratte corte stanno vicino ai quadri e quelle lunghe all'esterno, senza incrociarsi; la funzione si scrive se c'è posto. Anche in Excel; nel progetto d'esempio (22 fogli), con il cavo che dal quadro di distribuzione alimenta il quadro macchina.
 - **Planimetria** (`PLANIMETRIA`, `.NUOVO`, `.POSA`, `.LUNGHEZZE`; pulsante "Planimetria"): i quadri posati sulla pianta dell'impianto in scala (anche uno dopo l'altro, Invio = il prossimo) e la lunghezza dei cavi tra quadri posati calcolata dal percorso ortogonale, più le risalite e la scorta, scritta nei cavi (anche solo dove manca); i percorsi si disegnano sulla pianta con le sigle e le lunghezze.
+- Al primo avvio la sola cartella dei progetti è `Documenti\WireCraft\Commesse`: le cartelle delle commesse di altri programmi non si cercano più da sole, si aggiungono da Gestione Progetti → Cartelle dei progetti.
 - Il pulsante "Simbologia" apre la libreria dei simboli IEC 60617. Nessun pulsante della barra è più spento.
 
 ## 28 ottobre 2026: schema unifilare, prima release, morsettiere, topografico

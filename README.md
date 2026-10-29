@@ -29,7 +29,7 @@ Chi progetta quadri elettrici oggi paga licenze costose, ogni anno, per programm
 - 🧭 **Flusso di lavoro professionale**: commesse, multifoglio, siglatura, numerazione fili, cross reference, morsettiere, cavi, PLC, liste. Chi arriva da un CAD elettrico tradizionale si ritrova subito a casa.
 - 🔓 **Aperto davvero**: progetti in DXF con i dati elettrici negli attributi, liste in CSV, PDF per tutti. I progetti restano tuoi.
 - 🤖 **Pronto per l'AI**: ogni comando ha parametri JSON, quindi script e agenti AI possono disegnare, numerare e verificare uno schema come farebbe un progettista.
-- 🔁 **Compatibile**: apre le commesse esistenti in formato `Job-Description._sp` e i loro DWG, con fogli, titoli, rimandi, fili e contatti. Su un progetto reale di 114 rimandi ricalcola tutti i riferimenti incrociati, senza un errore.
+- 🔁 **Compatibile**: apre le commesse esistenti in formato `Job-Description._sp` e i loro DWG, con fogli, titoli, rimandi, fili e contatti: basta aggiungere la loro cartella in *Gestione Progetti → Cartelle dei progetti*. Su un progetto reale di 114 rimandi ricalcola tutti i riferimenti incrociati, senza un errore.
 
 ## Cosa sa fare
 

@@ -144,8 +144,8 @@ fn config_dir() -> Option<std::path::PathBuf> {
     }
 }
 
-/// Le cartelle delle commesse: al primo avvio `Documenti/WireCraft/Commesse` e, se
-/// c'è, quella delle commesse del CAD elettrico d'origine installato.
+/// Le cartelle delle commesse: al primo avvio `Documenti/WireCraft/Commesse`. Le cartelle
+/// delle commesse esistenti si aggiungono dalla finestra Gestione Progetti.
 fn prepara_commesse(file: &std::path::Path) {
     elettrico::commesse::imposta_file_percorsi(file);
     if file.exists() {
@@ -157,10 +157,6 @@ fn prepara_commesse(file: &std::path::Path) {
             log::warn!("cartella commesse {}: {e}", d.display());
         }
         let _ = elettrico::commesse::cambia_percorsi(Some(&d), None);
-    }
-    let spac = std::path::Path::new(r"C:\SPAC Automazione CAD 2026\Commesse");
-    if spac.exists() {
-        let _ = elettrico::commesse::cambia_percorsi(Some(spac), None);
     }
 }
 
