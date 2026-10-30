@@ -92,14 +92,18 @@ pub(crate) fn misura(id: Option<&str>, prefisso: &str, poli: usize) -> Option<(f
         _ => None,
     };
     let p = prefisso.to_ascii_uppercase();
-    let gruppo = match p.chars().next() {
-        Some('Q') => 0,
-        Some('F') => 1,
-        Some('T' | 'G') => 2,
-        Some('U') => 3,
-        Some('A') => 4,
-        Some('K') => 5,
-        _ => 6,
+    // ordine di montaggio: il generale, le protezioni, i fusibili, i contattori di potenza
+    // (vicino ai loro salvamotori), l'alimentazione, i PLC, i relè, il resto
+    let gruppo = match (p.as_str(), p.chars().next()) {
+        ("QS" | "QG", _) => 0,
+        (_, Some('Q')) => 1,
+        (_, Some('F')) => 2,
+        ("KM", _) => 3,
+        (_, Some('T' | 'G')) => 4,
+        (_, Some('U')) => 5,
+        (_, Some('A')) => 6,
+        (_, Some('K')) => 7,
+        _ => 8,
     };
     if let Some((w, h)) = per_id {
         return Some((w, h, gruppo));
@@ -647,9 +651,13 @@ mod tests {
 
     #[test]
     fn misure_dai_simboli_e_dalle_sigle() {
-        assert_eq!(misura(Some("qf3"), "QF", 3), Some((54.0, 90.0, 0)));
-        assert_eq!(misura(Some("km"), "KM", 3), Some((45.0, 85.0, 5)));
-        assert_eq!(misura(None, "QF", 2), Some((36.0, 90.0, 0)));
+        assert_eq!(misura(Some("qf3"), "QF", 3), Some((54.0, 90.0, 1)));
+        assert_eq!(misura(Some("km"), "KM", 3), Some((45.0, 85.0, 3)));
+        assert_eq!(misura(None, "QF", 2), Some((36.0, 90.0, 1)));
+        // il generale per primo, i relè dopo l'alimentazione e i PLC
+        assert_eq!(misura(Some("qs3"), "QS", 3).map(|m| m.2), Some(0));
+        assert_eq!(misura(Some("ka"), "KA", 1).map(|m| m.2), Some(7));
+        assert!(misura(Some("tc"), "T", 1).map(|m| m.2) < misura(Some("ka"), "KA", 1).map(|m| m.2));
         assert_eq!(misura(Some("m3"), "M", 3), None, "il motore non sta nel quadro");
         assert_eq!(misura(None, "SB", 1), None);
         assert_eq!(misura(None, "X", 1), None);

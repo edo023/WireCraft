@@ -43,6 +43,8 @@ pub enum Azione {
     Topografico,
     /// Finestra "Planimetria": quadri sulla pianta e lunghezze dei cavi.
     Planimetria,
+    /// Finestra "Fronte Quadro": pulsanti e lampade sulla porta.
+    Fronte,
     /// Targhette del tipo dato (componenti, fili, morsetti, cavi) in CSV.
     Targhette(&'static str),
     Cross,
@@ -292,7 +294,7 @@ fn schede() -> Vec<Scheda> {
                 gruppo(
                     "Layout",
                     false,
-                    vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Cerchio, "Pulsantiera", Liste(Some("pulsantiera"))), g(Icona::Pianta, "Gestore Topografico", Topografico), g(Icona::Tensioni, "Sovratemperature", Sovratemperature)],
+                    vec![g(Icona::Quadro, "Layout Quadro", LayoutQuadro), g(Icona::Tratteggio, "Foratura Piastra", Foratura), g(Icona::Cerchio, "Fronte Quadro", Fronte), g(Icona::Pianta, "Gestore Topografico", Topografico), g(Icona::Tensioni, "Sovratemperature", Sovratemperature)],
                 ),
                 gruppo(
                     "Distribuzione",

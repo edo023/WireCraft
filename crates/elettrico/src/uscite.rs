@@ -499,9 +499,6 @@ pub fn uscita(s: &mut Session, tipo: &str, p: &Value, primo: Option<u32>) -> Res
     if tipo == "loop" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
         return crate::loopdiagram::uscita(s, primo);
     }
-    if tipo == "pulsantiera" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
-        return crate::pulsantiera::uscita(s, p, primo);
-    }
     if tipo == "disegnomorsettiere" && !p.get("tabella").and_then(Value::as_bool).unwrap_or(false) {
         return crate::morsettiere::uscita(s, p, primo);
     }
@@ -565,6 +562,7 @@ fn run_aggiorna(s: &mut Session, _p: &Value) -> Result<Value> {
         crate::norma81346::applica(s)?;
         crate::unifilare::aggiorna(s)?;
         crate::topografico::aggiorna(s, false)?;
+        crate::pulsantiera::aggiorna(s, false)?;
         crate::siglatura::aggiorna_tutto(s)?;
         crate::fili::aggiorna_rimandi(s)?;
         let v = aggiorna_liste(s)?;

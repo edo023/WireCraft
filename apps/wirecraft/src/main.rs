@@ -11,6 +11,7 @@ mod cavi_plc;
 mod configuratore;
 mod dialogo;
 mod edita_xs;
+mod fronte;
 mod gestione;
 mod icone;
 mod liste;

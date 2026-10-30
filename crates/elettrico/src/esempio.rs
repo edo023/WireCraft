@@ -116,8 +116,8 @@ pub fn disegna(s: &mut Session, testata: &Value) -> Result<()> {
     e("foraturapiastra", json!({"foglio": layout["foglio"]}))?;
     // calcolo termico del quadro, con l'armadio della piastra
     e("uscita", json!({"tipo": "termico", "quadro": "+QG"}))?;
-    // la pulsantiera sulla porta, con la foratura
-    e("uscita", json!({"tipo": "pulsantiera", "quadro": "+QG"}))?;
+    // il fronte quadro: la porta con pulsanti e lampade, che poi si spostano a mano
+    e("pulsantiera.disegna", json!({"quadro": "+QG"}))?;
     for tipo in ["indice", "distinta", "morsettiere", "disegnomorsettiere", "cablaggio", "cavi", "impianto", "io", "loop", "circuiti", "funzioni", "simboli"] {
         e("uscita", json!({"tipo": tipo}))?;
     }
