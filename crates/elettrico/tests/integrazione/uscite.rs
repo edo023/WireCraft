@@ -90,3 +90,23 @@ fn uscite_sui_fogli_e_aggiornamento() {
     let pagine = esegui(&mut s, "dataextraction", json!({"blocks": "CE_USCITA_*", "combine": false}));
     assert_eq!(pagine["rows"].as_array().unwrap().len(), 6);
 }
+
+#[test]
+fn la_stessa_lista_due_volte_si_ridisegna_al_suo_posto() {
+    let _uno_alla_volta = crate::uno_alla_volta();
+    let mut s = prepara(1);
+    circuito(&mut s);
+    let a = esegui(&mut s, "uscita", json!({"tipo": "distinta"}));
+    let b = esegui(&mut s, "uscita", json!({"tipo": "distinta"}));
+    assert_eq!(a["fogli"], b["fogli"], "stessi fogli, nessuna copia");
+    let pagine = esegui(&mut s, "dataextraction", json!({"blocks": "CE_USCITA_*", "combine": false}));
+    assert_eq!(pagine["rows"].as_array().map(Vec::len), Some(a["fogli"].as_array().unwrap().len()));
+    // un'altra morsettiera è un'altra uscita: si aggiunge
+    let m1 = esegui(&mut s, "uscita", json!({"tipo": "morsettiere", "morsettiera": "-XG"}));
+    let m2 = esegui(&mut s, "uscita", json!({"tipo": "morsettiere"}));
+    assert_ne!(m1["fogli"], m2["fogli"]);
+    // e nel foglio indicato si disegna dove si chiede
+    let n = elettrico::fogli::elenco(&mut s).unwrap().last().unwrap().numero + 1;
+    let c = esegui(&mut s, "uscita", json!({"tipo": "distinta", "foglio": n}));
+    assert_eq!(c["fogli"][0].as_u64(), Some(u64::from(n)));
+}

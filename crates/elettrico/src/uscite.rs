@@ -547,11 +547,37 @@ pub fn aggiorna_liste(s: &mut Session) -> Result<Vec<(String, Vec<u32>)>> {
     Ok(out)
 }
 
+/// Le pagine già disegnate della stessa uscita (tipo, quadro e morsettiera): (handle, foglio).
+fn stessa_uscita(s: &mut Session, tipo: &str, p: &Value) -> Result<Vec<(String, u32)>> {
+    let chiave = |v: &Value, k: &str| v.get(k).and_then(Value::as_str).unwrap_or_default().trim().to_ascii_uppercase();
+    Ok(pagine_esistenti(s)?
+        .into_iter()
+        .filter(|(b, _)| b.attributo("TIPO") == tipo)
+        .filter(|(b, _)| {
+            let par: Value = serde_json::from_str(b.attributo("PARAMETRI")).unwrap_or_else(|_| json!({}));
+            ["quadro", "morsettiera"].iter().all(|k| chiave(&par, k) == chiave(p, k))
+        })
+        .map(|(b, n)| (b.handle, n))
+        .collect())
+}
+
 fn run_uscita(s: &mut Session, p: &Value) -> Result<Value> {
     let tipo = testo_param(p, "tipo").ok_or_else(|| errore(format!("Indicare il tipo di uscita: {}", TIPI.map(|t| t.0).join(", "))))?;
-    let primo = numero_param(p, "foglio");
     in_gruppo(s, "Uscita", |s| {
+        // la stessa uscita già sui fogli si ridisegna al suo posto, non se ne fa una seconda: le
+        // sue pagine sui fogli ridisegnati se ne vanno col disegno, quelle avanzate dopo
+        let dato = numero_param(p, "foglio");
+        let primo = match dato {
+            Some(n) => Some(n),
+            None => stessa_uscita(s, &tipo, p)?.iter().map(|(_, n)| *n).min(),
+        };
         let f = uscita(s, &tipo, p, primo)?;
+        if dato.is_none() {
+            let avanzi: Vec<String> = stessa_uscita(s, &tipo, p)?.into_iter().filter(|(_, n)| !f.contains(n)).map(|(h, _)| h).collect();
+            if !avanzi.is_empty() {
+                esegui(s, "erase", json!({"handles": avanzi}))?;
+            }
+        }
         let nome = TIPI.iter().find(|t| t.0 == tipo).map_or(tipo.as_str(), |t| t.1);
         Ok(json!({"fogli": f, "message": format!("{nome}: fogli {}", f.iter().map(|n| format!("{n:02}")).collect::<Vec<_>>().join(", "))}))
     })
