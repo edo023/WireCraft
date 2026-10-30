@@ -521,8 +521,12 @@ pub fn uscita(s: &mut Session, tipo: &str, p: &Value, primo: Option<u32>) -> Res
     disegna(s, &t, tipo, &Value::Object(parametri), primo, t0, t1)
 }
 
-/// Ridisegna tutte le uscite già disegnate con i dati del momento. Restituisce (tipo, fogli).
-pub fn aggiorna_liste(s: &mut Session) -> Result<Vec<(String, Vec<u32>)>> {
+/// L'esito dell'aggiornamento di un'uscita: i fogli usati, o perché non si è potuta ridisegnare.
+pub type Aggiornata = std::result::Result<Vec<u32>, String>;
+
+/// Ridisegna tutte le uscite già disegnate con i dati del momento. Restituisce per ogni uscita
+/// il tipo e i fogli usati, o perché non si è potuta ridisegnare (resta com'era).
+pub fn aggiorna_liste(s: &mut Session) -> Result<Vec<(String, Aggiornata)>> {
     let mut gruppi: Vec<(String, String, u32)> = Vec::new();
     for (b, n) in pagine_esistenti(s)? {
         let tipo = b.attributo("TIPO").to_string();
@@ -535,14 +539,20 @@ pub fn aggiorna_liste(s: &mut Session) -> Result<Vec<(String, Vec<u32>)>> {
     gruppi.sort_by_key(|g| g.2);
     let mut out = Vec::new();
     for (tipo, par, primo) in gruppi {
-        // le pagine vecchie dell'uscita se ne vanno: la nuova può essere più corta o più lunga
         let vecchie: Vec<String> = pagine_esistenti(s)?.into_iter().filter(|(b, _)| b.attributo("TIPO") == tipo && b.attributo("PARAMETRI") == par).map(|(b, _)| b.handle).collect();
-        if !vecchie.is_empty() {
-            esegui(s, "erase", json!({"handles": vecchie}))?;
-        }
         let p: Value = serde_json::from_str(&par).unwrap_or_else(|_| json!({}));
-        let fogli_usati = uscita(s, &tipo, &p, Some(primo))?;
-        out.push((tipo, fogli_usati));
+        // si ridisegna al suo posto (le pagine sui fogli ridisegnati se ne vanno col disegno);
+        // poi via quelle avanzate, se la nuova è più corta. Se non si può ridisegnare resta com'era
+        match uscita(s, &tipo, &p, Some(primo)) {
+            Ok(fogli_usati) => {
+                let avanzi: Vec<String> = pagine_esistenti(s)?.into_iter().filter(|(b, n)| vecchie.contains(&b.handle) && !fogli_usati.contains(n)).map(|(b, _)| b.handle).collect();
+                if !avanzi.is_empty() {
+                    esegui(s, "erase", json!({"handles": avanzi}))?;
+                }
+                out.push((tipo, Ok(fogli_usati)));
+            }
+            Err(e) => out.push((tipo, Err(e.to_string()))),
+        }
     }
     Ok(out)
 }
@@ -597,9 +607,22 @@ fn run_aggiorna(s: &mut Session, _p: &Value) -> Result<Value> {
         let msg = if v.is_empty() {
             "Nessuna lista o tabella da aggiornare (cross reference aggiornato)".to_string()
         } else {
-            v.iter().map(|(t, f)| format!("{t}: {} fogli", f.len())).collect::<Vec<_>>().join(", ")
+            v.iter()
+                .map(|(t, f)| match f {
+                    Ok(f) => format!("{t}: {} fogli", f.len()),
+                    Err(e) => format!("{t}: non aggiornata ({e})"),
+                })
+                .collect::<Vec<_>>()
+                .join(", ")
         };
-        Ok(json!({"uscite": v.iter().map(|(t, f)| json!({"tipo": t, "fogli": f})).collect::<Vec<_>>(), "message": msg}))
+        let uscite: Vec<Value> = v
+            .iter()
+            .map(|(t, f)| match f {
+                Ok(f) => json!({"tipo": t, "fogli": f}),
+                Err(e) => json!({"tipo": t, "fogli": [], "errore": e}),
+            })
+            .collect();
+        Ok(json!({"uscite": uscite, "message": msg}))
     })
 }
 

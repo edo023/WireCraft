@@ -110,3 +110,29 @@ fn la_stessa_lista_due_volte_si_ridisegna_al_suo_posto() {
     let c = esegui(&mut s, "uscita", json!({"tipo": "distinta", "foglio": n}));
     assert_eq!(c["fogli"][0].as_u64(), Some(u64::from(n)));
 }
+
+#[test]
+fn una_lista_che_non_si_aggiorna_non_ferma_le_altre() {
+    let _uno_alla_volta = crate::uno_alla_volta();
+    let mut s = prepara(1);
+    circuito(&mut s);
+    esegui(&mut s, "uscita", json!({"tipo": "distinta"}));
+    // l'elenco della pulsantiera (c'è un pulsante del quadro +QG)
+    let sb = elettrico::siglatura::componenti(&mut s).unwrap().into_iter().find(|c| c.nome.starts_with("-SB")).unwrap().blocco.handle;
+    esegui(&mut s, "editasimbolo", json!({"handle": sb, "quadro": "+QG"}));
+    let p = esegui(&mut s, "uscita", json!({"tipo": "pulsantiera", "quadro": "+QG"}));
+    let foglio_p = p["fogli"][0].as_u64().unwrap();
+    // via il pulsante: la pulsantiera non si può più disegnare, la distinta sì
+    esegui(&mut s, "cancellasimbolo", json!({"handles": [sb]}));
+    let a = esegui(&mut s, "aggiornaliste", json!({}));
+    let u = a["uscite"].as_array().unwrap();
+    assert!(u.iter().any(|x| x["tipo"] == "distinta" && x["errore"].is_null()), "{a}");
+    assert!(u.iter().any(|x| x["tipo"] == "pulsantiera" && x["errore"].is_string()), "{a}");
+    assert!(a["message"].as_str().unwrap().contains("non aggiornata"), "{a}");
+    // e la sua pagina è rimasta
+    let pagine = esegui(&mut s, "dataextraction", json!({"blocks": "CE_USCITA_*", "combine": false}));
+    let col: Vec<&str> = pagine["columns"].as_array().unwrap().iter().map(|c| c.as_str().unwrap()).collect();
+    let layer = col.iter().position(|c| *c == "Layer").unwrap();
+    let layer_p = foglio_p.to_string();
+    assert!(pagine["rows"].as_array().unwrap().iter().any(|r| r[layer].as_str() == Some(layer_p.as_str())), "{pagine}");
+}
