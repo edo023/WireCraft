@@ -130,6 +130,12 @@ fn quadro_di_distribuzione() {
     assert_eq!(r["righe"], 4);
     let _ = std::fs::remove_dir_all(&dir);
 
+    // nel lay-out del quadro le protezioni occupano i moduli dei loro poli: F+N 2, 3F+N 4
+    let ing = elettrico::layout::ingombri(&mut s, "+QD").unwrap();
+    let largo = |sigla: &str| ing.iter().find(|i| i.sigla == sigla).map(|i| i.larghezza);
+    assert_eq!(largo(prese["sigla"].as_str().unwrap()), Some(36.0), "{ing:?}");
+    assert_eq!(largo(a["sigla"].as_str().unwrap()), Some(72.0));
+
     // il foglio 2 continua il quadro dalla prima colonna, con le sue sbarre
     esegui(&mut s, "cambiofoglio", json!({"foglio": 2}));
     // il foglio 2 è vuoto: il quadro va indicato

@@ -1,6 +1,6 @@
-//! Finestra "Liste e Tabelle": disegna sui fogli lista fogli, distinta materiali, morsettiere,
-//! tabella di cablaggio e legende (comando `USCITA`), le aggiorna tutte (`AGGIORNALISTE`) o le
-//! esporta in CSV.
+//! Finestra "Liste e Tabelle": disegna sui fogli le uscite del progetto (lista fogli, distinta
+//! materiali, morsettiere, cablaggio, schema d'impianto, legende… comando `USCITA`), le
+//! aggiorna tutte (`AGGIORNALISTE`), le esporta in Excel o in CSV.
 
 use cadcraft_ui_egui::CadApp;
 use elettrico::uscite::TIPI;
@@ -53,7 +53,7 @@ impl FinestraListe {
                 ui.label("Quadro (vuoto = tutti)");
                 ui.add(egui::TextEdit::singleline(&mut self.quadro).hint_text("+QG").desired_width(100.0));
                 ui.end_row();
-                if TIPI.get(self.tipo).is_some_and(|t| t.0 == "morsettiere") {
+                if TIPI.get(self.tipo).is_some_and(|t| matches!(t.0, "morsettiere" | "disegnomorsettiere")) {
                     ui.label("Morsettiera (vuoto = tutte)");
                     ui.add(egui::TextEdit::singleline(&mut self.morsettiera).hint_text("-XG").desired_width(100.0));
                     ui.end_row();

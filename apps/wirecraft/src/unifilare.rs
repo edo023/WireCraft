@@ -180,7 +180,13 @@ impl FinestraUnifilare {
     pub fn apri(&mut self, cad: &mut CadApp) {
         self.aperta = true;
         self.messaggio = None;
-        self.quadro = elettrico::impostazioni::quadro_corrente().unwrap_or_default();
+        // il quadro dei circuiti del foglio corrente; senza, tutti (il quadro corrente può
+        // non avere circuiti e l'elenco sembrerebbe vuoto)
+        let tutti = cad.run("unifilare", json!({})).unwrap_or_default();
+        let foglio = elettrico::fogli::corrente(&mut cad.session).ok().flatten().map(|f| f.numero);
+        self.quadro = foglio
+            .and_then(|n| tutti["circuiti"].as_array().into_iter().flatten().find(|c| c["foglio"].as_u64() == Some(u64::from(n))).and_then(|c| c["quadro"].as_str().map(str::to_string)))
+            .unwrap_or_default();
         self.rileggi(cad);
     }
 

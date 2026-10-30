@@ -139,7 +139,13 @@ pub fn ingombri(s: &mut Session, quadro: &str) -> Result<Vec<Ingombro>> {
         }
         let sim = simboli::LIBRERIA.iter().find(|x| x.blocco.eq_ignore_ascii_case(&b.nome));
         let prefisso = siglatura::prefisso_di(&c.nome).unwrap_or_default();
-        let Some((mut w, h, gruppo)) = misura(sim.map(|x| x.id), &prefisso, sim.map_or(3, |x| x.poli.len())) else { continue };
+        // le protezioni dell'unifilare: i poli dal sistema del circuito (F+N = 2, 3F+N = 4)
+        let poli = if b.nome.to_ascii_uppercase().starts_with("CE_UNIF_") {
+            crate::unifilare::Sistema::da_testo(b.attributo("SISTEMA")).map_or(4, |x| usize::from(x.fasi) + usize::from(x.neutro))
+        } else {
+            sim.map_or(3, |x| x.poli.len())
+        };
+        let Some((mut w, h, gruppo)) = misura(sim.map(|x| x.id), &prefisso, poli) else { continue };
         // una larghezza scritta sul componente vale più di quella proposta
         let mut stimata = true;
         if let Ok(x) = b.attributo("LARGHEZZA").trim().replace(',', ".").parse::<f64>()

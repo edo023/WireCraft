@@ -23,6 +23,7 @@ mod norma81346;
 mod numerazione;
 mod ponticelli;
 mod planimetria;
+mod progetti_esterni;
 mod pulsantiera;
 mod robustezza;
 mod revisioni;

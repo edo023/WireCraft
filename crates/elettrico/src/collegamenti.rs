@@ -92,29 +92,66 @@ fn conduttore_da(e: &Inserito) -> Conduttore {
     Conduttore { sezione: e.attributo("SEZIONE").into(), colore: e.attributo("COLORE").into(), codice: e.attributo("CODICE").into(), costruttore: e.attributo("COSTRUTTORE").into() }
 }
 
-/// I morsetti dei componenti della libreria posati su un foglio: (capo, punto).
-fn capi_componenti(s: &mut Session, layer: &str) -> Result<Vec<Capo>> {
+/// Distanza massima (mm) tra l'attributo di un pin e l'estremo del filo che ci arriva, nei
+/// simboli di altri programmi.
+const PIN_ATTRIBUTO: f64 = 4.0;
+
+/// I morsetti dei componenti posati su un foglio: (capo, punto). Per i simboli della libreria
+/// il punto viene dal simbolo; per quelli di altri programmi (blocchi con `PRES` e i pin
+/// `PINA1`, `PINB1`…) è l'estremo di filo più vicino all'attributo di ogni pin.
+fn capi_componenti(s: &Session, layer: &str, quadri: &[(String, String)], segmenti: &[Segmento]) -> Result<Vec<Capo>> {
+    use cadcraft_engine::doc::EntityKind;
     let mut v = Vec::new();
-    // il quadro di un contatto è quello della sua madre
-    let quadri: Vec<(String, String)> =
-        crate::siglatura::componenti(s)?.into_iter().filter(|c| c.madre()).map(|c| (c.nome.clone(), c.blocco.attributo("QUADRO").to_string())).collect();
-    for b in blocchi_inseriti(s, "CE_*")?.into_iter().filter(|b| b.layer == layer) {
-        let Some(sim) = simboli::trova(&b.nome) else { continue };
-        if sim.grafico() {
+    let estremi: Vec<P> = segmenti.iter().flat_map(|f| [f.a, f.b]).collect();
+    for e in s.doc()?.model.iter().filter(|e| e.common.layer == layer) {
+        let EntityKind::Insert(i) = &e.kind else { continue };
+        let attributo = |tag: &str| i.attribs.iter().find(|a| a.tag.eq_ignore_ascii_case(tag)).map_or("", |a| a.text.value.as_str());
+        let pres = attributo("PRES").trim().to_ascii_uppercase();
+        // il componente è la madre o, per un contatto, la sigla della sua madre
+        let sigla = attributo("NOME").to_string();
+        let madre = pres == "M";
+        let quadro = |sigla: &str| if madre { attributo("QUADRO").to_string() } else { quadri.iter().find(|(n, _)| n.eq_ignore_ascii_case(sigla)).map(|(_, q)| q.clone()).unwrap_or_default() };
+        let capo = |pin: &str, pos: P| Capo { sigla: sigla.clone(), pin: pin.to_string(), quadro: quadro(&sigla), pos, tipo: TipoCapo::Componente, blocco: e.handle.hex() };
+        if let Some(sim) = simboli::trova(&i.block) {
+            if sim.grafico() {
+                continue;
+            }
+            for (tag, p) in sim.pin((i.insert.x, i.insert.y)) {
+                v.push(capo(attributo(&tag), p));
+            }
             continue;
         }
-        // il componente è la madre o, per un contatto, la sigla della sua madre
-        let sigla = b.attributo("NOME").to_string();
-        let quadro = if sim.madre() {
-            b.attributo("QUADRO").to_string()
-        } else {
-            quadri.iter().find(|(n, _)| n.eq_ignore_ascii_case(&sigla)).map(|(_, q)| q.clone()).unwrap_or_default()
-        };
-        for (tag, p) in sim.pin(b.pos) {
-            v.push(Capo { sigla: sigla.clone(), pin: b.attributo(&tag).to_string(), quadro: quadro.clone(), pos: p, tipo: TipoCapo::Componente, blocco: b.handle.clone() });
+        // un simbolo di un altro programma: le madri e i contatti, non i morsetti né gli specchietti
+        if !(madre || pres.starts_with('F')) || !attributo("MORSETTIERA").is_empty() {
+            continue;
+        }
+        let mut usati: Vec<P> = Vec::new();
+        for a in i.attribs.iter().filter(|a| a.tag.to_ascii_uppercase().starts_with("PIN") && !a.text.value.trim().is_empty()) {
+            let q = (a.text.insert.x, a.text.insert.y);
+            let vicino = estremi
+                .iter()
+                .filter(|p| !usati.iter().any(|u| vicini(*u, **p)))
+                .map(|p| (((p.0 - q.0).hypot(p.1 - q.1)), *p))
+                .filter(|(d, _)| *d <= PIN_ATTRIBUTO)
+                .min_by(|a, b| a.0.total_cmp(&b.0));
+            if let Some((_, p)) = vicino {
+                usati.push(p);
+                v.push(capo(&a.text.value, p));
+            }
         }
     }
     Ok(v)
+}
+
+/// Distanza massima (mm) tra un morsetto che interrompe il filo (come nei progetti di altri
+/// programmi) e gli estremi dei fili che gli arrivano.
+pub const MORSETTO_INTERROTTO: f64 = 10.0;
+
+/// L'estremo `q` arriva al morsetto in `p` che interrompe il filo: allineato in verticale o in
+/// orizzontale, entro [`MORSETTO_INTERROTTO`].
+pub fn arriva_al_morsetto(p: P, q: P) -> bool {
+    let (dx, dy) = ((q.0 - p.0).abs(), (q.1 - p.1).abs());
+    (dx < TOLL && dy > TOLL && dy <= MORSETTO_INTERROTTO) || (dy < TOLL && dx > TOLL && dx <= MORSETTO_INTERROTTO)
 }
 
 /// Le reti dei fogli `fogli_da` (tutti se vuoto).
@@ -124,19 +161,24 @@ pub fn reti(s: &mut Session, fogli_da: &[u32]) -> Result<Vec<Rete>> {
     let numeri = blocchi_inseriti(s, BLOCCO_NUMERO)?;
     let dati = blocchi_inseriti(s, BLOCCO_DATI)?;
     let tutti_morsetti = morsetti::morsetti(s)?;
+    // il quadro di un contatto è quello della sua madre (una volta per tutti i fogli)
+    let quadri: Vec<(String, String)> =
+        crate::siglatura::componenti(s)?.into_iter().filter(|c| c.madre()).map(|c| (c.nome.clone(), c.blocco.attributo("QUADRO").to_string())).collect();
     let mut out = Vec::new();
     for f in fogli::elenco(s)? {
         if !fogli_da.is_empty() && !fogli_da.contains(&f.numero) {
             continue;
         }
         let segmenti = fili::fili(s, &f.layer)?;
-        let componenti = capi_componenti(s, &f.layer)?;
+        let componenti = capi_componenti(s, &f.layer, &quadri, &segmenti)?;
         for g in numerazione::reti(&segmenti) {
             let g: Vec<&Segmento> = g.into_iter().filter_map(|i| segmenti.get(i)).collect();
             let tocca = |p: P| g.iter().any(|x| su(x, p));
             let estremo = |p: P| g.iter().any(|x| vicini(x.a, p) || vicini(x.b, p));
             let mut capi: Vec<Capo> = componenti.iter().filter(|c| tocca(c.pos)).cloned().collect();
-            for m in tutti_morsetti.iter().filter(|m| m.foglio == f.numero && tocca(m.blocco.pos)) {
+            // il morsetto sta sul filo, o lo interrompe e i fili gli arrivano sopra e sotto
+            let collegato = |p: P| tocca(p) || (!segmenti.iter().any(|x| su(x, p)) && g.iter().any(|x| arriva_al_morsetto(p, x.a) || arriva_al_morsetto(p, x.b)));
+            for m in tutti_morsetti.iter().filter(|m| m.foglio == f.numero && collegato(m.blocco.pos)) {
                 capi.push(Capo { sigla: m.morsettiera.clone(), pin: m.numero.clone(), quadro: m.blocco.attributo("QUADRO").into(), pos: m.blocco.pos, tipo: TipoCapo::Morsetto, blocco: m.blocco.handle.clone() });
             }
             let rim: Vec<&fili::Rimando> = rimandi.iter().filter(|r| r.foglio == f.numero && estremo(r.pos)).collect();

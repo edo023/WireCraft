@@ -29,7 +29,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `TITOLOFOGLIO`, `DESCRIZIONECOLONNA` | titolo del foglio e descrizioni delle colonne, in due lingue |
 | `NUMERAFOGLI`, `ELENCOFOGLI`, `COORDINATA` | numerazione, elenco, riferimento `foglio/colonnaRiga` di un punto |
 | `COPIATRAFOGLI`, `SPOSTATRAFOGLI` | copia (con sigle nuove) o sposta oggetti su altri fogli |
-| `MEMORIZZAFOGLIO`, `INSERISCIMEMORIZZATO` | fogli memorizzati in libreria, per categoria |
+| `MEMORIZZAFOGLIO`, `INSERISCIMEMORIZZATO`, `FOGLI.MEMORIZZATI` | fogli memorizzati in libreria, per categoria; l'elenco della libreria |
 | `REVISIONE.CREA`, `.VEDI`, `.ANNULLA`, `.RESET`, `.ELENCO` | revisioni: archivio dei fogli e simbolo nel cartiglio |
 | `STAMPAFOGLI` | PDF dei fogli scelti; **dinamico**: segnalibri e riferimenti cliccabili; `filiColorati`: i fili a colori e il resto in nero |
 
@@ -41,6 +41,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | `RIMANDIALIMENTAZIONI` / `RIMANDICOLLEGAMENTI`, `AGGIORNARIMANDI` | rimandi di partenza e arrivo con il riferimento all'altro (`///` = senza corrispondenza) |
 | `SIMBOLO.*` (`SIMBOLO.KM`, `SIMBOLO.NA`…) | posa un simbolo, su un punto o con la **fence** su più fili |
 | `EDITASIMBOLO` (`XS`), `CANCELLASIMBOLO`, `SPOSTASIMBOLO` | modifica, cancella e sposta mantenendo i collegamenti |
+| `XS.RICONOSCI` | che oggetto elettrico è un'entità (componente, morsetto, filo, rimando, cavo, bit PLC) e i suoi attributi |
 | `SIGLECOMPONENTI` | rinumera le sigle secondo la siglatura dei settaggi e aggiorna i contatti |
 | `CROSSREFERENCE` | dove sta la madre di ogni contatto, specchietti, rimandi; elenca i problemi |
 | `SALTA` (Vai al Collegato) | dal contatto alla madre, dalla madre ai suoi contatti, da un rimando al corrispondente: cambia foglio, inquadra e seleziona |

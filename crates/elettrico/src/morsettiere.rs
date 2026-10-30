@@ -274,27 +274,41 @@ fn contatto(a: &Segmento, b: &Segmento) -> Option<P> {
 
 /// I capi raggiunti dal morsetto in `p` lungo i fili, da una parte (verso l'alto, o verso
 /// sinistra su un filo orizzontale: il lato interno) e dall'altra (il lato esterno), nell'ordine
-/// in cui si incontrano. Il morsetto non interrompe il filo: lo si divide in `p`.
+/// in cui si incontrano. Il morsetto sta sul filo (lo si divide in `p`), o i fili finiscono in
+/// `p`, o lo interrompe e i fili gli arrivano sopra e sotto (come nei progetti di altri
+/// programmi).
 pub fn lati(segmenti: &[Segmento], capi: &[Capo], p: P) -> (Vec<Capo>, Vec<Capo>) {
-    let Some(i) = segmenti.iter().position(|f| su(f, p)) else { return (Vec::new(), Vec::new()) };
-    let f = &segmenti[i];
-    let verticale = (f.a.0 - f.b.0).abs() < 0.01;
-    let (primo, secondo) = if verticale {
-        if f.a.1 >= f.b.1 { (f.a, f.b) } else { (f.b, f.a) }
-    } else if f.a.0 <= f.b.0 {
-        (f.a, f.b)
-    } else {
-        (f.b, f.a)
-    };
-    let lato = |fine: P| -> Vec<Capo> {
-        if stesso_punto(p, fine) {
-            return Vec::new();
+    // i tratti da cui partire, per lato: (indice del segmento da non ripercorrere, tratto)
+    let mut partenze: [Vec<(usize, Segmento)>; 2] = [Vec::new(), Vec::new()];
+    // il lato di un punto rispetto al morsetto: 0 sopra o a sinistra, 1 sotto o a destra
+    let lato_di = |q: P| usize::from(if (q.0 - p.0).abs() < 0.01 { q.1 < p.1 } else { q.0 > p.0 });
+    let sul_filo: Vec<usize> = segmenti.iter().enumerate().filter(|(_, f)| su(f, p)).map(|(i, _)| i).collect();
+    if sul_filo.is_empty() {
+        for (i, f) in segmenti.iter().enumerate() {
+            for q in [f.a, f.b] {
+                if crate::collegamenti::arriva_al_morsetto(p, q) {
+                    partenze[lato_di(q)].push((i, f.clone()));
+                }
+            }
         }
-        let meta = Segmento { a: p, b: fine, handle: String::new() };
+    } else {
+        for &i in &sul_filo {
+            let f = &segmenti[i];
+            for fine in [f.a, f.b] {
+                if !stesso_punto(fine, p) {
+                    partenze[lato_di(fine)].push((i, Segmento { a: p, b: fine, handle: String::new() }));
+                }
+            }
+        }
+    }
+    let gia: Vec<usize> = partenze.iter().flatten().map(|(i, _)| *i).collect();
+    let lato = |inizio: &[(usize, Segmento)]| -> Vec<Capo> {
         // in ampiezza dai segmenti toccati, senza ripassare dal morsetto
         let mut visti = vec![false; segmenti.len()];
-        visti[i] = true;
-        let mut ordine: Vec<Segmento> = vec![meta];
+        for i in &gia {
+            visti[*i] = true;
+        }
+        let mut ordine: Vec<Segmento> = inizio.iter().map(|(_, f)| f.clone()).collect();
         let mut k = 0;
         while k < ordine.len() {
             let c = ordine[k].clone();
@@ -308,13 +322,15 @@ pub fn lati(segmenti: &[Segmento], capi: &[Capo], p: P) -> (Vec<Capo>, Vec<Capo>
         }
         let mut v: Vec<Capo> = Vec::new();
         for g in &ordine {
-            let mut qui: Vec<&Capo> = capi.iter().filter(|c| su(g, c.pos) && !stesso_punto(c.pos, p) && !v.iter().any(|x| x == *c)).collect();
+            // sul tratto, o un altro morsetto che interrompe il filo dove il tratto finisce
+            let tocca = |c: &Capo| su(g, c.pos) || (c.tipo == TipoCapo::Morsetto && (crate::collegamenti::arriva_al_morsetto(c.pos, g.a) || crate::collegamenti::arriva_al_morsetto(c.pos, g.b)));
+            let mut qui: Vec<&Capo> = capi.iter().filter(|c| tocca(c) && !stesso_punto(c.pos, p) && !v.iter().any(|x| x == *c)).collect();
             qui.sort_by(|a, b| (a.pos.0 - p.0).hypot(a.pos.1 - p.1).total_cmp(&(b.pos.0 - p.0).hypot(b.pos.1 - p.1)));
             v.extend(qui.into_iter().cloned());
         }
         v
     };
-    (lato(primo), lato(secondo))
+    (lato(&partenze[0]), lato(&partenze[1]))
 }
 
 fn testo_capi(v: &[Capo]) -> String {

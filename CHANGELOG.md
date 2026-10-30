@@ -7,6 +7,16 @@ Il progetto giorno per giorno: cosa è stato fatto e cosa è stato verificato. L
 - **Firma digitale** dell'eseguibile e dell'installatore.
 - **Simbologie** oltre la IEC 60617.
 
+## 30 ottobre 2026: prova su un progetto reale
+
+Tutte le uscite e i comandi nuovi provati su un progetto esistente di 50 fogli (9.578 entità, 128 componenti, 187 morsetti), salvato e riaperto senza perdite. Corretto quello che è venuto fuori:
+
+- **Schemi di altri programmi**: i simboli che non sono della libreria ora hanno i loro pin (l'estremo di filo accanto all'attributo `PINA1`, `PINB1`…), e i morsetti che interrompono il filo (i fili arrivano sopra e sotto) si collegano alle reti. Su quel progetto la tabella di cablaggio passa da 0 righe a 7 fogli, e il disegno delle morsettiere trova i collegamenti di 127 morsetti su 187 (prima nessuno). Un test lo riproduce con blocchi costruiti apposta.
+- **Velocità**: le reti leggevano i componenti una volta per foglio; ora una volta sola. Aggiorna Liste e Tabelle su 108 fogli scende da 49 a 17 secondi; loop diagram da 8,7 a 2,0 s, cablaggio da 6,9 a 2,9 s.
+- **Lay-out**: le protezioni dello schema unifilare occupano i moduli dei loro poli (F+N due, 3F+N quattro), non sempre tre.
+- **Schema Unifilare**: la finestra si apre sul quadro dei circuiti del foglio corrente, o su tutti; prima filtrava sul quadro corrente e poteva sembrare vuota.
+- **Liste e Tabelle**: il campo della morsettiera c'è anche per il disegno delle morsettiere.
+
 ## 29 ottobre 2026: schema d'impianto, planimetria, versione 0.3.0
 
 - **Versione 0.3.0** pronta per la release, con l'**installatore per Windows** (Inno Setup, compilato dalla CI insieme allo zip): installazione per l'utente senza permessi di amministratore, collegamento nel menu Start, icona sul desktop a scelta, disinstallazione. Se l'installatore non si compila, la release esce comunque con lo zip.
