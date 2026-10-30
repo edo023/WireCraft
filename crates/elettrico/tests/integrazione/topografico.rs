@@ -68,6 +68,25 @@ fn componenti_nel_lay_out() {
     s.input(Input::Cancel).unwrap();
     assert_eq!(stato_di(&mut s, &qf), "posato");
 
+    // Layout Quadro di nuovo: niente secondo foglio, solo il componente nuovo in coda sulla guida
+    let fogli_prima = elettrico::fogli::elenco(&mut s).unwrap().len();
+    esegui(&mut s, "cambiofoglio", json!({"foglio": 1}));
+    let nuovo = esegui(&mut s, "simbolo.ka", json!({"at": [300.0, 200.0], "quadro": "+QG"}))["nome"].as_str().unwrap().to_string();
+    let r = esegui(&mut s, "layoutquadro", json!({"quadro": "+QG"}));
+    assert_eq!((r["foglio"].as_u64(), r["posati"].as_u64(), r["esistente"].as_bool()), (Some(foglio), Some(1), Some(true)), "{r}");
+    assert_eq!(elettrico::fogli::elenco(&mut s).unwrap().len(), fogli_prima);
+    assert_eq!(stato_di(&mut s, &nuovo), "posato");
+    assert_eq!(stati(&mut s).len(), 4);
+    // rifatto da capo: stesso foglio, tutti posati, nessun doppione
+    let r = esegui(&mut s, "layoutquadro", json!({"quadro": "+QG", "rifai": true}));
+    assert_eq!(r["foglio"].as_u64(), Some(foglio));
+    assert_eq!(elettrico::fogli::elenco(&mut s).unwrap().len(), fogli_prima);
+    let st = stati(&mut s);
+    assert!(st.len() == 4 && st.iter().all(|(_, x)| x == "posato"), "{st:?}");
+    let h_nuovo = elettrico::siglatura::componenti(&mut s).unwrap().into_iter().find(|c| c.nome == nuovo).unwrap().blocco.handle;
+    esegui(&mut s, "cancellasimbolo", json!({"handles": [h_nuovo]}));
+    esegui(&mut s, "topografico.aggiorna", json!({"togliOrfani": true}));
+
     // rinominato nello schema: l'ingombro lo segue, con il codice
     esegui(&mut s, "editasimbolo", json!({"handle": km["handle"], "nome": "-KM99", "tipo": "LC1D12"}));
     let r = esegui(&mut s, "topografico.aggiorna", json!({}));

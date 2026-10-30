@@ -585,7 +585,19 @@ fn run_layout(s: &mut Session, p: &Value) -> Result<Value> {
         (None, None) => None,
         _ => return Err(errore("La piastra deve essere almeno 200 x 300 mm (larghezza e altezza)")),
     };
-    let n = numero_param(p, "foglio");
+    let rifai = p.get("rifai").and_then(Value::as_bool).unwrap_or(false);
+    let esistente = crate::topografico::piastra(s, &quadro)?.and_then(|p| fogli::numero_da_layer(&p.layer));
+    // il lay-out c'è già: si aggiungono i componenti che mancano, quelli posati restano dove sono
+    if let (Some(f), None, false) = (esistente, numero_param(p, "foglio"), rifai) {
+        let (posati, fuori) = in_gruppo(s, "Lay-out quadro", |s| crate::topografico::completa(s, &quadro))?;
+        let mut msg = format!("Il quadro {quadro} ha già il lay-out sul foglio {f}: {posati} componenti aggiunti");
+        if !fuori.is_empty() {
+            msg.push_str(&format!("; non c'è posto sulle guide per {}: posali dal Gestore Topografico o rifai il lay-out", fuori.join(", ")));
+        }
+        return Ok(json!({"foglio": f, "posati": posati, "fuori": fuori, "esistente": true, "message": msg}));
+    }
+    // rifatto: sullo stesso foglio
+    let n = numero_param(p, "foglio").or(if rifai { esistente } else { None });
     in_gruppo(s, "Lay-out quadro", |s| {
         let e = disegna(s, &quadro, n, piastra)?;
         let mut msg = format!("Lay-out {quadro} sul foglio {}: piastra {}x{} mm, scala 1:{}, {} elementi", e.foglio, e.larghezza, e.altezza, misura_testo(e.scala), e.posati);
@@ -628,7 +640,7 @@ pub fn comandi() -> Vec<CommandSpec> {
             "layoutquadro",
             "Layout Quadro",
             &["Quadro", "Layout Quadro"],
-            "{quadro?: \"+QG\" (default il quadro corrente), foglio?: numero (default dopo l'ultimo), larghezza?, altezza?: piastra in mm (default la più piccola in cui entra tutto)} → {foglio, larghezza, altezza, scala, posati, fuori}",
+            "{quadro?: \"+QG\" (default il quadro corrente), foglio?: numero (default dopo l'ultimo), larghezza?, altezza?: piastra in mm (default la più piccola in cui entra tutto), rifai?: bool} → {foglio, larghezza, altezza, scala, posati, fuori}. Se il quadro ha già il lay-out si aggiungono solo i componenti che mancano; rifai lo ridisegna da capo sullo stesso foglio",
             run_layout as cadcraft_engine::cmd::Run,
         ),
         spec(

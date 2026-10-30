@@ -161,6 +161,44 @@ pub fn posa(s: &mut Session, quadro: &str, sigla: &str, at: P) -> Result<Value> 
     Ok(json!({"handle": h, "sigla": i.sigla, "at": [at.0, at.1], "message": format!("{} nel lay-out del quadro {quadro}", i.sigla)}))
 }
 
+/// Posa nel lay-out già disegnato i componenti che mancano, in coda sulle guide dove c'è posto
+/// (dall'alto); quelli già posati non si muovono. Restituisce (posati, quelli che non entrano).
+pub fn completa(s: &mut Session, quadro: &str) -> Result<(usize, Vec<String>)> {
+    let p = piastra(s, quadro)?.ok_or_else(|| errore(format!("Il quadro {quadro} non ha ancora il lay-out")))?;
+    let k = p.scala;
+    // le guide del foglio: (x iniziale, y, x finale), dall'alto
+    let mut guide: Vec<(f64, f64, f64)> = blocchi_inseriti(s, BLOCCO_GUIDA)?
+        .into_iter()
+        .filter(|g| g.layer.eq_ignore_ascii_case(&p.layer))
+        .map(|g| (g.pos.0, g.pos.1, g.pos.0 + g.attributo("LUNGHEZZA").trim().parse::<f64>().unwrap_or(0.0) / k))
+        .collect();
+    guide.sort_by(|a, b| b.1.total_cmp(&a.1));
+    // dove finiscono gli ingombri già posati su ogni guida
+    let mut fine: Vec<f64> = guide.iter().map(|g| g.0).collect();
+    for b in blocchi_inseriti(s, &format!("{PREFISSO_INGOMBRO}*"))?.into_iter().filter(|b| b.layer.eq_ignore_ascii_case(&p.layer)) {
+        let w = b.attributo("LARGHEZZA").trim().parse::<f64>().unwrap_or(0.0) / k;
+        if let Some(i) = guide.iter().position(|g| (g.1 - b.pos.1).abs() < 0.5) {
+            fine[i] = fine[i].max(b.pos.0 + w);
+        }
+    }
+    let distacco = 2.0 / k;
+    let (mut posati, mut fuori) = (0, Vec::new());
+    for v in elenco(s, quadro)?.into_iter().filter(|v| v.stato == Stato::DaPosare) {
+        let w = v.larghezza / k;
+        match guide.iter().enumerate().find(|(i, g)| fine[*i] + distacco + w <= g.2 + 1e-6) {
+            Some((i, g)) => {
+                let x = fine[i] + if fine[i] > g.0 { distacco } else { 0.0 };
+                let y = g.1;
+                posa(s, quadro, &v.sigla, (x, y))?;
+                fine[i] = x + w;
+                posati += 1;
+            }
+            None => fuori.push(v.sigla),
+        }
+    }
+    Ok((posati, fuori))
+}
+
 /// Allinea gli ingombri di tutti i lay-out allo schema: sigla e codice del componente
 /// ricordato. Con `togli_orfani` cancella quelli rimasti senza componente. Restituisce
 /// (aggiornati, orfani).

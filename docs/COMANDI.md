@@ -83,7 +83,7 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 
 | Comando | Cosa fa |
 |---|---|
-| `LAYOUTQUADRO` | interno armadio su un foglio nuovo: piastra in scala con canaline, guide DIN, ingombri di componenti e morsettiere, tabella delle misure |
+| `LAYOUTQUADRO` | interno armadio su un foglio nuovo: piastra in scala con canaline, guide DIN, ingombri di componenti e morsettiere, tabella delle misure. Se il quadro ha già il lay-out si aggiungono solo i componenti che mancano (in coda sulle guide); `rifai: true` lo ridisegna da capo sullo stesso foglio |
 | `BOX.QUADRO`, `BOX.FUNZIONE`, `BOX.UBICAZIONE` (`BOX {tipo}`) | riquadro tratto-punto che dà quadro (`+QG`), funzione (`=TR1`) o ubicazione (`++ZC`) secondo la CEI EN 81346 a madri, morsetti e connettori che racchiude; fra box dello stesso tipo vale il più piccolo |
 | `BOX.APPLICA` | riapplica i box dopo aver spostato qualcosa (lo fa anche `AGGIORNALISTE`) |
 | `DESIGNAZIONI` | etichette sopra la sigla con i livelli scelti (`=TR1++ZC+QG`), anche sui contatti con i dati della madre; regola `discordanti`: solo quello che il box non dice già; `togli` le cancella |

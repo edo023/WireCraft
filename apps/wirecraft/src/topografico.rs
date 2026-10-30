@@ -145,8 +145,14 @@ impl FinestraTopografico {
             ui.separator();
             ui.horizontal(|ui| {
                 let mancanti = self.elementi.iter().filter(|e| e["stato"] == "da posare").count();
-                if ui.add_enabled(mancanti > 0, egui::Button::new(format!("Posa i mancanti ({mancanti})"))).on_hover_text("Uno dopo l'altro: un punto per ognuno").clicked() {
+                if ui.add_enabled(mancanti > 0 && self.foglio > 0, egui::Button::new(format!("Disponi i mancanti ({mancanti})"))).on_hover_text("In coda sulle guide dove c'è posto; quelli già posati non si muovono").clicked() {
+                    azione = Some(("layoutquadro", json!({"quadro": self.quadro.trim()})));
+                }
+                if ui.add_enabled(mancanti > 0, egui::Button::new("Posali a mano")).on_hover_text("Uno dopo l'altro: un punto per ognuno").clicked() {
                     posa = Some(None);
+                }
+                if self.foglio > 0 && ui.button("Rifai il lay-out").on_hover_text("Ridisegna piastra, guide e ingombri da capo sullo stesso foglio: le posizioni scelte a mano si perdono").clicked() {
+                    azione = Some(("layoutquadro", json!({"quadro": self.quadro.trim(), "rifai": true})));
                 }
                 if ui.button("Aggiorna dallo schema").on_hover_text("Sigle e codici degli ingombri dai componenti").clicked() {
                     azione = Some(("topografico.aggiorna", json!({})));
