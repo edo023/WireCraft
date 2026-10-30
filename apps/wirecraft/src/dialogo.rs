@@ -289,7 +289,9 @@ impl Dialogo {
     }
 }
 
-/// Scheda dell'archivio materiali: ricerca, preferiti, importazione di listini, nuovi articoli.
+/// Scheda dell'archivio materiali: ricerca, preferiti, importazione di listini e della libreria
+/// di base, nuovi articoli; un articolo si posa nello schema dal suo codice o si associa al
+/// componente selezionato.
 #[derive(Default)]
 pub struct SchedaMateriali {
     cerca: String,
@@ -298,18 +300,37 @@ pub struct SchedaMateriali {
     nuovo: [String; 3],
 }
 
+/// La sigla della madre del componente selezionato (o della madre del contatto selezionato).
+fn sigla_selezionata(cad: &mut CadApp) -> Option<String> {
+    let scelto = cad.session.selection().first()?.hex();
+    let c = siglatura::componenti(&mut cad.session).ok()?.into_iter().find(|c| c.blocco.handle.eq_ignore_ascii_case(&scelto))?;
+    Some(c.nome)
+}
+
 impl SchedaMateriali {
     pub fn mostra(&mut self, cad: &mut CadApp, ui: &mut egui::Ui) {
         let mut ricarica = self.risultati.is_none();
         ui.label(format!("Articoli in archivio: {}", archivio::quanti()));
-        ricarica |= ui.add(egui::TextEdit::singleline(&mut self.cerca).hint_text("Cerca")).changed();
+        ricarica |= ui.add(egui::TextEdit::singleline(&mut self.cerca).hint_text("Cerca (codice, descrizione, costruttore)")).changed();
         ricarica |= ui.checkbox(&mut self.solo_preferiti, "Solo preferiti").changed();
-        if ui.button("Importa listino (CSV)…").clicked()
-            && let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv", "txt"]).pick_file()
-        {
-            let _ = cad.run("materiali.importa", json!({"file": p.to_string_lossy()}));
-            ricarica = true;
-        }
+        ui.horizontal_wrapped(|ui| {
+            if ui.button("Importa listino (CSV)…").on_hover_text("Colonne riconosciute: Costruttore, Codice, Descrizione, Categoria, Simbolo, Larghezza").clicked()
+                && let Some(p) = rfd::FileDialog::new().add_filter("CSV", &["csv", "txt"]).pick_file()
+            {
+                match cad.run("materiali.importa", json!({"file": p.to_string_lossy()})) {
+                    Ok(r) => cad.set_status(r["message"].as_str().unwrap_or_default().to_string()),
+                    Err(e) => cad.set_status(e),
+                }
+                ricarica = true;
+            }
+            if ui.button("Libreria di base").on_hover_text("Articoli generici (magnetotermici, contattori, relè, alimentatori, pulsanti…) con simbolo e larghezza").clicked() {
+                match cad.run("materiali.base", json!({})) {
+                    Ok(r) => cad.set_status(r["message"].as_str().unwrap_or_default().to_string()),
+                    Err(e) => cad.set_status(e),
+                }
+                ricarica = true;
+            }
+        });
         ui.collapsing("Nuovo articolo", |ui| {
             ui.add(egui::TextEdit::singleline(&mut self.nuovo[0]).hint_text("Costruttore"));
             ui.add(egui::TextEdit::singleline(&mut self.nuovo[1]).hint_text("Codice"));
@@ -325,12 +346,22 @@ impl SchedaMateriali {
         }
         ui.separator();
         let mut cambia = None;
+        let mut inserisci = None;
+        let mut associa = None;
         for a in self.risultati.iter().flatten() {
             ui.horizontal(|ui| {
                 if ui.small_button(if a.preferito { "★" } else { "☆" }).on_hover_text("Preferito").clicked() {
                     cambia = Some((a.costruttore.clone(), a.codice.clone(), !a.preferito));
                 }
-                ui.label(format!("{}  {}", a.costruttore, a.codice)).on_hover_text(&a.descrizione);
+                if !a.simbolo.is_empty() && ui.small_button("Inserisci").on_hover_text("Posa il simbolo con questo materiale: un punto per componente, Invio per finire").clicked() {
+                    inserisci = Some(a.clone());
+                }
+                if ui.small_button("Associa").on_hover_text("Al componente selezionato nel disegno").clicked() {
+                    associa = Some(a.clone());
+                }
+                let simbolo = simboli::trova(&a.simbolo).map_or("—", |s| s.etichetta);
+                let larghezza = if a.larghezza > 0.0 { format!("{} mm", a.larghezza) } else { "—".into() };
+                ui.label(format!("{}  {}", a.costruttore, a.codice)).on_hover_text(format!("{}\nSimbolo: {simbolo}\nLarghezza sulla guida: {larghezza}", a.descrizione));
             });
         }
         if let Some((c, k, p)) = cambia {
@@ -338,6 +369,21 @@ impl SchedaMateriali {
                 cad.set_status(e.to_string());
             }
             self.risultati = archivio::cerca(&self.cerca, self.solo_preferiti, 300).ok();
+        }
+        if let Some(a) = inserisci {
+            cad.start("materiale.inserisci");
+            if let Err(e) = cad.session.input(cadcraft_engine::Input::Text(format!("{}|{}", a.costruttore, a.codice))) {
+                cad.set_status(e.to_string());
+            }
+        }
+        if let Some(a) = associa {
+            match sigla_selezionata(cad) {
+                Some(sigla) => match cad.run("materiale", json!({"sigla": sigla, "codice": a.codice, "costruttore": a.costruttore, "descrizione": a.descrizione})) {
+                    Ok(r) => cad.set_status(r["message"].as_str().unwrap_or_default().to_string()),
+                    Err(e) => cad.set_status(e),
+                },
+                None => cad.set_status("Seleziona prima il componente nel disegno"),
+            }
         }
     }
 }

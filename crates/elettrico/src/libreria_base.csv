@@ -1,0 +1,82 @@
+Costruttore;Codice;Descrizione;Categoria;Preferito;Simbolo;Larghezza
+Generico;MT-1P-C6;Magnetotermico 1P C6 6kA;Magnetotermici;;qf1;18
+Generico;MT-1P-C10;Magnetotermico 1P C10 6kA;Magnetotermici;1;qf1;18
+Generico;MT-1P-C16;Magnetotermico 1P C16 6kA;Magnetotermici;1;qf1;18
+Generico;MT-1P-C20;Magnetotermico 1P C20 6kA;Magnetotermici;;qf1;18
+Generico;MT-1P-C25;Magnetotermico 1P C25 6kA;Magnetotermici;;qf1;18
+Generico;MT-1P-C32;Magnetotermico 1P C32 6kA;Magnetotermici;;qf1;18
+Generico;MT-2P-C4;Magnetotermico 2P C4 6kA;Magnetotermici;;qf2;36
+Generico;MT-2P-C10;Magnetotermico 2P C10 6kA;Magnetotermici;1;qf2;36
+Generico;MT-2P-C16;Magnetotermico 2P C16 6kA;Magnetotermici;1;qf2;36
+Generico;MT-2P-C20;Magnetotermico 2P C20 6kA;Magnetotermici;;qf2;36
+Generico;MT-2P-C25;Magnetotermico 2P C25 6kA;Magnetotermici;;qf2;36
+Generico;MT-3P-C10;Magnetotermico 3P C10 6kA;Magnetotermici;;qf3;54
+Generico;MT-3P-C16;Magnetotermico 3P C16 6kA;Magnetotermici;1;qf3;54
+Generico;MT-3P-C25;Magnetotermico 3P C25 6kA;Magnetotermici;;qf3;54
+Generico;MT-3P-C32;Magnetotermico 3P C32 6kA;Magnetotermici;;qf3;54
+Generico;MT-3P-C40;Magnetotermico 3P C40 10kA;Magnetotermici;;qf3;54
+Generico;MT-4P-C16;Magnetotermico 4P C16 6kA;Magnetotermici;;qf4;72
+Generico;MT-4P-C25;Magnetotermico 4P C25 6kA;Magnetotermici;;qf4;72
+Generico;MT-4P-C40;Magnetotermico 4P C40 10kA;Magnetotermici;;qf4;72
+Generico;MTD-2P-C10-30;Magnetotermico differenziale 1P+N C10 30mA tipo A;Differenziali;1;qd2;36
+Generico;MTD-2P-C16-30;Magnetotermico differenziale 1P+N C16 30mA tipo A;Differenziali;1;qd2;36
+Generico;MTD-2P-C20-30;Magnetotermico differenziale 1P+N C20 30mA tipo A;Differenziali;;qd2;36
+Generico;MTD-4P-C16-300;Magnetotermico differenziale 4P C16 300mA tipo A;Differenziali;;qd4;72
+Generico;MTD-4P-C25-300;Magnetotermico differenziale 4P C25 300mA tipo A;Differenziali;;qd4;72
+Generico;MTD-4P-C40-300;Magnetotermico differenziale 4P C40 300mA tipo A;Differenziali;;qd4;72
+Generico;SM-0,4-0,63;Salvamotore 0,4-0,63 A;Salvamotori;;qm3;45
+Generico;SM-0,63-1;Salvamotore 0,63-1 A;Salvamotori;;qm3;45
+Generico;SM-1-1,6;Salvamotore 1-1,6 A;Salvamotori;;qm3;45
+Generico;SM-1,6-2,5;Salvamotore 1,6-2,5 A;Salvamotori;1;qm3;45
+Generico;SM-2,5-4;Salvamotore 2,5-4 A;Salvamotori;1;qm3;45
+Generico;SM-4-6,3;Salvamotore 4-6,3 A;Salvamotori;1;qm3;45
+Generico;SM-6-10;Salvamotore 6-10 A;Salvamotori;1;qm3;45
+Generico;SM-9-14;Salvamotore 9-14 A;Salvamotori;;qm3;45
+Generico;SM-13-18;Salvamotore 13-18 A;Salvamotori;;qm3;45
+Generico;SM-17-23;Salvamotore 17-23 A;Salvamotori;;qm3;45
+Generico;SM-20-25;Salvamotore 20-25 A;Salvamotori;;qm3;45
+Generico;SEZ-3P-25;Interruttore di manovra-sezionatore 3P 25 A;Sezionatori;;qs3;54
+Generico;SEZ-3P-40;Interruttore di manovra-sezionatore 3P 40 A;Sezionatori;1;qs3;54
+Generico;SEZ-3P-63;Interruttore di manovra-sezionatore 3P 63 A;Sezionatori;;qs3;54
+Generico;SEZ-3P-100;Interruttore di manovra-sezionatore 3P 100 A;Sezionatori;;qs3;72
+Generico;PF-1P-10X38;Portafusibile sezionabile 1P 10x38;Fusibili;;fu;18
+Generico;PF-3P-10X38;Portafusibile sezionabile 3P 10x38;Fusibili;;fu3;54
+Generico;CT-9-24DC;Contattore 9 A AC3 4 kW, bobina 24 VDC, 1NO;Contattori;1;km;45
+Generico;CT-9-230AC;Contattore 9 A AC3 4 kW, bobina 230 VAC, 1NO;Contattori;1;km;45
+Generico;CT-12-24DC;Contattore 12 A AC3 5,5 kW, bobina 24 VDC, 1NO;Contattori;;km;45
+Generico;CT-12-230AC;Contattore 12 A AC3 5,5 kW, bobina 230 VAC, 1NO;Contattori;;km;45
+Generico;CT-18-24DC;Contattore 18 A AC3 7,5 kW, bobina 24 VDC, 1NO;Contattori;;km;45
+Generico;CT-18-230AC;Contattore 18 A AC3 7,5 kW, bobina 230 VAC, 1NO;Contattori;;km;45
+Generico;CT-25-230AC;Contattore 25 A AC3 11 kW, bobina 230 VAC, 1NO1NC;Contattori;;km;45
+Generico;CT-32-230AC;Contattore 32 A AC3 15 kW, bobina 230 VAC, 1NO1NC;Contattori;;km;55
+Generico;RL-2S-24DC;Relè ausiliario 2 scambi, bobina 24 VDC, con zoccolo;Relè;1;ka;16
+Generico;RL-2S-230AC;Relè ausiliario 2 scambi, bobina 230 VAC, con zoccolo;Relè;;ka;16
+Generico;RL-4S-24DC;Relè ausiliario 4 scambi, bobina 24 VDC, con zoccolo;Relè;;ka;27
+Generico;TM-RIT-24-230;Relè temporizzato ritardato all'eccitazione 24-230 V, 1 scambio;Relè;;kt;22.5
+Generico;TM-DIS-24-230;Relè temporizzato ritardato alla diseccitazione 24-230 V, 1 scambio;Relè;;ktdis;22.5
+Generico;TR-63VA;Trasformatore monofase 400/230 V 63 VA;Trasformatori;;tc;70
+Generico;TR-100VA;Trasformatore monofase 400/230 V 100 VA;Trasformatori;1;tc;80
+Generico;TR-160VA;Trasformatore monofase 400/230 V 160 VA;Trasformatori;;tc;85
+Generico;TR-250VA;Trasformatore monofase 400/230 V 250 VA;Trasformatori;;tc;95
+Generico;AL-24-2,5A;Alimentatore 230 VAC / 24 VDC 2,5 A;Alimentatori;1;g;45
+Generico;AL-24-5A;Alimentatore 230 VAC / 24 VDC 5 A;Alimentatori;1;g;60
+Generico;AL-24-10A;Alimentatore 230 VAC / 24 VDC 10 A;Alimentatori;;g;85
+Generico;AL-24-20A;Alimentatore 230 VAC / 24 VDC 20 A;Alimentatori;;g;125
+Generico;PL-VERDE-NO;Pulsante verde 1NO, foro 22 mm;Comandi;1;sbno;0
+Generico;PL-NERO-NO;Pulsante nero 1NO, foro 22 mm;Comandi;;sbno;0
+Generico;PL-ROSSO-NC;Pulsante rosso 1NC, foro 22 mm;Comandi;1;sbnc;0
+Generico;PL-EMERG-NC;Pulsante di emergenza a fungo 1NC, foro 22 mm;Comandi;1;sbem;0
+Generico;PL-LUM-VERDE-24;Pulsante luminoso verde 1NO 24 V, foro 22 mm;Comandi;;sh;0
+Generico;SEL-2POS;Selettore 2 posizioni fisse 1NO, foro 22 mm;Comandi;;sa;0
+Generico;SEL-CHIAVE;Selettore a chiave 2 posizioni 1NO, foro 22 mm;Comandi;;sak;0
+Generico;LS-VERDE-24;Lampada di segnalazione verde 24 V LED, foro 22 mm;Segnalazione;1;hl;0
+Generico;LS-ROSSA-24;Lampada di segnalazione rossa 24 V LED, foro 22 mm;Segnalazione;1;hl;0
+Generico;LS-GIALLA-24;Lampada di segnalazione gialla 24 V LED, foro 22 mm;Segnalazione;;hl;0
+Generico;LS-BIANCA-24;Lampada di segnalazione bianca 24 V LED, foro 22 mm;Segnalazione;;hl;0
+Generico;LS-VERDE-230;Lampada di segnalazione verde 230 V LED, foro 22 mm;Segnalazione;;hl;0
+Generico;LS-ROSSA-230;Lampada di segnalazione rossa 230 V LED, foro 22 mm;Segnalazione;;hl;0
+Generico;SIR-24;Sirena 24 V, foro 22 mm;Segnalazione;;ha;0
+Generico;FC-1NO1NC;Finecorsa a leva 1NO+1NC;Sensori;;sqno;0
+Generico;PX-PNP-M12;Sensore induttivo M12 PNP NO, 3 fili;Sensori;;bq;0
+Generico;RES-ANTICOND-50W;Resistenza anticondensa 50 W 230 V;Utilizzatori;;eh;40
+Generico;PRESA-SERV-DIN;Presa di servizio da guida DIN 2P+T 16 A;Utilizzatori;;xs;45

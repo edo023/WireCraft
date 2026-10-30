@@ -67,7 +67,9 @@ Finestre: Gestione Progetti, Gestione Fogli (con revisioni e fogli in libreria),
 | Comando | Cosa fa |
 |---|---|
 | `USCITA {tipo}` | disegna sui fogli: `indice`, `distinta`, `morsettiere`, `cablaggio`, `cavi`, `conduttoricavi`, `io`, `funzioni`, `simboli`, `revisioni`, `termico`, `loop`, `pulsantiera` (con `tabella: true` in tabella) |
-| `DISTINTAMATERIALI`, `TABELLACABLAGGIO`, `MATERIALE`, `MATERIALI.*` | distinta e cablaggio in CSV, materiali dei componenti, archivio materiali |
+| `DISTINTAMATERIALI`, `TABELLACABLAGGIO`, `MATERIALE`, `MATERIALI.*` | distinta e cablaggio in CSV, materiali dei componenti (il primo dà la larghezza sulla guida DIN), archivio materiali: articoli con costruttore, codice, descrizione, categoria, simbolo e larghezza; listini CSV con le colonne riconosciute dal nome |
+| `MATERIALI.BASE` | aggiunge all'archivio la libreria di base: articoli generici (magnetotermici, differenziali, salvamotori, sezionatori, contattori, relè, trasformatori, alimentatori, pulsanti, lampade, sensori) con simbolo e larghezza. Un archivio nuovo parte già con questi |
+| `MATERIALE.INSERISCI` | posa il simbolo dell'articolo (`codice`, `costruttore?`, `at` o fence) con costruttore, codice, descrizione e larghezza; interattivo: il codice, poi un punto per componente. Pulsante "Inserisci" nella scheda Materiali |
 | `CAVO.DEFINISCI`, `CAVO.POSA`, `CAVO.TOGLI`, `CAVO.ELIMINA`, `CAVI`, `CAVO.CONDUTTORI` | cavi e vene |
 | `PLC.SCHEDA`, `PLC.NUMERABIT`, `PLC.COMMENTO`, `PLC.ELENCO`, `PLC.IMPORTA` | schede I/O, indirizzi, commenti, elenco I/O |
 | `RETI` | le reti con i capi collegati (per script e agenti) |

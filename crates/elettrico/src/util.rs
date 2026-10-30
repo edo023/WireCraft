@@ -239,6 +239,11 @@ pub fn numero_param(p: &Value, chiave: &str) -> Option<u32> {
     }
 }
 
+/// Un numero positivo del parametro `chiave`, anche scritto come testo con la virgola.
+pub fn numero_positivo(p: &Value, chiave: &str) -> Option<f64> {
+    p.get(chiave).and_then(|v| v.as_f64().or_else(|| v.as_str().and_then(|t| t.trim().replace(',', ".").parse().ok()))).filter(|x: &f64| x.is_finite() && *x > 0.0)
+}
+
 pub fn punto_param(p: &Value, chiave: &str) -> Option<(f64, f64)> {
     let a = p.get(chiave)?.as_array()?;
     let x = a.first()?.as_f64()?;

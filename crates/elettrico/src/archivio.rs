@@ -1,12 +1,17 @@
 //! Archivio materiali: un file CSV aperto (separatore `;`) con costruttore, codice, descrizione,
-//! categoria e preferito. Si riempie importando i listini dei costruttori (CSV con intestazione;
-//! le colonne si riconoscono dal nome, in italiano o in inglese) o aggiungendo articoli a mano.
+//! categoria, preferito, simbolo della libreria e larghezza sulla guida DIN (mm). Si riempie
+//! importando i listini dei costruttori (CSV con intestazione; le colonne si riconoscono dal
+//! nome, in italiano o in inglese), con la libreria di base di articoli generici o a mano.
+//!
+//! Un articolo con il simbolo si posa direttamente (`MATERIALE.INSERISCI`): il simbolo giusto con
+//! costruttore, codice e descrizione già scritti; la larghezza va al componente e il lay-out del
+//! quadro la usa al posto della misura stimata.
 
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
-use cadcraft_engine::cmd::always;
-use cadcraft_engine::{CommandSpec, Result, Session};
+use cadcraft_engine::cmd::{always, has_doc};
+use cadcraft_engine::{Accept, CommandSpec, Input, Interactive, Prompt, Result, Session, Step};
 use serde_json::{Value, json};
 
 use crate::util::{errore, testo_param};
@@ -18,9 +23,15 @@ pub struct Articolo {
     pub descrizione: String,
     pub categoria: String,
     pub preferito: bool,
+    /// Il simbolo della libreria con cui si disegna (`qf1`, `km`…); vuoto se non si sa.
+    pub simbolo: String,
+    /// Larghezza sulla guida DIN (mm); 0 se non si sa.
+    pub larghezza: f64,
 }
 
-const INTESTAZIONE: &str = "Costruttore;Codice;Descrizione;Categoria;Preferito";
+const INTESTAZIONE: &str = "Costruttore;Codice;Descrizione;Categoria;Preferito;Simbolo;Larghezza";
+/// La libreria di base: articoli generici con simbolo e larghezza.
+const BASE: &str = include_str!("libreria_base.csv");
 /// Righe al massimo in un file importato (difesa da file enormi o sbagliati).
 const MAX_RIGHE: usize = 2_000_000;
 
@@ -74,6 +85,8 @@ pub fn leggi_csv(testo: &str) -> Result<Vec<Articolo>> {
     let c_desc = colonna(&["descrizione", "description", "desc"]);
     let c_cat = colonna(&["categoria", "famiglia", "category", "family"]);
     let c_pref = colonna(&["preferit", "favorite", "favourite"]);
+    let c_sim = colonna(&["simbolo", "symbol"]);
+    let c_larg = colonna(&["larghezza", "width"]);
     let mut v = Vec::new();
     for riga in righe.take(MAX_RIGHE) {
         let f = campi(riga, sep);
@@ -83,7 +96,15 @@ pub fn leggi_csv(testo: &str) -> Result<Vec<Articolo>> {
             continue;
         }
         let pref = get(c_pref).to_lowercase();
-        v.push(Articolo { costruttore: get(c_cost), codice, descrizione: get(c_desc), categoria: get(c_cat), preferito: matches!(pref.as_str(), "1" | "si" | "sì" | "x" | "true" | "yes") });
+        v.push(Articolo {
+            costruttore: get(c_cost),
+            codice,
+            descrizione: get(c_desc),
+            categoria: get(c_cat),
+            preferito: matches!(pref.as_str(), "1" | "si" | "sì" | "x" | "true" | "yes"),
+            simbolo: get(c_sim).to_ascii_lowercase(),
+            larghezza: get(c_larg).replace(',', ".").parse::<f64>().ok().filter(|x| x.is_finite() && *x > 0.0).unwrap_or(0.0),
+        });
     }
     Ok(v)
 }
@@ -93,7 +114,8 @@ fn salva(st: &Stato) -> Result<()> {
     let mut out = String::from(INTESTAZIONE);
     out.push('\n');
     for a in &st.articoli {
-        let campi = [a.costruttore.as_str(), a.codice.as_str(), a.descrizione.as_str(), a.categoria.as_str(), if a.preferito { "1" } else { "" }];
+        let larghezza = if a.larghezza > 0.0 { crate::layout::misura_testo(a.larghezza) } else { String::new() };
+        let campi = [a.costruttore.as_str(), a.codice.as_str(), a.descrizione.as_str(), a.categoria.as_str(), if a.preferito { "1" } else { "" }, a.simbolo.as_str(), larghezza.as_str()];
         out.push_str(&campi.iter().map(|c| campo_csv(c)).collect::<Vec<_>>().join(";"));
         out.push('\n');
     }
@@ -114,6 +136,26 @@ pub fn imposta(file: &Path) -> Result<usize> {
         st.articoli = articoli;
         Ok(st.articoli.len())
     })
+}
+
+/// Gli articoli della libreria di base.
+pub fn base() -> Vec<Articolo> {
+    leggi_csv(BASE).unwrap_or_default()
+}
+
+/// L'articolo con il codice dato (e il costruttore, se non è vuoto).
+pub fn trova(costruttore: &str, codice: &str) -> Option<Articolo> {
+    let (costruttore, codice) = (costruttore.trim(), codice.trim());
+    if codice.is_empty() {
+        return None;
+    }
+    con(|st| Ok(st.articoli.iter().find(|a| a.codice.eq_ignore_ascii_case(codice) && (costruttore.is_empty() || a.costruttore.eq_ignore_ascii_case(costruttore))).cloned())).ok().flatten()
+}
+
+/// La larghezza (mm) del primo materiale di un componente, se l'archivio la conosce.
+pub fn larghezza_di(costruttore: &str, tipo: &str) -> Option<f64> {
+    let primo = |t: &str| t.split(';').next().unwrap_or_default().trim().to_string();
+    trova(&primo(costruttore), &primo(tipo)).map(|a| a.larghezza).filter(|l| *l > 0.0)
 }
 
 fn stesso(a: &Articolo, b: &Articolo) -> bool {
@@ -176,7 +218,7 @@ pub fn quanti() -> usize {
 }
 
 fn json_articolo(a: &Articolo) -> Value {
-    json!({"costruttore": a.costruttore, "codice": a.codice, "descrizione": a.descrizione, "categoria": a.categoria, "preferito": a.preferito})
+    json!({"costruttore": a.costruttore, "codice": a.codice, "descrizione": a.descrizione, "categoria": a.categoria, "preferito": a.preferito, "simbolo": a.simbolo, "larghezza": a.larghezza})
 }
 
 fn run_cerca(_s: &mut Session, p: &Value) -> Result<Value> {
@@ -193,7 +235,12 @@ fn run_aggiungi(_s: &mut Session, p: &Value) -> Result<Value> {
         descrizione: testo_param(p, "descrizione").unwrap_or_default(),
         categoria: testo_param(p, "categoria").unwrap_or_default(),
         preferito: p.get("preferito").and_then(Value::as_bool).unwrap_or(false),
+        simbolo: testo_param(p, "simbolo").unwrap_or_default().trim().to_ascii_lowercase(),
+        larghezza: p.get("larghezza").and_then(|v| v.as_f64().or_else(|| v.as_str().and_then(|t| t.trim().replace(',', ".").parse().ok()))).filter(|x: &f64| x.is_finite() && *x > 0.0).unwrap_or(0.0),
     };
+    if !a.simbolo.is_empty() && crate::simboli::trova(&a.simbolo).is_none() {
+        return Err(errore(format!("Simbolo sconosciuto: {}", a.simbolo)));
+    }
     let msg = format!("Archivio: {} {}", a.costruttore, a.codice);
     aggiungi(vec![a])?;
     Ok(json!({"message": msg}))
@@ -208,6 +255,78 @@ fn run_importa(_s: &mut Session, p: &Value) -> Result<Value> {
     let letti = articoli.len();
     let nuovi = aggiungi(articoli)?;
     Ok(json!({"letti": letti, "nuovi": nuovi, "message": format!("Importati {letti} articoli ({nuovi} nuovi). In archivio: {}", quanti())}))
+}
+
+fn run_base(_s: &mut Session, _p: &Value) -> Result<Value> {
+    let v = base();
+    let n = v.len();
+    let nuovi = aggiungi(v)?;
+    Ok(json!({"articoli": n, "nuovi": nuovi, "message": format!("Libreria di base: {n} articoli ({nuovi} nuovi). In archivio: {}", quanti())}))
+}
+
+/// Posa il simbolo dell'articolo (punto o fence, come `SIMBOLO.*`) con costruttore, codice e
+/// descrizione dell'articolo.
+pub fn posa(s: &mut Session, p: &Value) -> Result<Value> {
+    let codice = testo_param(p, "codice").filter(|c| !c.trim().is_empty()).ok_or_else(|| errore("Indicare il codice del materiale"))?;
+    let costruttore = testo_param(p, "costruttore").unwrap_or_default();
+    let a = trova(&costruttore, &codice).ok_or_else(|| errore(format!("{} {codice} non è in archivio", costruttore.trim())))?;
+    let sim = crate::simboli::trova(&a.simbolo).ok_or_else(|| errore(format!("L'articolo {} non dice con che simbolo si disegna: scrivilo nella colonna Simbolo dell'archivio", a.codice)))?;
+    let mut q = p.clone();
+    if let Some(m) = q.as_object_mut() {
+        // CODICE nei simboli è lo specchietto dei contatti: il codice dell'articolo va in TIPO
+        m.remove("codice");
+        m.insert("costruttore".into(), json!(a.costruttore));
+        m.insert("tipo".into(), json!(a.codice));
+        m.insert("descrizione".into(), json!(a.descrizione));
+    }
+    s.execute(sim.comando, &q)
+}
+
+fn run_posa(s: &mut Session, p: &Value) -> Result<Value> {
+    posa(s, p)
+}
+
+/// Posa interattiva: il codice (`costruttore|codice`, o solo il codice) e poi un punto per ogni
+/// componente da posare, fino a Invio.
+struct PosaInterattiva {
+    articolo: Option<Articolo>,
+}
+
+impl Interactive for PosaInterattiva {
+    fn name(&self) -> &'static str {
+        "MATERIALE.INSERISCI"
+    }
+    fn prompt(&self, _s: &Session) -> Prompt {
+        match &self.articolo {
+            Some(a) => Prompt::new(format!("Punto di {} {} (Invio per finire)", a.costruttore, a.codice), Accept::POINT),
+            None => Prompt::new("Codice del materiale", Accept::TEXT),
+        }
+    }
+    fn input(&mut self, s: &mut Session, i: Input) -> Result<Step> {
+        match (i, &self.articolo) {
+            (Input::Cancel | Input::Enter, _) => Ok(Step::Done),
+            (Input::Text(t) | Input::Keyword(t), None) => {
+                let (costruttore, codice) = t.split_once('|').unwrap_or(("", t.as_str()));
+                match trova(costruttore, codice) {
+                    Some(a) => self.articolo = Some(a),
+                    None => s.echo(format!("{} non è in archivio", t.trim())),
+                }
+                Ok(Step::Continue)
+            }
+            (Input::Point(q), Some(a)) => {
+                match posa(s, &json!({"costruttore": a.costruttore, "codice": a.codice, "at": [q.x, q.y]})) {
+                    Ok(r) => s.echo(r["message"].as_str().unwrap_or_default().to_string()),
+                    Err(e) => s.echo(e.to_string()),
+                }
+                Ok(Step::Continue)
+            }
+            _ => Ok(Step::Continue),
+        }
+    }
+}
+
+fn fabbrica(_s: &Session) -> Result<Box<dyn Interactive>> {
+    Ok(Box::new(PosaInterattiva { articolo: None }))
 }
 
 pub fn comandi() -> Vec<CommandSpec> {
@@ -225,8 +344,20 @@ pub fn comandi() -> Vec<CommandSpec> {
         transparent: false,
     };
     vec![
-        spec("materiali.cerca", "Cerca in Archivio Materiali", &[], "{testo?, preferiti?: bool, limite?} → {articoli}", run_cerca as cadcraft_engine::cmd::Run),
-        spec("materiali.aggiungi", "Aggiungi ad Archivio Materiali", &[], "{costruttore?, codice, descrizione?, categoria?, preferito?}", run_aggiungi),
+        spec("materiali.cerca", "Cerca in Archivio Materiali", &[], "{testo?, preferiti?: bool, limite?} → {articoli: [{costruttore, codice, descrizione, categoria, preferito, simbolo, larghezza}]}", run_cerca as cadcraft_engine::cmd::Run),
+        spec("materiali.aggiungi", "Aggiungi ad Archivio Materiali", &[], "{costruttore?, codice, descrizione?, categoria?, preferito?, simbolo?: id della libreria, larghezza?: mm sulla guida DIN}", run_aggiungi),
+        spec("materiali.base", "Libreria di base", &["Progetto", "Libreria di base dei materiali"], "{} — aggiunge all'archivio gli articoli generici con simbolo e larghezza", run_base),
+        CommandSpec {
+            enabled: has_doc,
+            interactive: Some(fabbrica),
+            ..spec(
+                "materiale.inserisci",
+                "Inserisci da codice",
+                &["Simboli", "Inserisci da codice…"],
+                "{codice, costruttore?, at: [x,y] | da + a (fence), …i parametri del simbolo} — il simbolo dell'articolo con costruttore, codice e descrizione; interattivo: il codice, poi un punto per componente",
+                run_posa,
+            )
+        },
         spec("materiali.importa", "Importa listino materiali", &["Progetto", "Importa listino materiali (CSV)"], "{file: percorso .csv} → {letti, nuovi}", run_importa),
     ]
 }

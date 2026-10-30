@@ -16,6 +16,7 @@ Tutte le uscite e i comandi nuovi provati su un progetto esistente di 50 fogli (
 - **Lay-out**: le protezioni dello schema unifilare occupano i moduli dei loro poli (F+N due, 3F+N quattro), non sempre tre.
 - **Schema Unifilare**: la finestra si apre sul quadro dei circuiti del foglio corrente, o su tutti; prima filtrava sul quadro corrente e poteva sembrare vuota.
 - **Liste e Tabelle**: il campo della morsettiera c'è anche per il disegno delle morsettiere.
+- **Componenti dal codice**: gli articoli dell'archivio hanno anche il simbolo con cui si disegnano e la larghezza sulla guida DIN (colonne `Simbolo` e `Larghezza`, riconosciute anche nei listini). La **libreria di base** (circa 80 articoli generici: magnetotermici, differenziali, salvamotori, sezionatori, portafusibili, contattori, relè, temporizzatori, trasformatori, alimentatori, pulsanti, selettori, lampade, sensori) riempie l'archivio al primo avvio e si aggiunge con un pulsante. Dalla scheda Materiali, **Inserisci** posa il simbolo giusto con costruttore, codice e descrizione (un punto per componente) e **Associa** dà il materiale al componente selezionato. Il codice di un componente, posato, associato o cambiato con Modifica Simbolo, porta la sua larghezza al componente, e il lay-out del quadro la usa al posto della misura stimata.
 
 ## 29 ottobre 2026: schema d'impianto, planimetria, versione 0.3.0
 

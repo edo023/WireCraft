@@ -16,6 +16,7 @@ mod impianto;
 mod impostazioni;
 mod layout;
 mod libreria;
+mod libreria_codici;
 mod loopdiagram;
 mod morsettiere;
 mod multifoglio;

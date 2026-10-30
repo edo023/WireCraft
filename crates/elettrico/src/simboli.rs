@@ -17,7 +17,7 @@ use cadcraft_engine::{Accept, CommandSpec, Input, Interactive, Prompt, Result, S
 use serde_json::{Value, json};
 
 use crate::util::{
-    allinea_a_destra, blocchi_definiti, blocchi_inseriti, blocco, colore, errore, esegui, handles, in_gruppo, layer_corrente, linea, punto_param, su_layer_zero, testo,
+    allinea_a_destra, blocchi_definiti, blocchi_inseriti, blocco, colore, errore, esegui, handles, in_gruppo, layer_corrente, linea, numero_positivo, punto_param, su_layer_zero, testo,
     testo_param,
 };
 use crate::{fili, fogli, morsetti, siglatura, specchietto};
@@ -1393,7 +1393,12 @@ pub fn inserisci(s: &mut Session, sim: &Simbolo, at: P, p: &Value) -> Result<Val
         let funzione = crate::norma81346::Livello::Funzione.normalizza(&testo_param(p, "funzioneImpianto").unwrap_or(imp.funzione));
         let ubicazione = crate::norma81346::Livello::Ubicazione.normalizza(&testo_param(p, "ubicazione").unwrap_or(imp.ubicazione));
         let dissipazione = p.get("dissipazione").and_then(|v| v.as_f64().map(|x| x.to_string()).or_else(|| v.as_str().map(|t| t.trim().replace(',', ".")))).filter(|t| t.parse::<f64>().is_ok_and(|x| x.is_finite() && x >= 0.0)).unwrap_or_default();
-        let valori: Vec<(&str, &str)> = [("FUNZIONE_IMPIANTO", funzione.as_str()), ("UBICAZIONE", ubicazione.as_str()), ("DISSIPAZIONE", dissipazione.as_str())].into_iter().filter(|(_, v)| !v.is_empty()).collect();
+        // la larghezza sulla guida DIN: quella data, o quella del materiale in archivio
+        let larghezza = numero_positivo(p, "larghezza")
+            .or_else(|| crate::archivio::larghezza_di(&testo_param(p, "costruttore").unwrap_or_default(), &testo_param(p, "tipo").unwrap_or_default()))
+            .map(crate::layout::misura_testo)
+            .unwrap_or_default();
+        let valori: Vec<(&str, &str)> = [("FUNZIONE_IMPIANTO", funzione.as_str()), ("UBICAZIONE", ubicazione.as_str()), ("DISSIPAZIONE", dissipazione.as_str()), ("LARGHEZZA", larghezza.as_str())].into_iter().filter(|(_, v)| !v.is_empty()).collect();
         if !valori.is_empty() {
             crate::util::imposta_attributi(s, &h, &valori)?;
         }
@@ -1506,6 +1511,13 @@ pub fn modifica(s: &mut Session, p: &Value) -> Result<Value> {
                 return Err(errore(format!("Potenza dissipata non valida: {v}")));
             }
             extra.push(("DISSIPAZIONE", v));
+        }
+        // un altro materiale porta la sua larghezza, se l'archivio la conosce
+        if let Some(l) = numero_positivo(p, "larghezza").or_else(|| {
+            let tipo = testo_param(p, "tipo")?;
+            crate::archivio::larghezza_di(&testo_param(p, "costruttore").unwrap_or_else(|| c.blocco.attributo("COSTRUTTORE").to_string()), &tipo)
+        }) {
+            extra.push(("LARGHEZZA", crate::layout::misura_testo(l)));
         }
         if !extra.is_empty() {
             crate::util::imposta_attributi(s, &h, &extra.iter().map(|(t, v)| (*t, v.as_str())).collect::<Vec<_>>())?;

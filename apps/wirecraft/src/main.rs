@@ -212,8 +212,13 @@ fn main() -> eframe::Result {
             }
             if let Some(dir) = config_dir() {
                 app.enable_autosave(&dir.join("autosave"));
-                if let Err(e) = elettrico::archivio::imposta(&dir.join("materiali.csv")) {
+                // al primo avvio l'archivio dei materiali parte con la libreria di base
+                let archivio = dir.join("materiali.csv");
+                let nuovo = !archivio.exists();
+                if let Err(e) = elettrico::archivio::imposta(&archivio) {
                     log::warn!("archivio materiali: {e}");
+                } else if nuovo && let Err(e) = elettrico::archivio::aggiungi(elettrico::archivio::base()) {
+                    log::warn!("libreria di base: {e}");
                 }
                 if let Err(e) = elettrico::traduttore::imposta(&dir.join("dizionario.csv")) {
                     log::warn!("dizionario: {e}");

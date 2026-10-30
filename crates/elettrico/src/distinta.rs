@@ -100,6 +100,10 @@ fn run_materiale(s: &mut Session, p: &Value) -> Result<Value> {
         };
         let valori = json!({"COSTRUTTORE": unisci("COSTRUTTORE", &costruttore), "TIPO": unisci("TIPO", &codice), "DESCRIZIONE": unisci("DESCRIZIONE", &descrizione)});
         esegui(s, "attedit", json!({"handle": c.blocco.handle, "values": valori}))?;
+        // il primo materiale dà la larghezza sulla guida DIN, se l'archivio la conosce
+        if !aggiungi && let Some(l) = crate::archivio::larghezza_di(&costruttore, &codice) {
+            crate::util::imposta_attributi(s, &c.blocco.handle, &[("LARGHEZZA", crate::layout::misura_testo(l).as_str())])?;
+        }
         Ok(json!({"sigla": sigla, "message": format!("{sigla}: {costruttore} {codice}")}))
     })
 }
