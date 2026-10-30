@@ -547,15 +547,17 @@ pub fn aggiorna_liste(s: &mut Session) -> Result<Vec<(String, Vec<u32>)>> {
     Ok(out)
 }
 
-/// Le pagine già disegnate della stessa uscita (tipo, quadro e morsettiera): (handle, foglio).
+/// Le pagine già disegnate della stessa uscita (tipo, quadro, morsettiera, disegno o tabella):
+/// (handle, foglio).
 fn stessa_uscita(s: &mut Session, tipo: &str, p: &Value) -> Result<Vec<(String, u32)>> {
     let chiave = |v: &Value, k: &str| v.get(k).and_then(Value::as_str).unwrap_or_default().trim().to_ascii_uppercase();
+    let tabella = |v: &Value| v.get("tabella").and_then(Value::as_bool).unwrap_or(false);
     Ok(pagine_esistenti(s)?
         .into_iter()
         .filter(|(b, _)| b.attributo("TIPO") == tipo)
         .filter(|(b, _)| {
             let par: Value = serde_json::from_str(b.attributo("PARAMETRI")).unwrap_or_else(|_| json!({}));
-            ["quadro", "morsettiera"].iter().all(|k| chiave(&par, k) == chiave(p, k))
+            ["quadro", "morsettiera"].iter().all(|k| chiave(&par, k) == chiave(p, k)) && tabella(&par) == tabella(p)
         })
         .map(|(b, n)| (b.handle, n))
         .collect())
