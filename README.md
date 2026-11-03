@@ -7,6 +7,8 @@ Schemi multifoglio, morsettiere, cavi, PLC, distinte, lay-out del quadro e PDF.<
 Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artificiale.
 </p>
 
+<p align="center"><a href="https://wirecraft.alfredopennisi.com"><b>Sito web</b></a> · <a href="https://github.com/edo023/WireCraft/releases/latest"><b>Scarica</b></a> · <a href="docs/COMANDI.md"><b>Guida ai comandi</b></a></p>
+
 <p align="center">
 <img alt="Licenza MIT o Apache-2.0" src="https://img.shields.io/badge/licenza-MIT%20%2F%20Apache--2.0-2ea44f">
 <img alt="Rust" src="https://img.shields.io/badge/Rust-1.95%2B-b7410e?logo=rust">
