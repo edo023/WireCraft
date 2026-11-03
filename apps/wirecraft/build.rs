@@ -11,7 +11,7 @@ fn main() {
         res.set_icon("assets/wirecraft.ico");
     }
     res.set("ProductName", "WireCraft")
-        .set("FileDescription", "WireCraft - CAD elettrico per l'automazione industriale")
+        .set("FileDescription", "WireCraft - CAD elettrico per la distribuzione e l'automazione industriale")
         .set("LegalCopyright", "WireCraft contributors. MIT OR Apache-2.0.")
         .set("OriginalFilename", "wirecraft.exe")
         .set("InternalName", "wirecraft");

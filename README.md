@@ -1,9 +1,9 @@
 <p align="center"><img src="assets/logo-scritta.svg" alt="WireCraft" width="520"></p>
 
-<h3 align="center">Il CAD elettrico open source per l'automazione industriale.</h3>
+<h3 align="center">Il CAD elettrico open source per la distribuzione e l'automazione industriale.</h3>
 
 <p align="center">
-Schemi multifoglio, morsettiere, cavi, PLC, distinte, lay-out del quadro e PDF.<br>
+Schemi multifoglio, quadri di distribuzione con schema unifilare, morsettiere, cavi, PLC, distinte, lay-out del quadro e PDF.<br>
 Gratis, leggero, nativo, e pronto per lavorare insieme all'intelligenza artificiale.
 </p>
 

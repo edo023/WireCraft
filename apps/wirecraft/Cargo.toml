@@ -1,6 +1,6 @@
 [package]
 name = "wirecraft"
-description = "WireCraft: CAD elettrico per l'automazione industriale, basato su CADCraft"
+description = "WireCraft: CAD elettrico per la distribuzione e l'automazione industriale, basato su CADCraft"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
