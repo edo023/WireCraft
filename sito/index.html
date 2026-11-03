@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WireCraft – CAD elettrico gratuito e open source con l'IA</title>
+<meta name="description" content="WireCraft è il CAD elettrico gratuito e open source per schemi, quadri elettrici e automazione industriale, pronto per l'intelligenza artificiale.">
+<link rel="canonical" href="https://wirecraft.alfredopennisi.com/">
+<link rel="alternate" hreflang="it" href="https://wirecraft.alfredopennisi.com/">
+<link rel="alternate" hreflang="en" href="https://wirecraft.alfredopennisi.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://wirecraft.alfredopennisi.com/">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="author" content="Alfredo Pennisi">
+<meta name="theme-color" content="#050c17">
+<meta name="color-scheme" content="dark">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WireCraft">
+<meta property="og:locale" content="it_IT">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:url" content="https://wirecraft.alfredopennisi.com/">
+<meta property="og:title" content="WireCraft – Il CAD elettrico open source pronto per l'IA">
+<meta property="og:description" content="Schemi multifoglio, morsettiere, cavi, PLC, distinte, lay-out del quadro e PDF. Gratis, leggero e pensato per lavorare con l'intelligenza artificiale.">
+<meta property="og:image" content="https://wirecraft.alfredopennisi.com/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WireCraft, il CAD elettrico open source pronto per l'IA, con uno schema elettrico aperto">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WireCraft – Il CAD elettrico open source pronto per l'IA">
+<meta name="twitter:description" content="Schemi, morsettiere, PLC, quadri e PDF. Gratis, open source, pensato per l'intelligenza artificiale.">
+<meta name="twitter:image" content="https://wirecraft.alfredopennisi.com/img/og-image.png">
+
+<link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+<link rel="icon" href="/img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="stylesheet" href="/css/stile.css">
+<script src="/js/sito.js" defer></script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://wirecraft.alfredopennisi.com/#sito",
+      "url": "https://wirecraft.alfredopennisi.com/",
+      "name": "WireCraft",
+      "description": "Il CAD elettrico open source per l'automazione industriale, pronto per l'intelligenza artificiale.",
+      "inLanguage": ["it", "en"],
+      "publisher": { "@id": "https://wirecraft.alfredopennisi.com/#autore" }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://wirecraft.alfredopennisi.com/#autore",
+      "name": "Alfredo Pennisi",
+      "url": "https://alfredopennisi.com/",
+      "sameAs": ["https://github.com/edo023"]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://wirecraft.alfredopennisi.com/#software",
+      "name": "WireCraft",
+      "alternateName": ["WireCraft CAD elettrico", "WireCraft electrical CAD"],
+      "description": "CAD elettrico gratuito e open source per schemi elettrici multifoglio, quadri elettrici e automazione industriale: siglatura, numerazione fili, cross reference, morsettiere, cavi, PLC, distinta materiali, lay-out del quadro, schema unifilare, calcolo termico e PDF. Ogni comando ha parametri JSON, così script e agenti di intelligenza artificiale possono disegnare e verificare gli schemi.",
+      "url": "https://wirecraft.alfredopennisi.com/",
+      "applicationCategory": "DesignApplication",
+      "applicationSubCategory": "CAD elettrico",
+      "operatingSystem": "Windows 10, Windows 11",
+      "inLanguage": "it",
+      "isAccessibleForFree": true,
+      "license": "https://github.com/edo023/WireCraft/blob/main/LICENSE-MIT",
+      "downloadUrl": "https://github.com/edo023/WireCraft/releases/latest",
+      "installUrl": "https://github.com/edo023/WireCraft/releases/latest",
+      "softwareHelp": "https://github.com/edo023/WireCraft/blob/main/docs/COMANDI.md",
+      "releaseNotes": "https://github.com/edo023/WireCraft/blob/main/CHANGELOG.md",
+      "image": "https://wirecraft.alfredopennisi.com/img/og-image.png",
+      "screenshot": [
+        "https://wirecraft.alfredopennisi.com/img/schema-1600.webp",
+        "https://wirecraft.alfredopennisi.com/img/layout-quadro-1600.webp",
+        "https://wirecraft.alfredopennisi.com/img/unifilare-1300.webp",
+        "https://wirecraft.alfredopennisi.com/img/output-pdf-1600.webp"
+      ],
+      "featureList": [
+        "Schemi elettrici multifoglio con squadratura e cartiglio",
+        "Siglatura dei componenti e numerazione automatica dei fili",
+        "Cross reference e rimandi tra fogli",
+        "52 simboli IEC 60617 originali",
+        "Morsettiere, connettori, cavi e schede I/O PLC",
+        "Distinta materiali, tabella di cablaggio, liste in CSV ed Excel",
+        "Lay-out del quadro, foratura della piastra e fronte quadro",
+        "Schema unifilare con dimensionamento di protezioni e cavi",
+        "Calcolo termico del quadro e loop diagram",
+        "Designazione CEI EN 81346",
+        "Traduttore in cinque lingue",
+        "PDF con segnalibri e riferimenti cliccabili",
+        "Comandi con parametri JSON per script e agenti di intelligenza artificiale"
+      ],
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR", "availability": "https://schema.org/InStock" },
+      "author": { "@id": "https://wirecraft.alfredopennisi.com/#autore" }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "WireCraft",
+      "codeRepository": "https://github.com/edo023/WireCraft",
+      "programmingLanguage": "Rust",
+      "license": "https://github.com/edo023/WireCraft/blob/main/LICENSE-APACHE",
+      "targetProduct": { "@id": "https://wirecraft.alfredopennisi.com/#software" },
+      "author": { "@id": "https://wirecraft.alfredopennisi.com/#autore" }
+    },
+    {
+      "@type": "FAQPage",
+      "inLanguage": "it",
+      "mainEntity": [
+        { "@type": "Question", "name": "WireCraft è davvero gratis?", "acceptedAnswer": { "@type": "Answer", "text": "Sì. WireCraft è open source con licenza MIT o Apache-2.0: lo puoi usare anche per lavoro, senza licenze, abbonamenti o limiti di fogli." } },
+        { "@type": "Question", "name": "Come si usa l'intelligenza artificiale con un CAD elettrico?", "acceptedAnswer": { "@type": "Answer", "text": "In WireCraft ogni comando ha un nome e parametri JSON e restituisce un risultato strutturato. Un assistente di intelligenza artificiale può quindi scrivere la sequenza di comandi che disegna simboli e fili, numera, sigla e genera le liste, e poi leggere il cross reference per verificare lo schema. Il progetto d'esempio di 22 fogli è costruito proprio così. Il collegamento diretto dell'assistente al progetto aperto, tramite il protocollo MCP, è il prossimo passo." } },
+        { "@type": "Question", "name": "Posso aprire i miei progetti esistenti?", "acceptedAnswer": { "@type": "Answer", "text": "WireCraft legge e scrive file DWG e DXF e riconosce fogli, titoli, rimandi, fili e contatti degli schemi esistenti, così i tuoi progetti restano tuoi e li puoi portare dove vuoi." } },
+        { "@type": "Question", "name": "Su quali sistemi funziona?", "acceptedAnswer": { "@type": "Answer", "text": "L'eseguibile pronto è per Windows 10 e 11 a 64 bit. Il codice è in Rust e parte da un motore CAD multipiattaforma: chi compila dai sorgenti può provarlo anche altrove." } },
+        { "@type": "Question", "name": "Quali norme segue?", "acceptedAnswer": { "@type": "Answer", "text": "I simboli seguono la IEC 60617, le designazioni dei componenti la CEI EN 81346 e il dimensionamento dei cavi nello schema unifilare la IEC 60364-5-52. I calcoli sono un aiuto al progettista: la verifica finale dell'impianto resta a chi lo firma." } },
+        { "@type": "Question", "name": "Serve un altro programma CAD per usarlo?", "acceptedAnswer": { "@type": "Answer", "text": "No. WireCraft è un programma autonomo: il motore CAD è incluso, open source, e non dipende da piattaforme di terzi." } }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<a class="salta" href="#contenuto">Vai al contenuto</a>
+
+<header class="barra">
+  <nav class="contenitore" aria-label="Principale">
+    <a class="marchio" href="/" aria-label="WireCraft, pagina iniziale">
+      <img src="/img/logo.svg" alt="" width="34" height="34">WireCraft
+    </a>
+    <ul class="menu" id="menu">
+      <li><a href="#ia">Intelligenza artificiale</a></li>
+      <li><a href="#funzioni">Funzioni</a></li>
+      <li><a href="#galleria">Galleria</a></li>
+      <li><a href="#inizia">Inizia</a></li>
+      <li><a href="#faq">Domande</a></li>
+    </ul>
+    <div class="azioni-barra">
+      <a class="lingua" href="/en/" hreflang="en" lang="en" aria-label="English version">EN</a>
+      <a class="btn btn-secondario btn-piccolo" href="https://github.com/edo023/WireCraft" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        GitHub
+      </a>
+      <button class="apri-menu" type="button" aria-controls="menu" aria-expanded="false" aria-label="Apri il menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="contenuto">
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="contenitore hero-griglia">
+    <div>
+      <p class="etichetta"><b>NUOVO</b> Open source · Gratis · Pronto per l'IA</p>
+      <h1>Il CAD elettrico <span class="gradiente">che parla con l'intelligenza artificiale</span></h1>
+      <p class="sottotitolo">
+        <strong>WireCraft</strong> è il CAD elettrico <strong>gratuito e open source</strong> per schemi, quadri e automazione industriale.
+        Ogni comando è pensato per essere usato da te <em>e</em> da un'IA: tu progetti, lei disegna, numera e controlla.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primario" href="https://github.com/edo023/WireCraft/releases/latest" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+          Scarica gratis per Windows
+        </a>
+        <a class="btn btn-secondario" href="https://github.com/edo023/WireCraft" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+          Il codice su GitHub
+        </a>
+      </div>
+      <ul class="fatti">
+        <li>Licenza MIT / Apache-2.0</li>
+        <li>Windows 10 e 11</li>
+        <li>Scritto in Rust</li>
+        <li>Nessun account</li>
+      </ul>
+    </div>
+
+    <div class="tavola" role="img" aria-label="Uno schema elettrico che si disegna da solo: marcia e arresto di un contattore, lampada di marcia e motore, con la corrente che scorre nei fili">
+      <svg viewBox="0 0 560 400" aria-hidden="true">
+        <!-- linee di alimentazione -->
+        <path class="filo fase disegna d1" pathLength="1" d="M30 40H530"/>
+        <path class="filo neutro disegna d1" pathLength="1" d="M30 360H530"/>
+        <text class="rotaia" x="8" y="45">L</text>
+        <text class="rotaia" x="8" y="365">N</text>
+
+        <!-- ramo 1: arresto, marcia, autoritenuta, bobina -->
+        <path class="filo ramo disegna d2" pathLength="1" d="M130 40V100"/>
+        <path class="simbolo disegna d3" pathLength="1" d="M130 100H142M130 140L146 96"/>
+        <path class="simbolo tratteggio appare a1" d="M139 120H108"/>
+        <path class="simbolo appare a1" d="M108 112V128"/>
+        <path class="filo ramo disegna d3" pathLength="1" d="M130 140V174"/>
+        <path class="simbolo disegna d3" pathLength="1" d="M130 210L116 174"/>
+        <path class="simbolo tratteggio appare a1" d="M123 192H96"/>
+        <path class="simbolo appare a1" d="M96 184V200"/>
+        <path class="filo ramo disegna d4" pathLength="1" d="M130 160H180V174"/>
+        <path class="simbolo disegna d4" pathLength="1" d="M180 210L166 174"/>
+        <path class="filo ramo disegna d4" pathLength="1" d="M180 210V222H130"/>
+        <path class="filo ramo disegna d4" pathLength="1" d="M130 210V240"/>
+        <rect class="simbolo disegna d4" pathLength="1" x="112" y="240" width="36" height="38" rx="2"/>
+        <path class="filo ramo disegna d5" pathLength="1" d="M130 278V360"/>
+        <circle class="nodo" cx="130" cy="160" r="4.5"/>
+        <circle class="nodo" cx="130" cy="222" r="4.5"/>
+        <text class="sigla appare a2" x="40" y="124">-SB1</text>
+        <text class="sigla appare a2" x="40" y="196">-SB2</text>
+        <text class="sigla appare a2" x="156" y="264">-KM1</text>
+        <text class="numero appare a3" x="136" y="74">03.01</text>
+        <text class="numero appare a3" x="136" y="320">N</text>
+
+        <!-- ramo 2: contatto e lampada di marcia -->
+        <path class="filo ramo disegna d2" pathLength="1" d="M290 40V134"/>
+        <path class="simbolo disegna d3" pathLength="1" d="M290 170L276 134"/>
+        <path class="filo ramo disegna d4" pathLength="1" d="M290 170V230"/>
+        <circle class="lampada-luce" cx="290" cy="252" r="30"/>
+        <circle class="simbolo disegna d4" pathLength="1" cx="290" cy="252" r="22"/>
+        <path class="simbolo disegna d5" pathLength="1" d="M274.4 236.4L305.6 267.6M305.6 236.4L274.4 267.6"/>
+        <path class="filo ramo disegna d5" pathLength="1" d="M290 274V360"/>
+        <text class="sigla appare a2" x="300" y="158">-KM1</text>
+        <text class="sigla appare a2" x="322" y="257">-HL1</text>
+        <text class="numero appare a3" x="296" y="206">03.03</text>
+
+        <!-- ramo 3: contatto e motore -->
+        <path class="filo ramo disegna d2" pathLength="1" d="M440 40V94"/>
+        <path class="simbolo disegna d3" pathLength="1" d="M440 130L426 94"/>
+        <path class="filo ramo disegna d4" pathLength="1" d="M440 130V216"/>
+        <circle class="simbolo disegna d4" pathLength="1" cx="440" cy="250" r="34"/>
+        <text class="sigla appare a2" x="430" y="248" fill="#e9eff7">M</text>
+        <text class="numero appare a2" x="430" y="266">1~</text>
+        <path class="filo ramo disegna d5" pathLength="1" d="M440 284V360"/>
+        <text class="sigla appare a2" x="450" y="118">-KM1</text>
+        <text class="sigla appare a2" x="482" y="255">-M1</text>
+        <text class="numero appare a3" x="446" y="180">03.04</text>
+
+        <!-- nodi sulle alimentazioni -->
+        <circle class="nodo-fase" cx="130" cy="40" r="5"/>
+        <circle class="nodo-fase" cx="290" cy="40" r="5"/>
+        <circle class="nodo-fase" cx="440" cy="40" r="5"/>
+        <circle class="nodo-neutro" cx="130" cy="360" r="5"/>
+        <circle class="nodo-neutro" cx="290" cy="360" r="5"/>
+        <circle class="nodo-neutro" cx="440" cy="360" r="5"/>
+
+        <!-- la corrente che scorre -->
+        <path class="corrente" pathLength="1" d="M30 40H130V360H30"/>
+        <path class="corrente" pathLength="1" d="M130 40H290V360H130"/>
+        <path class="corrente" pathLength="1" d="M290 40H440V360H290"/>
+      </svg>
+
+      <div class="chip chip-ia" aria-hidden="true"><span class="icona-ia">✦</span><span>«Aggiungi la lampada di marcia e numera i fili»</span></div>
+      <div class="chip chip-cmd" aria-hidden="true"><span>simbolo.hl</span>&nbsp;{"funzione1":"Lampada marcia"}</div>
+      <div class="chip chip-ok" aria-hidden="true"><i></i>Cross reference: nessun problema</div>
+    </div>
+  </div>
+
+  <div class="contenitore vetrina">
+    <figure class="figura">
+      <div class="finestra">
+        <div class="finestra-barra" aria-hidden="true"><i></i><i></i><i></i><span>WireCraft — Nastro trasportatore — foglio 02</span></div>
+        <picture>
+          <source type="image/webp" srcset="/img/schema-800.webp 800w, /img/schema-1600.webp 1600w" sizes="(max-width: 1220px) 100vw, 1180px">
+          <img src="/img/schema-1600.webp" width="1600" height="826" fetchpriority="high"
+               alt="WireCraft aperto sullo schema di potenza di un motore: a sinistra l'elenco dei fogli del progetto, al centro lo schema elettrico con squadratura e cartiglio, a destra i comandi elettrici">
+        </picture>
+      </div>
+      <figcaption class="didascalia">Il progetto d'esempio: un nastro trasportatore con PLC, quadro di distribuzione, lay-out e liste. Si apre con un clic.</figcaption>
+    </figure>
+
+    <div class="numeri rivela">
+      <div><strong class="gradiente">0 €</strong><span>di licenza, per sempre</span></div>
+      <div><strong>52</strong><span>simboli IEC 60617 originali</span></div>
+      <div><strong>22</strong><span>fogli nel progetto d'esempio</span></div>
+      <div><strong>5</strong><span>lingue nel traduttore</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= IA ================= -->
+<section class="sezione ia" id="ia" aria-labelledby="titolo-ia">
+  <div class="contenitore">
+    <div class="intro rivela">
+      <p class="occhiello">Intelligenza artificiale</p>
+      <h2 id="titolo-ia">Un CAD elettrico che <span class="gradiente">l'IA sa usare</span></h2>
+      <p>I CAD tradizionali sono fatti solo di finestre e clic. WireCraft ha anche una lingua: ogni comando ha un nome, parametri chiari e una risposta strutturata. È la stessa lingua che parlano gli assistenti di intelligenza artificiale. Così l'IA può fare il lavoro ripetitivo, e tu tieni le decisioni.</p>
+    </div>
+
+    <div class="ia-griglia">
+      <div class="passi-ia">
+        <article class="passo-ia rivela">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="17" r="3"/><path d="m20.2 19.2 1.8 1.8"/></svg></div>
+          <div>
+            <h3>Legge il progetto</h3>
+            <p>Componenti, fili, morsetti, cavi e reti escono in JSON: l'IA sa cosa c'è nello schema e dove sta, foglio per foglio.</p>
+          </div>
+        </article>
+        <article class="passo-ia rivela">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21l3.5-1 11-11-2.5-2.5-11 11L3 21Z"/><path d="m14 6 2.5 2.5M19 3l2 2"/></svg></div>
+          <div>
+            <h3>Disegna come un progettista</h3>
+            <p>Posa simboli e fili, sigla i componenti, numera i fili, genera morsettiere, distinta e tabella di cablaggio. Un comando per ogni azione, niente magie nascoste.</p>
+          </div>
+        </article>
+        <article class="passo-ia rivela">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></div>
+          <div>
+            <h3>Controlla il lavoro</h3>
+            <p>Cross reference con i problemi in rosso, numeri di filo doppi, verifica di protezioni e cavi nello schema unifilare: l'IA trova gli errori prima del collaudo.</p>
+          </div>
+        </article>
+        <article class="passo-ia rivela">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div>
+          <div>
+            <h3>Tu resti al comando</h3>
+            <p>Ogni modifica è un comando che puoi leggere, annullare e rifare a mano. L'IA ti fa risparmiare ore; la firma sul progetto resta la tua.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="rivela">
+        <div class="terminale">
+          <div class="finestra-barra" aria-hidden="true"><i></i><i></i><i></i><span>assistente IA → WireCraft</span></div>
+          <div class="terminale-corpo" aria-label="Esempio di conversazione tra un progettista, un assistente IA e WireCraft">
+            <p class="riga"><span class="chi chi-tu">tu ›</span> <span class="msg">Sul foglio 3 metti marcia e arresto del nastro con la lampada di marcia. Poi numera i fili e aggiorna la distinta.</span></p>
+            <p class="riga"><span class="chi chi-ia">IA ›</span> <span class="msg">Fatto. Ecco i comandi che ho eseguito:</span></p>
+            <p class="riga cmd"><b>cambiofoglio</b>   <em>{"foglio": 3}</em></p>
+            <p class="riga cmd"><b>simbolo.sbnc</b>   <em>{"at": [100,230], "funzione1": "Arresto nastro"}</em></p>
+            <p class="riga cmd"><b>simbolo.sbno</b>   <em>{"at": [100,200], "funzione1": "Marcia nastro"}</em></p>
+            <p class="riga cmd"><b>simbolo.km</b>     <em>{"at": [100,140], "funzione1": "Contattore motore nastro"}</em></p>
+            <p class="riga cmd"><b>simbolo.hl</b>     <em>{"at": [220,140], "funzione1": "Lampada marcia"}</em></p>
+            <p class="riga cmd"><b>numerafili</b>     <em>{"tutti": true}</em></p>
+            <p class="riga cmd"><b>uscita</b>         <em>{"tipo": "distinta"}</em></p>
+            <p class="riga esito">✓ componenti siglati · fili numerati · distinta aggiornata · cross reference senza problemi</p>
+          </div>
+          <p class="nota-terminale">Esempio con i nomi e i parametri reali dei comandi di WireCraft. Il progetto d'esempio di 22 fogli è generato da una sequenza di comandi come questa.</p>
+        </div>
+        <div class="oggi-domani">
+          <div class="oggi"><b>Già oggi</b>Tutti i comandi con parametri JSON, dalla riga di comando e da script: un'IA può scriverli per te.</div>
+          <div class="domani"><b>In arrivo</b>Il tuo assistente IA collegato direttamente al progetto aperto, tramite il protocollo MCP.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FUNZIONI ================= -->
+<section class="sezione" id="funzioni" aria-labelledby="titolo-funzioni">
+  <div class="contenitore">
+    <div class="intro rivela">
+      <p class="occhiello">Funzioni</p>
+      <h2 id="titolo-funzioni">Tutto il flusso di lavoro, <span class="gradiente">dallo schema al quadro</span></h2>
+      <p>Un CAD elettrico completo per macchine e quadri di automazione industriale. Chi arriva da un CAD elettrico tradizionale ritrova un flusso di lavoro familiare, in un programma leggero che parte in un attimo.</p>
+    </div>
+
+    <div class="griglia-funzioni">
+      <article class="funzione rivela">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M3 7v14h4"/></svg></div>
+        <h3>Progetti e fogli</h3>
+        <p>Commesse con i loro multifogli, squadratura A3 e cartiglio compilato da solo. Aggiungi, sposta o compatta i fogli: i riferimenti seguono.</p>
+        <ul><li>multifoglio</li><li>revisioni</li><li>fogli memorizzati</li><li>configurazioni per cliente</li></ul>
+      </article>
+      <article class="funzione rivela">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
+        <h3>Schema elettrico</h3>
+        <p>Fili ortogonali con nodi automatici, alimentazioni, rimandi tra fogli e 52 simboli IEC 60617 disegnati da zero. Cancelli un simbolo e il filo si richiude.</p>
+        <ul><li>fili colorati</li><li>specchietti contatti</li><li>inserimento su più fili</li></ul>
+      </article>
+      <article class="funzione rivela">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12 12 20 3 11V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg></div>
+        <h3>Automatismi</h3>
+        <p>Siglatura dei componenti in sei modalità, numerazione automatica dei fili, cross reference dinamico, navigatore ad albero e "vai al collegato".</p>
+        <ul><li>CEI EN 81346</li><li>numeri doppi segnalati</li><li>fili bloccati</li></ul>
+      </article>
+      <article class="funzione rivela">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0zM12 18v4"/></svg></div>
+        <h3>Morsetti, cavi e PLC</h3>
+        <p>Morsettiere posate con una linea sui fili, ponticelli, connettori, cavi con le loro vene e schede I/O PLC con indirizzi e commenti in due lingue.</p>
+        <ul><li>editor morsettiere</li><li>loop diagram</li><li>configuratore macchina</li></ul>
+      </article>
+      <article class="funzione rivela">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg></div>
+        <h3>Liste e uscite</h3>
+        <p>Lista fogli, distinta materiali, morsettiere, tabella di cablaggio, lista cavi e I/O sui fogli, sempre aggiornabili. Anche in CSV ed Excel.</p>
+        <ul><li>archivio materiali</li><li>listini</li><li>targhette</li></ul>
+      </article>
+      <article class="funzione rivela">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 9v6"/></svg></div>
+        <h3>Lay-out del quadro</h3>
+        <p>Dallo schema alla piastra in scala, con guide DIN, canaline e foratura quotata. Il fronte quadro mette pulsanti e lampade sulla porta.</p>
+        <ul><li>gestore topografico</li><li>calcolo termico</li><li>foratura in CSV</li></ul>
+      </article>
+      <article class="funzione rivela">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18M7 5v5M12 5v5M17 5v5"/><rect x="5" y="10" width="4" height="4"/><rect x="10" y="10" width="4" height="4"/><rect x="15" y="10" width="4" height="4"/><path d="M7 14v6M12 14v6M17 14v6"/></svg></div>
+        <h3>Schema unifilare</h3>
+        <p>Quadri di distribuzione che si dimensionano da soli: corrente d'impiego, taratura delle protezioni, sezione del cavo e caduta di tensione, con la verifica.</p>
+        <ul><li>Ib ≤ In ≤ Iz</li><li>IEC 60364-5-52</li><li>potere di interruzione</li></ul>
+      </article>
+      <article class="funzione rivela">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></svg></div>
+        <h3>Traduttore</h3>
+        <p>Dizionario in italiano, inglese, tedesco, francese e spagnolo. Uno schema bilingue con un comando: funzioni, titoli dei fogli e colonne.</p>
+        <ul><li>IT · EN · DE · FR · ES</li></ul>
+      </article>
+      <article class="funzione rivela">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><path d="M6 14h12v7H6z"/></svg></div>
+        <h3>Stampa e PDF</h3>
+        <p>PDF dinamico con i segnalibri dei fogli e i riferimenti cliccabili. Fili a colori e tutto il resto in nero, pronto da consegnare al cliente.</p>
+        <ul><li>schema d'impianto</li><li>planimetria</li><li>disegno morsettiere</li></ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALLERIA ================= -->
+<section class="sezione" id="galleria" aria-labelledby="titolo-galleria">
+  <div class="contenitore">
+    <div class="intro rivela">
+      <p class="occhiello">Galleria</p>
+      <h2 id="titolo-galleria">Disegni lo schema. <span class="gradiente">Il resto arriva da solo.</span></h2>
+    </div>
+    <div class="galleria">
+      <div class="scheda-galleria rivela">
+        <div class="testo-galleria">
+          <h3>Il lay-out del quadro nasce dallo schema</h3>
+          <p>I componenti e le morsettiere finiscono sulle guide DIN in scala, tra le canaline. La piastra si sceglie da sola tra le misure commerciali.</p>
+          <ul><li>ingombri presi dai codici dei materiali</li><li>foratura della piastra con le quote</li><li>se cambi una sigla nello schema, il lay-out segue</li></ul>
+        </div>
+        <figure class="figura">
+          <picture>
+            <source type="image/webp" srcset="/img/layout-quadro-800.webp 800w, /img/layout-quadro-1600.webp 1600w" sizes="(max-width: 1020px) 100vw, 640px">
+            <img src="/img/layout-quadro-1600.webp" width="1600" height="826" loading="lazy" decoding="async" alt="Lay-out dell'interno di un quadro elettrico generato dallo schema, con guide DIN, canaline e la tabella degli ingombri">
+          </picture>
+        </figure>
+      </div>
+      <div class="scheda-galleria rivela">
+        <div class="testo-galleria">
+          <h3>Il quadro di distribuzione si dimensiona da solo</h3>
+          <p>Scegli l'utenza, la potenza e la lunghezza della linea: WireCraft propone la taratura della protezione e la sezione del cavo, poi verifica tutto.</p>
+          <ul><li>coordinamento Ib ≤ In ≤ Iz</li><li>caduta di tensione dall'origine</li><li>cambi un dato e la colonna si aggiorna</li></ul>
+        </div>
+        <figure class="figura figura-chiara">
+          <picture>
+            <source type="image/webp" srcset="/img/unifilare-800.webp 800w, /img/unifilare-1300.webp 1300w" sizes="(max-width: 1020px) 100vw, 640px">
+            <img src="/img/unifilare-1300.webp" width="1300" height="1217" loading="lazy" decoding="async" alt="Schema unifilare di un quadro di distribuzione con arrivo linea, sbarre, sei partenze e la tabella dei dati di ogni circuito con la verifica">
+          </picture>
+        </figure>
+      </div>
+      <div class="scheda-galleria rivela">
+        <div class="testo-galleria">
+          <h3>Le uscite sono pronte da consegnare</h3>
+          <p>Schema a fili colorati, calcolo termico, loop diagram e tabella di cablaggio, generati dal progetto e bilingui, in un PDF con i rimandi cliccabili.</p>
+          <ul><li>distinta materiali e cablaggio anche in Excel</li><li>targhette in CSV per la stampante</li><li>segnalibri per ogni foglio</li></ul>
+        </div>
+        <figure class="figura">
+          <picture>
+            <source type="image/webp" srcset="/img/output-pdf-800.webp 800w, /img/output-pdf-1600.webp 1600w" sizes="(max-width: 1020px) 100vw, 640px">
+            <img src="/img/output-pdf-1600.webp" width="1600" height="1146" loading="lazy" decoding="async" alt="Quattro pagine del PDF generato da WireCraft: schema di un motore a fili colorati, calcolo termico del quadro, loop diagram e tabella di cablaggio">
+          </picture>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PERCHÉ ================= -->
+<section class="sezione" id="perche" aria-labelledby="titolo-perche">
+  <div class="contenitore">
+    <div class="intro centrato rivela">
+      <p class="occhiello">Perché open source</p>
+      <h2 id="titolo-perche">I tuoi progetti <span class="gradiente">restano tuoi</span></h2>
+      <p>Niente licenze annuali, niente formati chiusi, niente piattaforme di terzi da comprare prima. Lo installi, lo usi, lo modifichi.</p>
+    </div>
+    <div class="griglia-perche">
+      <div class="perche rivela"><div class="simbolo-grande">0 €</div><strong>Gratis, anche per lavoro</strong><p>Licenza MIT o Apache-2.0: nessun abbonamento, nessun limite di fogli o di progetti.</p></div>
+      <div class="perche rivela"><div class="simbolo-grande">.dxf</div><strong>Formati aperti</strong><p>Progetti in DWG e DXF con i dati negli attributi, liste in CSV ed Excel, PDF per tutti.</p></div>
+      <div class="perche rivela"><div class="simbolo-grande">⚡</div><strong>Nativo e leggero</strong><p>Scritto in Rust: parte in un attimo e gira anche su PC modesti, senza altri programmi.</p></div>
+      <div class="perche rivela"><div class="simbolo-grande">{ }</div><strong>Costruito con chi lo usa</strong><p>Codice aperto su GitHub: proponi simboli, segnala problemi, contribuisci.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INIZIA ================= -->
+<section class="sezione" id="inizia" aria-labelledby="titolo-inizia">
+  <div class="contenitore">
+    <div class="intro rivela">
+      <p class="occhiello">Inizia</p>
+      <h2 id="titolo-inizia">Dal download al primo schema <span class="gradiente">in due minuti</span></h2>
+    </div>
+    <ol class="passi">
+      <li class="rivela"><h3>Scarica</h3><p>Dalla pagina <a href="https://github.com/edo023/WireCraft/releases/latest" rel="noopener">Releases di GitHub</a> prendi l'ultima versione per Windows 10 o 11 a 64 bit.</p></li>
+      <li class="rivela"><h3>Avvia</h3><p>Estrai lo ZIP e fai doppio clic su <code>wirecraft.exe</code>. Nessuna installazione, nessun account.</p></li>
+      <li class="rivela"><h3>Esplora</h3><p>In <em>Gestione Progetti</em> premi <strong>Progetto d'esempio</strong>: si apre un impianto completo da sfogliare e modificare.</p></li>
+    </ol>
+    <details class="dettagli-dev rivela">
+      <summary>Sei uno sviluppatore? Compila dai sorgenti</summary>
+      <div>
+        <p>Servono <a href="https://rustup.rs" rel="noopener">Rust</a> 1.95 o successivo e i Build Tools di Visual Studio (C++).</p>
+<pre class="blocco-codice"><code>git clone --recurse-submodules https://github.com/edo023/WireCraft.git
+cd WireCraft
+scripts/aggiorna-cadcraft.sh        <span class="commento"># prepara il motore CAD</span>
+cargo run --release -p wirecraft    <span class="commento"># avvia il programma</span></code></pre>
+        <p>Tutti i comandi, con i loro parametri, sono nella <a href="https://github.com/edo023/WireCraft/blob/main/docs/COMANDI.md" rel="noopener">guida ai comandi</a>.</p>
+      </div>
+    </details>
+    <p class="avviso-windows">WireCraft è in versione alpha e l'eseguibile non è ancora firmato digitalmente: al primo avvio Windows può mostrare "Windows ha protetto il PC". Scegli <em>Ulteriori informazioni → Esegui comunque</em>.</p>
+  </div>
+</section>
+
+<!-- ================= ROADMAP ================= -->
+<section class="sezione" id="roadmap" aria-labelledby="titolo-roadmap">
+  <div class="contenitore">
+    <div class="intro rivela">
+      <p class="occhiello">Roadmap</p>
+      <h2 id="titolo-roadmap">Da un'idea a un CAD completo <span class="gradiente">in una settimana</span></h2>
+      <p>WireCraft cresce in fretta e in pubblico. La storia completa, giorno per giorno, è nel <a href="https://github.com/edo023/WireCraft/blob/main/CHANGELOG.md" rel="noopener">changelog</a>.</p>
+    </div>
+    <ol class="linea-tempo">
+      <li class="rivela"><time datetime="2026-10-23">23 ottobre 2026</time><strong>L'idea</strong><span class="desc">Un CAD elettrico libero, con il flusso di lavoro dei programmi professionali.</span></li>
+      <li class="rivela"><time datetime="2026-10-26">26 ottobre</time><strong>Prima versione</strong><span class="desc">Progetti, multifoglio, fili, simboli, siglatura, numerazione, morsetti, cavi, PLC, liste e PDF.</span></li>
+      <li class="rivela"><time datetime="2026-10-27">27 ottobre</time><strong>Pubblicazione open source</strong><span class="desc">Traduttore, lay-out del quadro, connettori, CEI EN 81346, calcolo termico, loop diagram.</span></li>
+      <li class="rivela"><time datetime="2026-10-28">28 ottobre</time><strong>Prima release per Windows</strong><span class="desc">Schema unifilare con dimensionamento, editor delle morsettiere, gestore topografico.</span></li>
+      <li class="rivela"><time datetime="2026-10-30">30 ottobre</time><strong>Prova su un progetto reale</strong><span class="desc">50 fogli e 9.578 entità salvati e riaperti senza perdite; liste tre volte più veloci.</span></li>
+      <li class="rivela prossimo"><span class="quando">Prossimi passi</span><strong>Assistente IA collegato e calcoli completi dei quadri</strong><span class="desc">L'IA che lavora sul progetto aperto tramite MCP; cortocircuito su ogni circuito, contatti indiretti (TT, TN, IT), selettività e relazione di calcolo in PDF; poi la firma digitale dell'eseguibile.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="sezione" id="faq" aria-labelledby="titolo-faq">
+  <div class="contenitore">
+    <div class="intro centrato rivela">
+      <p class="occhiello">Domande frequenti</p>
+      <h2 id="titolo-faq">Tutto quello che vuoi sapere</h2>
+    </div>
+    <div class="faq">
+      <details class="rivela"><summary>WireCraft è davvero gratis?</summary><div class="risposta"><p>Sì. WireCraft è open source con licenza MIT o Apache-2.0, a tua scelta: lo puoi usare anche per lavoro, senza licenze, abbonamenti o limiti di fogli. Puoi anche modificarlo e ridistribuirlo.</p></div></details>
+      <details class="rivela"><summary>Come si usa l'intelligenza artificiale con un CAD elettrico?</summary><div class="risposta"><p>In WireCraft ogni comando ha un nome e parametri JSON e restituisce un risultato strutturato. Un assistente di intelligenza artificiale può quindi scrivere la sequenza di comandi che disegna simboli e fili, sigla, numera e genera le liste, e poi leggere il cross reference per verificare lo schema. Il progetto d'esempio di 22 fogli è costruito proprio così.</p><p>Il prossimo passo è collegare il tuo assistente direttamente al progetto aperto, tramite il protocollo MCP (Model Context Protocol).</p></div></details>
+      <details class="rivela"><summary>L'IA può sbagliare uno schema?</summary><div class="risposta"><p>Sì, come una persona. Per questo in WireCraft l'IA non lavora di nascosto: ogni modifica è un comando leggibile che puoi controllare, annullare e rifare, e il cross reference segnala i problemi. Le decisioni e la responsabilità del progetto restano al progettista.</p></div></details>
+      <details class="rivela"><summary>Posso aprire i miei progetti esistenti?</summary><div class="risposta"><p>WireCraft legge e scrive file DWG e DXF e riconosce fogli, titoli, rimandi, fili e contatti degli schemi esistenti. I dati elettrici stanno negli attributi dei blocchi, le liste in CSV ed Excel: i tuoi progetti restano tuoi e li puoi portare dove vuoi.</p></div></details>
+      <details class="rivela"><summary>Serve un altro programma CAD per usarlo?</summary><div class="risposta"><p>No. WireCraft è un programma autonomo: il motore CAD, <a href="https://github.com/storytold/cadcraft" rel="noopener">CADCraft</a>, è incluso ed è anch'esso open source. Non c'è nessuna piattaforma di terzi da comprare.</p></div></details>
+      <details class="rivela"><summary>Su quali sistemi funziona?</summary><div class="risposta"><p>L'eseguibile pronto è per Windows 10 e 11 a 64 bit. Il codice è in Rust e il motore CAD è multipiattaforma: chi compila dai sorgenti può provarlo anche su altri sistemi.</p></div></details>
+      <details class="rivela"><summary>Quali norme segue?</summary><div class="risposta"><p>I simboli seguono la IEC 60617, le designazioni dei componenti la CEI EN 81346, il dimensionamento dei cavi nello schema unifilare la IEC 60364-5-52. I calcoli sono un aiuto al progettista: la verifica finale dell'impianto e la sua conformità restano a chi lo progetta e lo firma.</p></div></details>
+      <details class="rivela"><summary>È pronto per lavori veri?</summary><div class="risposta"><p>WireCraft è in versione alpha: è già stato provato su un progetto reale di 50 fogli, ma può avere ancora difetti. Usalo, controlla le uscite e segnala quello che non va nelle <a href="https://github.com/edo023/WireCraft/issues" rel="noopener">Issues di GitHub</a>.</p></div></details>
+      <details class="rivela"><summary>Come posso contribuire?</summary><div class="risposta"><p>Prova il programma e apri una issue con quello che manca, proponi nuovi simboli IEC, cartigli o fogli memorizzati, oppure scrivi codice: ogni funzione nuova arriva con il suo test. Tutto su <a href="https://github.com/edo023/WireCraft" rel="noopener">GitHub</a>.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= INVITO ================= -->
+<section class="sezione" aria-labelledby="titolo-invito">
+  <div class="contenitore">
+    <div class="invito rivela">
+      <h2 id="titolo-invito">Il futuro della progettazione elettrica è <span class="gradiente">aperto e intelligente</span></h2>
+      <p>Scarica WireCraft, apri il progetto d'esempio e prova a progettare con l'IA al tuo fianco.</p>
+      <div class="cta">
+        <a class="btn btn-primario" href="https://github.com/edo023/WireCraft/releases/latest" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 21h16"/></svg>
+          Scarica gratis
+        </a>
+        <a class="btn btn-secondario" href="https://github.com/edo023/WireCraft" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg>
+          Lascia una stella su GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="piede">
+  <div class="contenitore">
+    <div class="piede-griglia">
+      <div>
+        <a class="marchio" href="/"><img src="/img/logo.svg" alt="" width="34" height="34" loading="lazy">WireCraft</a>
+        <p>Il CAD elettrico open source per l'automazione industriale, pronto per l'intelligenza artificiale.</p>
+      </div>
+      <div>
+        <h2>Progetto</h2>
+        <ul>
+          <li><a href="https://github.com/edo023/WireCraft" rel="noopener">Codice su GitHub</a></li>
+          <li><a href="https://github.com/edo023/WireCraft/releases/latest" rel="noopener">Download</a></li>
+          <li><a href="https://github.com/edo023/WireCraft/blob/main/CHANGELOG.md" rel="noopener">Changelog</a></li>
+          <li><a href="https://github.com/edo023/WireCraft/blob/main/docs/COMANDI.md" rel="noopener">Guida ai comandi</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Comunità</h2>
+        <ul>
+          <li><a href="https://github.com/edo023/WireCraft/issues" rel="noopener">Segnala un problema</a></li>
+          <li><a href="https://github.com/edo023/WireCraft/issues/new" rel="noopener">Proponi un'idea</a></li>
+          <li><a href="/en/" hreflang="en" lang="en">English</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Note legali</h2>
+        <ul>
+          <li><a href="/privacy/">Privacy e cookie</a></li>
+          <li><a href="/note-legali/">Note legali e marchi</a></li>
+          <li><a href="https://github.com/edo023/WireCraft/blob/main/LICENSE-MIT" rel="noopener">Licenza MIT</a></li>
+          <li><a href="https://github.com/edo023/WireCraft/blob/main/LICENSE-APACHE" rel="noopener">Licenza Apache-2.0</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legale">
+      <p>WireCraft è un progetto open source indipendente di Alfredo Pennisi, senza scopo di lucro. Non è sponsorizzato, approvato né collegato in alcun modo a produttori di software CAD commerciali. Eventuali marchi e nomi di prodotto di terzi appartengono ai rispettivi titolari.</p>
+      <p>Il software è fornito "così com'è", senza garanzie. I calcoli e le verifiche sono un aiuto alla progettazione e non sostituiscono il giudizio del progettista abilitato. Questo sito non usa cookie di profilazione né traccia i visitatori.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

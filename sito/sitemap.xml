@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://wirecraft.alfredopennisi.com/</loc>
+    <lastmod>2026-11-03</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://wirecraft.alfredopennisi.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://wirecraft.alfredopennisi.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://wirecraft.alfredopennisi.com/"/>
+    <image:image><image:loc>https://wirecraft.alfredopennisi.com/img/schema-1600.webp</image:loc></image:image>
+    <image:image><image:loc>https://wirecraft.alfredopennisi.com/img/layout-quadro-1600.webp</image:loc></image:image>
+    <image:image><image:loc>https://wirecraft.alfredopennisi.com/img/unifilare-1300.webp</image:loc></image:image>
+    <image:image><image:loc>https://wirecraft.alfredopennisi.com/img/output-pdf-1600.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://wirecraft.alfredopennisi.com/en/</loc>
+    <lastmod>2026-11-03</lastmod>
+    <xhtml:link rel="alternate" hreflang="it" href="https://wirecraft.alfredopennisi.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://wirecraft.alfredopennisi.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://wirecraft.alfredopennisi.com/"/>
+  </url>
+  <url>
+    <loc>https://wirecraft.alfredopennisi.com/privacy/</loc>
+    <lastmod>2026-11-03</lastmod>
+  </url>
+  <url>
+    <loc>https://wirecraft.alfredopennisi.com/note-legali/</loc>
+    <lastmod>2026-11-03</lastmod>
+  </url>
+</urlset>
